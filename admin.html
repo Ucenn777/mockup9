@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Toko</title>
+
+<style>
+*{
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+margin:0;
+background:#f1f1f1;
+}
+
+/* LOGIN */
+#login{
+width:320px;
+background:white;
+padding:25px;
+margin:100px auto;
+border-radius:15px;
+box-shadow:0 0 10px #aaa;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+button{
+padding:10px;
+border:0;
+border-radius:8px;
+background:#007bff;
+color:white;
+cursor:pointer;
+}
+
+
+/* ADMIN */
+
+#panel{
+display:none;
+}
+
+.sidebar{
+position:fixed;
+width:220px;
+height:100%;
+background:#222;
+color:white;
+padding:20px;
+}
+
+.sidebar button{
+width:100%;
+margin:8px 0;
+background:#333;
+}
+
+.content{
+margin-left:240px;
+padding:20px;
+}
+
+
+.box{
+background:white;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+
+.menu{
+display:none;
+}
+
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+td,th{
+border:1px solid #ddd;
+padding:10px;
+}
+
+
+</style>
+</head>
+
+
+<body>
+
+
+<div id="login">
+
+<h2>Login Admin</h2>
+
+<input id="user" placeholder="Username">
+
+<input id="pass" type="password" placeholder="Password">
+
+<button onclick="login()">
+Masuk
+</button>
+
+
+</div>
+
+
+
+
+<div id="panel">
+
+
+<div class="sidebar">
+
+<h2>ADMIN</h2>
+
+<button onclick="show('dashboard')">
+Dashboard
+</button>
+
+<button onclick="show('tambah')">
+Tambah Barang
+</button>
+
+<button onclick="show('barang')">
+Daftar Barang
+</button>
+
+<button onclick="show('pesanan')">
+Pesanan
+</button>
+
+
+<button onclick="logout()">
+Logout
+</button>
+
+
+</div>
+
+
+
+<div class="content">
+
+
+<div id="dashboard" class="menu" style="display:block">
+
+<div class="box">
+
+<h1>Dashboard</h1>
+
+<p>Total Barang : <b id="jumlah">0</b></p>
+
+<p>Status : Online</p>
+
+</div>
+
+</div>
+
+
+
+<div id="tambah" class="menu">
+
+<div class="box">
+
+<h2>Tambah Barang</h2>
+
+<input id="nama" placeholder="Nama barang">
+
+<input id="harga" placeholder="Harga">
+
+<input id="foto" placeholder="Link gambar">
+
+
+<button onclick="tambahBarang()">
+Simpan
+</button>
+
+
+</div>
+
+</div>
+<div id="barang" class="menu">
+
+<div class="box">
+
+<h2>Daftar Barang</h2>
+
+<table>
+
+<tr>
+<th>Nama</th>
+<th>Harga</th>
+<th>Foto</th>
+<th>Aksi</th>
+</tr>
+
+
+<tbody id="daftar"></tbody>
+
+
+</table>
+
+</div>
+
+</div>
+
+
+
+
+<div id="pesanan" class="menu">
+
+<div class="box">
+
+<h2>Pesanan Customer</h2>
+
+<table>
+
+<tr>
+<th>Nama Customer</th>
+<th>Barang</th>
+<th>Total</th>
+</tr>
+
+
+<tbody id="orderList">
+
+<tr>
+<td colspan="3">
+Belum ada pesanan
+</td>
+</tr>
+
+</tbody>
+
+
+</table>
+
+</div>
+
+</div>
+
+
+
+</div>
+
+</div>
+
+
+
+
+<script>
+
+
+let barang=[];
+
+
+// LOGIN
+
+function login(){
+
+let u=document.getElementById("user").value;
+
+let p=document.getElementById("pass").value;
+
+
+if(u=="admin" && p=="12345"){
+
+
+document.getElementById("login").style.display="none";
+
+document.getElementById("panel").style.display="block";
+
+
+loadBarang();
+
+
+}else{
+
+alert("Username atau password salah");
+
+}
+
+}
+
+
+
+// LOGOUT
+
+function logout(){
+
+location.reload();
+
+}
+
+
+
+// MENU
+
+function show(id){
+
+
+let menu=document.querySelectorAll(".menu");
+
+
+menu.forEach(function(x){
+
+x.style.display="none";
+
+});
+
+
+document.getElementById(id).style.display="block";
+
+
+}
+
+
+
+// TAMBAH BARANG
+
+function tambahBarang(){
+
+
+let data={
+
+nama:document.getElementById("nama").value,
+
+harga:document.getElementById("harga").value,
+
+foto:document.getElementById("foto").value
+
+};
+
+
+barang.push(data);
+
+
+simpanBarang();
+
+tampilBarang();
+
+
+alert("Barang ditambahkan");
+
+
+}
+
+
+
+// SIMPAN
+
+function simpanBarang(){
+
+localStorage.setItem(
+"barangAdmin",
+JSON.stringify(barang)
+);
+
+}
+
+
+
+// LOAD
+
+function loadBarang(){
+
+let data=localStorage.getItem("barangAdmin");
+
+
+if(data){
+
+barang=JSON.parse(data);
+
+}
+
+
+tampilBarang();
+
+
+}
+
+
+
+// TAMPIL
+
+function tampilBarang(){
+
+
+let html="";
+
+
+barang.forEach(function(b,i){
+
+
+html+=`
+
+<tr>
+
+<td>${b.nama}</td>
+
+<td>${b.harga}</td>
+
+<td>
+<img src="${b.foto}" width="50">
+</td>
+
+
+<td>
+
+<button onclick="hapusBarang(${i})">
+Hapus
+</button>
+
+
+</td>
+
+
+</tr>
+
+
+`;
+
+
+});
+
+
+document.getElementById("daftar").innerHTML=html;
+
+
+document.getElementById("jumlah").innerHTML=barang.length;
+
+
+}
+
+
+
+// HAPUS
+
+function hapusBarang(i){
+
+
+barang.splice(i,1);
+
+
+simpanBarang();
+
+tampilBarang();
+
+}
+
+</script>
+
+<script>
+
+// cek login tersimpan (opsional)
+window.onload=function(){
+
+loadBarang();
+
+}
+
+
+</script>
+
+
+</body>
+</html>

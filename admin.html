@@ -92,6 +92,14 @@
         }
         .btn-action:hover { background: #d73211; }
 
+        /* Image Preview Area */
+        .img-preview-container {
+            display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;
+        }
+        .img-preview-container img {
+            width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;
+        }
+
         /* Tables */
         .data-table-container { width: 100%; overflow-x: auto; background: #fff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         table { width: 100%; border-collapse: collapse; font-size: 11px; color: #333; min-width: 520px; }
@@ -190,8 +198,9 @@
                         <input type="number" id="new-price" required placeholder="Contoh: 250000">
                     </div>
                     <div class="form-row">
-                        <label>Upload Foto Produk</label>
-                        <input type="file" id="new-img-file" accept="image/*" required>
+                        <label>Upload Foto Produk (Bisa pilih lebih dari 1)</label>
+                        <input type="file" id="new-img-file" accept="image/*" multiple required onchange="previewImages(event)">
+                        <div id="image-previews" class="img-preview-container"></div>
                     </div>
                     <div class="form-row">
                         <label>Jumlah Stok Awal</label>
@@ -206,7 +215,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Gambar</th>
+                                <th>Foto</th>
                                 <th>Nama Produk</th>
                                 <th>Kategori</th>
                                 <th>Harga</th>
@@ -308,6 +317,26 @@
             document.getElementById("stat-total-revenue").innerText = "Rp " + totalRev.toLocaleString('id-ID');
         }
 
+        // Preview foto saat dipilih
+        function previewImages(event) {
+            const container = document.getElementById("image-previews");
+            container.innerHTML = "";
+            const files = event.target.files;
+
+            if (files) {
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement("img");
+                        img.src = e.target.result;
+                        container.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        // Simpan Produk dengan Multiple Upload
         function handleAddNewProduct(e) {
             e.preventDefault();
             const name = document.getElementById("new-name").value;
@@ -316,24 +345,37 @@
             const fileInput = document.getElementById("new-img-file");
             const stock = parseInt(document.getElementById("new-stock").value);
 
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const base64Image = event.target.result;
+            if (fileInput.files && fileInput.files.length > 0) {
+                const files = Array.from(fileInput.files);
+                const imagePromises = files.map(file => {
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (event) => resolve(event.target.result);
+                        reader.readAsDataURL(file);
+                    });
+                });
+
+                Promise.all(imagePromises).then(base64Images => {
                     let prods = getProducts();
 
                     prods.push({
                         id: prods.length > 0 ? Math.max(...prods.map(p => p.id)) + 1 : 1,
-                        name: name, category: category, price: price, img: base64Image, stock: stock,
-                        rating: "5.0", sold: "Baru"
+                        name: name,
+                        category: category,
+                        price: price,
+                        img: base64Images[0], // Foto utama/cover
+                        images: base64Images, // Semua foto yang diunggah
+                        stock: stock,
+                        rating: "5.0",
+                        sold: "Baru"
                     });
 
                     saveProducts(prods);
-                    alert("Produk berhasil ditambahkan!");
+                    alert(`Berhasil menambahkan produk dengan ${base64Images.length} foto!`);
                     document.getElementById("add-product-form").reset();
+                    document.getElementById("image-previews").innerHTML = "";
                     switchTab('view', document.querySelectorAll('.menu-item')[2]);
-                };
-                reader.readAsDataURL(fileInput.files[0]);
+                });
             }
         }
 
@@ -346,9 +388,15 @@
                 return;
             }
             prods.forEach(p => {
+                const imageCount = p.images ? p.images.length : 1;
                 tbody.innerHTML += `
                     <tr>
-                        <td><img src="${p.img}" style="width:30px; height:30px; object-fit:cover; border-radius:4px;" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80'"></td>
+                        <td>
+                            <div style="position:relative; display:inline-block;">
+                                <img src="${p.img}" style="width:36px; height:36px; object-fit:cover; border-radius:4px;" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80'">
+                                ${imageCount > 1 ? `<span style="position:absolute; bottom:-4px; right:-4px; background:#ee4d2d; color:#fff; font-size:9px; padding:1px 4px; border-radius:8px; font-weight:bold;">+${imageCount - 1}</span>` : ''}
+                            </div>
+                        </td>
                         <td><b>${p.name}</b></td>
                         <td>${p.category || '-'}</td>
                         <td>Rp ${p.price.toLocaleString('id-ID')}</td>

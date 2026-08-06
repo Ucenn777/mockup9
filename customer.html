@@ -1,431 +1,1063 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Dashboard - TokoKita</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        body {
-            background-color: #f5f5f5;
-            color: #333;
-        }
+<title>TokoOren</title>
 
-        /* Top Header & Navbar Ala Shopee */
-        .header {
-            background-color: #ee4d2d;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+<style>
 
-        .top-bar {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 8px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            color: white;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
 
-        .top-bar a {
-            color: white;
-            text-decoration: none;
-            margin-left: 15px;
-            font-weight: 500;
-        }
+body{
+background:#f5f5f5;
+}
 
-        .top-bar a:hover {
-            opacity: 0.8;
-        }
+/* HEADER */
 
-        .main-header {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+header{
 
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-        }
+background:#ff5722;
 
-        /* Search Box */
-        .search-box {
-            flex: 1;
-            max-width: 600px;
-            display: flex;
-            background: white;
-            border-radius: 2px;
-            overflow: hidden;
-        }
+padding:15px;
 
-        .search-box input {
-            width: 100%;
-            padding: 10px 15px;
-            border: none;
-            outline: none;
-            font-size: 14px;
-        }
+display:flex;
 
-        .search-box button {
-            background: #f76743;
-            border: none;
-            color: white;
-            padding: 0 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+align-items:center;
 
-        .header-icons {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+justify-content:space-between;
 
-        .cart-icon {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            position: relative;
-            font-size: 14px;
-            background: rgba(0,0,0,0.15);
-            padding: 8px 12px;
-            border-radius: 4px;
-        }
+position:sticky;
 
-        .cart-badge {
-            background: white;
-            color: #ee4d2d;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 11px;
-            font-weight: bold;
-            margin-left: 5px;
-        }
+top:0;
 
-        /* Menu Navigasi Utama */
-        .nav-menu {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+z-index:100;
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
+gap:15px;
 
-        .nav-item {
-            padding: 12px 20px;
-            text-decoration: none;
-            color: #333;
-            font-size: 14px;
-            font-weight: 500;
-            border-bottom: 3px solid transparent;
-            transition: 0.2s;
-        }
+}
 
-        .nav-item:hover, .nav-item.active {
-            color: #ee4d2d;
-            border-bottom-color: #ee4d2d;
-        }
+.logo{
 
-        /* Container Utama */
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 15px;
-        }
+font-size:28px;
 
-        .section-title {
-            font-size: 16px;
-            color: #ee4d2d;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            font-weight: bold;
-            border-left: 4px solid #ee4d2d;
-            padding-left: 10px;
-            background: white;
-            padding-top: 12px;
-            padding-bottom: 12px;
-            border-radius: 0 4px 4px 0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
+font-weight:bold;
 
-        /* Grid Produk Responsif */
-        .grid-produk {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-            gap: 12px;
-        }
+color:white;
 
-        .card {
-            background: white;
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
+}
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-        }
+.search{
 
-        .card-img {
-            width: 100%;
-            height: 140px;
-            background-color: #eee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #888;
-            font-weight: bold;
-            font-size: 13px;
-        }
+flex:1;
 
-        .card-body {
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            flex-grow: 1;
-        }
+}
 
-        .card-title {
-            font-size: 13px;
-            line-height: 1.4;
-            height: 36px;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            margin-bottom: 8px;
-        }
+.search input{
 
-        .card-price {
-            color: #ee4d2d;
-            font-size: 15px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
+width:100%;
 
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 11px;
-            color: #777;
-            margin-bottom: 10px;
-        }
+padding:12px;
 
-        .rating {
-            color: #ffce3d;
-            font-weight: bold;
-        }
+border:0;
 
-        .btn-beli {
-            display: block;
-            width: 100%;
-            background-color: #ee4d2d;
-            color: white;
-            text-align: center;
-            padding: 8px 0;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: bold;
-            border-radius: 2px;
-            transition: 0.2s;
-        }
+border-radius:8px;
 
-        .btn-beli:hover {
-            background-color: #d73211;
-        }
+outline:none;
 
-        /* Responsif untuk Layar HP */
-        @media (max-width: 600px) {
-            .main-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .grid-produk {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+}
+
+.menu{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+
+}
+
+.menu button{
+
+padding:10px 15px;
+
+border:0;
+
+background:white;
+
+border-radius:8px;
+
+cursor:pointer;
+
+font-weight:bold;
+
+}
+
+.cart{
+
+position:relative;
+
+}
+
+.badge{
+
+position:absolute;
+
+top:-8px;
+
+right:-8px;
+
+background:red;
+
+color:white;
+
+border-radius:50%;
+
+padding:3px 7px;
+
+font-size:12px;
+
+}
+
+/* ISI */
+
+.container{
+
+display:flex;
+
+gap:20px;
+
+padding:20px;
+
+}
+
+/* MENU KIRI */
+
+.sidebar{
+
+width:220px;
+
+background:white;
+
+border-radius:10px;
+
+padding:15px;
+
+height:fit-content;
+
+}
+
+.sidebar h3{
+
+margin-bottom:15px;
+
+}
+
+.sidebar button{
+
+width:100%;
+
+padding:12px;
+
+margin-bottom:10px;
+
+background:#ff5722;
+
+color:white;
+
+border:0;
+
+border-radius:8px;
+
+cursor:pointer;
+
+}
+
+/* PRODUK */
+
+.content{
+
+flex:1;
+
+}
+
+.banner{
+
+background:linear-gradient(45deg,#ff5722,#ff9800);
+
+color:white;
+
+padding:30px;
+
+border-radius:10px;
+
+margin-bottom:20px;
+
+}
+
+.grid{
+
+display:grid;
+
+grid-template-columns:repeat(4,1fr);
+
+gap:15px;
+
+}
+
+.card{
+
+background:white;
+
+border-radius:10px;
+
+overflow:hidden;
+
+cursor:pointer;
+
+transition:.2s;
+
+box-shadow:0 2px 5px rgba(0,0,0,.1);
+
+}
+
+.card:hover{
+
+transform:translateY(-4px);
+
+}
+
+.card img{
+
+width:100%;
+
+aspect-ratio:1/1;
+
+object-fit:cover;
+
+}
+
+.info{
+
+padding:10px;
+
+}
+
+.nama{
+
+font-weight:bold;
+
+height:40px;
+
+overflow:hidden;
+
+}
+
+.rating{
+
+color:#ff9800;
+
+font-size:14px;
+
+margin-top:5px;
+
+}
+
+.terjual{
+
+font-size:13px;
+
+color:gray;
+
+}
+
+.harga{
+
+color:#ff5722;
+
+font-size:20px;
+
+font-weight:bold;
+
+margin-top:8px;
+
+}
+
+/* DETAIL */
+
+#popup{
+
+display:none;
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+background:rgba(0,0,0,.6);
+
+overflow:auto;
+
+z-index:999;
+
+}
+
+#detail{
+
+background:white;
+
+width:95%;
+
+max-width:900px;
+
+margin:30px auto;
+
+border-radius:10px;
+
+padding:20px;
+
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+
+.container{
+
+flex-direction:column;
+
+}
+
+.sidebar{
+
+width:100%;
+
+}
+
+.grid{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+header{
+
+flex-wrap:wrap;
+
+}
+
+}
+
+</style>
+
 </head>
+
 <body>
 
-    <header class="header">
-        <div class="top-bar">
-            <span>Halo, Customer! 👋</span>
-            <div>
-                <a href="index.html">Logout</a>
-            </div>
-        </div>
+<header>
 
-        <div class="main-header">
-            <a href="customer.html" class="logo">TokoKita</a>
-            
-            <div class="search-box">
-                <input type="text" placeholder="Cari barang di TokoKita...">
-                <button type="button" onclick="alert('Mencari produk...')">Cari</button>
-            </div>
+<div class="logo">
 
-            <div class="header-icons">
-                <a href="customer.html" class="cart-icon" onclick="alert('Keranjang kamu berisi 2 barang')">
-                    🛒 Keranjang <span class="cart-badge">2</span>
-                </a>
-            </div>
-        </div>
-    </header>
+TokoOren
 
-    <nav class="nav-menu">
-        <div class="nav-container">
-            <a href="customer.html" class="nav-item active">Semua Produk</a>
-            <a href="customer.html" class="nav-item">Elektronik</a>
-            <a href="customer.html" class="nav-item">Pakaian Pria</a>
-            <a href="customer.html" class="nav-item">Pakaian Wanita</a>
-            <a href="customer.html" class="nav-item">Makanan & Minuman</a>
-            <a href="customer.html" class="nav-item">Pesanan Saya</a>
-        </div>
-    </nav>
+</div>
 
-    <div class="container">
-        
-        <h2 class="section-title">Rekomendasi Produk Hari Ini</h2>
+<div class="search">
 
-        <div class="grid-produk">
+<input id="cari" placeholder="Cari produk...">
 
-            <div class="card">
-                <div class="card-img">Kemeja Pria</div>
-                <div class="card-body">
-                    <div class="card-title">Kemeja Kasual Pria Lengan Panjang Premium</div>
-                    <div class="card-price">Rp 129.000</div>
-                    <div class="card-footer">
-                        <span class="rating">★ 4.8</span>
-                        <span>1,2rb Terjual</span>
-                    </div>
-                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Kemeja ke keranjang!')">+ Keranjang</a>
-                </div>
-            </div>
+</div>
 
-            <div class="card">
-                <div class="card-img">TWS Bluetooth</div>
-                <div class="card-body">
-                    <div class="card-title">Earphone Bluetooth TWS Wireless Bass Boost</div>
-                    <div class="card-price">Rp 85.000</div>
-                    <div class="card-footer">
-                        <span class="rating">★ 4.9</span>
-                        <span>3,4rb Terjual</span>
-                    </div>
-                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah TWS ke keranjang!')">+ Keranjang</a>
-                </div>
-            </div>
+<div class="menu">
 
-            <div class="card">
-                <div class="card-img">Sneakers Olahraga</div>
-                <div class="card-body">
-                    <div class="card-title">Sepatu Sneakers Olahraga Running Pria & Wanita</div>
-                    <div class="card-price">Rp 210.000</div>
-                    <div class="card-footer">
-                        <span class="rating">★ 4.7</span>
-                        <span>850 Terjual</span>
-                    </div>
-                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Sepatu ke keranjang!')">+ Keranjang</a>
-                </div>
-            </div>
+<button onclick="location.href='admin.html'">
 
-            <div class="card">
-                <div class="card-img">Tas Laptop</div>
-                <div class="card-body">
-                    <div class="card-title">Tas Ransel Laptop Waterproof Minimalis</div>
-                    <div class="card-price">Rp 145.000</div>
-                    <div class="card-footer">
-                        <span class="rating">★ 4.8</span>
-                        <span>500 Terjual</span>
-                    </div>
-                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Tas ke keranjang!')">+ Keranjang</a>
-                </div>
-            </div>
+Login Admin
 
-            <div class="card">
-                <div class="card-img">Smartwatch</div>
-                <div class="card-body">
-                    <div class="card-title">Smartwatch Jam Tangan Digital Fitur Sport</div>
-                    <div class="card-price">Rp 199.000</div>
-                    <div class="card-footer">
-                        <span class="rating">★ 4.6</span>
-                        <span>2,1rb Terjual</span>
-                    </div>
-                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Smartwatch ke keranjang!')">+ Keranjang</a>
-                </div>
-            </div>
+</button>
 
-            <div class="card">
-                <div class="card-img">Kopi Arabika</div>
-                <div class="card-body">
-                    <div class="card-title">Kopi Bubuk Arabika Premium Original 250gr</div>
-                    <div class="card-price">Rp 45.000</div>
-                    <div class="card-footer">
-                        <span class="rating">★ 5.0</span>
-                        <span>4,1rb Terjual</span>
-                    </div>
-                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Kopi ke keranjang!')">+ Keranjang</a>
-                </div>
-            </div>
+<button class="cart">
 
-            <div class="card">
-                <div class="card-img">Tumbler Stainless</div>
-                <div class="card-body">
-                    <div class="card-title">Botol Minum Tumbler Stainless Steel 500ml</div>
-                    <div class="card-price">Rp 68.000</div>
-                    <div class="card-footer">
-                        <span class="rating">★ 4.9</span>
-                        <span>900 Terjual</span>
-                    </div>
-                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Tumbler ke keranjang!')">+ Keranjang</a>
-                </div>
-            </div>
+🛒
 
-            <div class="card">
-                <div class="card-img">Powerbank 10k</div>
-                <div class="card-body">
-                    <div class="card-title">Powerbank Fast Charging 10000mAh Slim</div>
-                    <div class="card-price">Rp 115.000</div>
-                    <div class="card-footer">
-                        <span class="rating">★ 4.8</span>
-                        <span>1,5rb Terjual</span>
-                    </div>
-                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Powerbank ke keranjang!')">+ Keranjang</a>
-                </div>
-            </div>
+<span class="badge" id="badge">
 
-        </div>
-    </div>
+0
+
+</span>
+
+</button>
+
+</div>
+
+</header>
+
+<div class="container">
+
+<div class="sidebar">
+
+<h3>☰ MENU</h3>
+
+<button>🏠 Home</button>
+
+<button>🛒 Keranjang</button>
+
+<button>💳 Checkout</button>
+
+<button>📦 Pesanan Saya</button>
+
+<button onclick="location.href='index.html'">
+
+🚪 Logout
+
+</button>
+
+</div>
+
+<div class="content">
+
+<div class="banner">
+
+<h2>🔥 Promo Hari Ini</h2>
+
+<p>Diskon sampai 50%</p>
+
+</div>
+
+<div class="grid" id="produk">
+
+</div>
+
+</div>
+
+</div>
+
+<div id="popup">
+
+<div id="detail">
+
+</div>
+
+</div>
+
+<script>
+// ==========================
+// DATA PRODUK
+// ==========================
+
+let produk = JSON.parse(localStorage.getItem("produk")) || [
+
+{
+id:1,
+nama:"iPhone 15 Pro Max",
+harga:18999000,
+rating:"4.9",
+terjual:"2,5RB",
+gambar:"https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600",
+deskripsi:"iPhone 15 Pro Max Garansi Resmi."
+},
+
+{
+id:2,
+nama:"Samsung S25 Ultra",
+harga:17999000,
+rating:"4.9",
+terjual:"1,8RB",
+gambar:"https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600",
+deskripsi:"Samsung Flagship."
+},
+
+{
+id:3,
+nama:"Nike Air Force 1",
+harga:1599000,
+rating:"4.8",
+terjual:"3,2RB",
+gambar:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600",
+deskripsi:"Sepatu Original."
+},
+
+{
+id:4,
+nama:"Headset JBL",
+harga:599000,
+rating:"4.8",
+terjual:"980",
+gambar:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600",
+deskripsi:"Bass Mantap."
+},
+
+{
+id:5,
+nama:"Keyboard Gaming",
+harga:399000,
+rating:"4.7",
+terjual:"760",
+gambar:"https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?w=600",
+deskripsi:"RGB Mechanical."
+},
+
+{
+id:6,
+nama:"Mouse Gaming",
+harga:259000,
+rating:"4.9",
+terjual:"1,1RB",
+gambar:"https://images.unsplash.com/photo-1527814050087-3793815479db?w=600",
+deskripsi:"RGB 7200 DPI."
+},
+
+{
+id:7,
+nama:"Tas Eiger",
+harga:450000,
+rating:"4.9",
+terjual:"890",
+gambar:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600",
+deskripsi:"Tas Original."
+},
+
+{
+id:8,
+nama:"Jam Casio",
+harga:799000,
+rating:"4.8",
+terjual:"650",
+gambar:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600",
+deskripsi:"Jam Original."
+}
+
+];
+
+localStorage.setItem("produk",JSON.stringify(produk));
+
+let html="";
+
+produk.forEach(function(p){
+
+html+=`
+
+<div class="card" onclick="detailProduk(${p.id})">
+
+<img src="${p.gambar}">
+
+<div class="info">
+
+<div class="nama">
+
+${p.nama}
+
+</div>
+
+<div class="rating">
+
+⭐⭐⭐⭐⭐ ${p.rating}
+
+</div>
+
+<div class="terjual">
+
+Terjual ${p.terjual}
+
+</div>
+
+<div class="harga">
+
+Rp ${Number(p.harga).toLocaleString("id-ID")}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("produk").innerHTML=html;
+// ==========================
+// DETAIL PRODUK
+// ==========================
+
+function detailProduk(id){
+
+let p = produk.find(function(x){
+return x.id==id;
+});
+
+document.getElementById("popup").style.display="block";
+
+document.getElementById("detail").innerHTML=`
+
+<div style="display:flex;flex-wrap:wrap;gap:20px;">
+
+<div style="flex:1;min-width:280px;">
+
+<img src="${p.gambar}"
+style="width:100%;border-radius:10px;">
+
+</div>
+
+<div style="flex:1;min-width:280px;">
+
+<h2>${p.nama}</h2>
+
+<p style="color:#ff9800;font-size:18px;">
+⭐⭐⭐⭐⭐ ${p.rating}
+</p>
+
+<p style="color:gray;">
+Terjual ${p.terjual}
+</p>
+
+<h1 style="color:#ff5722;margin:15px 0;">
+Rp ${Number(p.harga).toLocaleString("id-ID")}
+</h1>
+
+<p>${p.deskripsi}</p>
+
+<br>
+
+<b>Warna</b>
+
+<br><br>
+
+<select id="warna"
+style="width:100%;padding:10px;">
+
+<option>Hitam</option>
+
+<option>Putih</option>
+
+<option>Merah</option>
+
+<option>Biru</option>
+
+</select>
+
+<br><br>
+
+<b>Jumlah</b>
+
+<div style="display:flex;gap:10px;align-items:center;margin-top:10px;">
+
+<button onclick="kurang()">-</button>
+
+<input id="jumlah"
+value="1"
+style="width:60px;text-align:center;">
+
+<button onclick="tambah()">+</button>
+
+</div>
+
+<br>
+
+<button
+onclick="tambahKeranjang(${p.id})"
+style="width:100%;
+padding:12px;
+background:#ff5722;
+color:white;
+border:0;
+border-radius:8px;">
+
+🛒 Tambah Keranjang
+
+</button>
+
+<br><br>
+
+<button
+style="width:100%;
+padding:12px;
+background:#16a34a;
+color:white;
+border:0;
+border-radius:8px;">
+
+⚡ Beli Sekarang
+
+</button>
+
+<br><br>
+
+<button
+onclick="tutupPopup()"
+style="width:100%;
+padding:12px;">
+
+Tutup
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+function tutupPopup(){
+
+document.getElementById("popup").style.display="none";
+
+}
+
+function tambah(){
+
+let j=document.getElementById("jumlah");
+
+j.value=Number(j.value)+1;
+
+}
+
+function kurang(){
+
+let j=document.getElementById("jumlah");
+
+if(Number(j.value)>1){
+
+j.value=Number(j.value)-1;
+
+}
+
+}
+// ==========================
+// KERANJANG
+// ==========================
+
+function tambahKeranjang(id){
+
+let p=produk.find(x=>x.id==id);
+
+let jumlah=Number(document.getElementById("jumlah").value);
+
+let warna=document.getElementById("warna").value;
+
+let keranjang=JSON.parse(localStorage.getItem("keranjang"))||[];
+
+let cek=keranjang.find(x=>x.id==id && x.warna==warna);
+
+if(cek){
+
+cek.jumlah+=jumlah;
+
+}else{
+
+keranjang.push({
+
+id:p.id,
+
+nama:p.nama,
+
+harga:p.harga,
+
+gambar:p.gambar,
+
+warna:warna,
+
+jumlah:jumlah,
+
+rating:p.rating,
+
+terjual:p.terjual,
+
+total:p.harga*jumlah
+
+});
+
+}
+
+localStorage.setItem(
+
+"keranjang",
+
+JSON.stringify(keranjang)
+
+);
+
+document.getElementById("badge").innerHTML=keranjang.length;
+
+alert("Produk berhasil ditambahkan ke keranjang");
+
+tutupPopup();
+
+}
+
+// ==========================
+// BUKA KERANJANG
+// ==========================
+
+document.querySelector(".cart").onclick=function(){
+
+let keranjang=JSON.parse(localStorage.getItem("keranjang"))||[];
+
+let total=0;
+
+let html="<h2>🛒 Keranjang</h2><hr>";
+
+if(keranjang.length==0){
+
+html+="<p>Keranjang masih kosong.</p>";
+
+}else{
+
+keranjang.forEach(function(k,i){
+
+total+=k.total;
+
+html+=`
+
+<div style="display:flex;gap:10px;margin:15px 0;">
+
+<img src="${k.gambar}"
+
+style="width:90px;height:90px;object-fit:cover;border-radius:10px;">
+
+<div>
+
+<b>${k.nama}</b><br>
+
+Warna : ${k.warna}<br>
+
+Jumlah : ${k.jumlah}<br>
+
+Rp ${Number(k.total).toLocaleString("id-ID")}
+
+</div>
+
+</div>
+
+`;
+
+});
+
+html+=`
+
+<hr>
+
+<h2>Total :
+
+Rp ${Number(total).toLocaleString("id-ID")}
+
+</h2>
+
+<br>
+
+<button onclick="checkout()"
+
+style="width:100%;
+
+padding:12px;
+
+background:#16a34a;
+
+color:white;
+
+border:0;
+
+border-radius:8px;">
+
+Checkout
+
+</button>
+
+`;
+
+}
+
+html+=`
+
+<br><br>
+
+<button onclick="tutupPopup()"
+
+style="width:100%;padding:12px;">
+
+Tutup
+
+</button>
+
+`;
+
+document.getElementById("detail").innerHTML=html;
+
+document.getElementById("popup").style.display="block";
+
+}
+
+// ==========================
+// CHECKOUT
+// ==========================
+
+function checkout(){
+
+let keranjang=JSON.parse(localStorage.getItem("keranjang"))||[];
+
+let pesanan=JSON.parse(localStorage.getItem("pesanan"))||[];
+
+keranjang.forEach(function(k){
+
+pesanan.push({
+
+nama:k.nama,
+
+harga:k.harga,
+
+jumlah:k.jumlah,
+
+warna:k.warna,
+
+total:k.total,
+
+status:"Menunggu"
+
+});
+
+});
+
+localStorage.setItem(
+
+"pesanan",
+
+JSON.stringify(pesanan)
+
+);
+
+localStorage.removeItem("keranjang");
+
+document.getElementById("badge").innerHTML="0";
+
+alert("Checkout berhasil");
+
+location.reload();
+
+}
+// ==========================
+// SEARCH PRODUK
+// ==========================
+
+document.getElementById("cari").onkeyup=function(){
+
+let key=this.value.toLowerCase();
+
+let html="";
+
+produk.filter(function(p){
+
+return p.nama.toLowerCase().includes(key);
+
+}).forEach(function(p){
+
+html+=`
+
+<div class="card" onclick="detailProduk(${p.id})">
+
+<img src="${p.gambar}">
+
+<div class="info">
+
+<div class="nama">${p.nama}</div>
+
+<div class="rating">
+
+⭐⭐⭐⭐⭐ ${p.rating}
+
+</div>
+
+<div class="terjual">
+
+Terjual ${p.terjual}
+
+</div>
+
+<div class="harga">
+
+Rp ${Number(p.harga).toLocaleString("id-ID")}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("produk").innerHTML=html;
+
+}
+
+// ==========================
+// WISHLIST
+// ==========================
+
+let wishlist=JSON.parse(localStorage.getItem("wishlist"))||[];
+
+function favorit(id){
+
+let p=produk.find(x=>x.id==id);
+
+if(!wishlist.find(x=>x.id==id)){
+
+wishlist.push(p);
+
+localStorage.setItem(
+
+"wishlist",
+
+JSON.stringify(wishlist)
+
+);
+
+alert("Produk ditambahkan ke Wishlist ❤️");
+
+}
+
+}
+
+// ==========================
+// TUTUP POPUP SAAT KLIK LUAR
+// ==========================
+
+window.onclick=function(e){
+
+if(e.target==document.getElementById("popup")){
+
+tutupPopup();
+
+}
+
+}
+
+// ==========================
+// UPDATE BADGE KERANJANG
+// ==========================
+
+document.getElementById("badge").innerHTML=
+(JSON.parse(localStorage.getItem("keranjang"))||[]).length;
+
+// ==========================
+// AKHIR FILE
+// ==========================
+
+</script>
 
 </body>
+
 </html>

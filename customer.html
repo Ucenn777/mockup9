@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Dashboard - Toko Online</title>
+    <title>Customer Dashboard - TokoKita</title>
     <style>
         * {
             box-sizing: border-box;
@@ -42,6 +42,11 @@
             color: white;
             text-decoration: none;
             margin-left: 15px;
+            font-weight: 500;
+        }
+
+        .top-bar a:hover {
+            opacity: 0.8;
         }
 
         .main-header {
@@ -101,7 +106,7 @@
             font-weight: bold;
             position: relative;
             font-size: 14px;
-            background: rgba(0,0,0,0.1);
+            background: rgba(0,0,0,0.15);
             padding: 8px 12px;
             border-radius: 4px;
         }
@@ -145,7 +150,7 @@
             border-bottom-color: #ee4d2d;
         }
 
-        /* Container Konten Utam */
+        /* Container Utama */
         .container {
             max-width: 1200px;
             margin: 20px auto;
@@ -153,17 +158,18 @@
         }
 
         .section-title {
-            font-size: 18px;
-            color: #555;
+            font-size: 16px;
+            color: #ee4d2d;
             margin-bottom: 15px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-weight: bold;
             border-left: 4px solid #ee4d2d;
             padding-left: 10px;
             background: white;
-            padding-top: 10px;
-            padding-bottom: 10px;
+            padding-top: 12px;
+            padding-bottom: 12px;
             border-radius: 0 4px 4px 0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         /* Grid Produk Responsif */
@@ -182,8 +188,6 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            text-decoration: none;
-            color: inherit;
         }
 
         .card:hover {
@@ -193,18 +197,22 @@
 
         .card-img {
             width: 100%;
-            height: 150px;
-            background-color: #e0e0e0;
+            height: 140px;
+            background-color: #eee;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #777;
+            color: #888;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .card-body {
             padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
         }
 
         .card-title {
@@ -220,7 +228,7 @@
 
         .card-price {
             color: #ee4d2d;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             margin-bottom: 8px;
         }
@@ -231,13 +239,15 @@
             align-items: center;
             font-size: 11px;
             color: #777;
+            margin-bottom: 10px;
         }
 
         .rating {
             color: #ffce3d;
+            font-weight: bold;
         }
 
-        .btn-action {
+        .btn-beli {
             display: block;
             width: 100%;
             background-color: #ee4d2d;
@@ -247,17 +257,15 @@
             text-decoration: none;
             font-size: 12px;
             font-weight: bold;
-            border: none;
-            margin-top: 10px;
             border-radius: 2px;
-            cursor: pointer;
+            transition: 0.2s;
         }
 
-        .btn-action:hover {
+        .btn-beli:hover {
             background-color: #d73211;
         }
 
-        /* Responsif untuk Layar Kecil / HP */
+        /* Responsif untuk Layar HP */
         @media (max-width: 600px) {
             .main-header {
                 flex-direction: column;
@@ -273,10 +281,8 @@
 
     <header class="header">
         <div class="top-bar">
-            <span>Selamat Datang di TokoKita!</span>
+            <span>Halo, Customer! 👋</span>
             <div>
-                <a href="bantuan.html">Bantuan</a>
-                <a href="profil.html">Profil Saya</a>
                 <a href="index.html">Logout</a>
             </div>
         </div>
@@ -284,14 +290,14 @@
         <div class="main-header">
             <a href="customer.html" class="logo">TokoKita</a>
             
-            <form action="pencarian.html" method="GET" class="search-box">
-                <input type="text" placeholder="Cari barang, merek, atau toko...">
-                <button type="submit">Cari</button>
-            </form>
+            <div class="search-box">
+                <input type="text" placeholder="Cari barang di TokoKita...">
+                <button type="button" onclick="alert('Mencari produk...')">Cari</button>
+            </div>
 
             <div class="header-icons">
-                <a href="keranjang.html" class="cart-icon">
-                    🛒 Keranjang <span class="cart-badge">3</span>
+                <a href="customer.html" class="cart-icon" onclick="alert('Keranjang kamu berisi 2 barang')">
+                    🛒 Keranjang <span class="cart-badge">2</span>
                 </a>
             </div>
         </div>
@@ -299,123 +305,122 @@
 
     <nav class="nav-menu">
         <div class="nav-container">
-            <a href="customer.html" class="nav-item active">Beranda</a>
-            <a href="kategori-elektronik.html" class="nav-item">Elektronik</a>
-            <a href="kategori-pakaian.html" class="nav-item">Pakaian Pria</a>
-            <a href="kategori-wanita.html" class="nav-item">Pakaian Wanita</a>
-            <a href="kategori-makanan.html" class="nav-item">Makanan & Minuman</a>
-            <a href="pesanan-saya.html" class="nav-item">Pesanan Saya</a>
-            <a href="chat.html" class="nav-item">Chat / Pesan</a>
+            <a href="customer.html" class="nav-item active">Semua Produk</a>
+            <a href="customer.html" class="nav-item">Elektronik</a>
+            <a href="customer.html" class="nav-item">Pakaian Pria</a>
+            <a href="customer.html" class="nav-item">Pakaian Wanita</a>
+            <a href="customer.html" class="nav-item">Makanan & Minuman</a>
+            <a href="customer.html" class="nav-item">Pesanan Saya</a>
         </div>
     </nav>
 
     <div class="container">
         
-        <h2 class="section-title">Rekomendasi Produk</h2>
+        <h2 class="section-title">Rekomendasi Produk Hari Ini</h2>
 
         <div class="grid-produk">
 
             <div class="card">
-                <div class="card-img">Gambar Produk</div>
+                <div class="card-img">Kemeja Pria</div>
                 <div class="card-body">
                     <div class="card-title">Kemeja Kasual Pria Lengan Panjang Premium</div>
                     <div class="card-price">Rp 129.000</div>
                     <div class="card-footer">
                         <span class="rating">★ 4.8</span>
-                        <span>Terjual 1,2rb</span>
+                        <span>1,2rb Terjual</span>
                     </div>
-                    <a href="detail-produk.html?id=1" class="btn-action">Beli Sekarang</a>
+                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Kemeja ke keranjang!')">+ Keranjang</a>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-img">Gambar Produk</div>
+                <div class="card-img">TWS Bluetooth</div>
                 <div class="card-body">
                     <div class="card-title">Earphone Bluetooth TWS Wireless Bass Boost</div>
                     <div class="card-price">Rp 85.000</div>
                     <div class="card-footer">
                         <span class="rating">★ 4.9</span>
-                        <span>Terjual 3,4rb</span>
+                        <span>3,4rb Terjual</span>
                     </div>
-                    <a href="detail-produk.html?id=2" class="btn-action">Beli Sekarang</a>
+                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah TWS ke keranjang!')">+ Keranjang</a>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-img">Gambar Produk</div>
+                <div class="card-img">Sneakers Olahraga</div>
                 <div class="card-body">
-                    <div class="card-title">Sepatu Sneakers Olahraga Pria & Wanita</div>
+                    <div class="card-title">Sepatu Sneakers Olahraga Running Pria & Wanita</div>
                     <div class="card-price">Rp 210.000</div>
                     <div class="card-footer">
                         <span class="rating">★ 4.7</span>
-                        <span>Terjual 850</span>
+                        <span>850 Terjual</span>
                     </div>
-                    <a href="detail-produk.html?id=3" class="btn-action">Beli Sekarang</a>
+                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Sepatu ke keranjang!')">+ Keranjang</a>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-img">Gambar Produk</div>
+                <div class="card-img">Tas Laptop</div>
                 <div class="card-body">
                     <div class="card-title">Tas Ransel Laptop Waterproof Minimalis</div>
                     <div class="card-price">Rp 145.000</div>
                     <div class="card-footer">
                         <span class="rating">★ 4.8</span>
-                        <span>Terjual 500+</span>
+                        <span>500 Terjual</span>
                     </div>
-                    <a href="detail-produk.html?id=4" class="btn-action">Beli Sekarang</a>
+                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Tas ke keranjang!')">+ Keranjang</a>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-img">Gambar Produk</div>
+                <div class="card-img">Smartwatch</div>
                 <div class="card-body">
                     <div class="card-title">Smartwatch Jam Tangan Digital Fitur Sport</div>
                     <div class="card-price">Rp 199.000</div>
                     <div class="card-footer">
                         <span class="rating">★ 4.6</span>
-                        <span>Terjual 2,1rb</span>
+                        <span>2,1rb Terjual</span>
                     </div>
-                    <a href="detail-produk.html?id=5" class="btn-action">Beli Sekarang</a>
+                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Smartwatch ke keranjang!')">+ Keranjang</a>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-img">Gambar Produk</div>
+                <div class="card-img">Kopi Arabika</div>
                 <div class="card-body">
-                    <div class="card-title">Kopi Bubuk Arabika Premium 250gr</div>
+                    <div class="card-title">Kopi Bubuk Arabika Premium Original 250gr</div>
                     <div class="card-price">Rp 45.000</div>
                     <div class="card-footer">
                         <span class="rating">★ 5.0</span>
-                        <span>Terjual 4,1rb</span>
+                        <span>4,1rb Terjual</span>
                     </div>
-                    <a href="detail-produk.html?id=6" class="btn-action">Beli Sekarang</a>
+                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Kopi ke keranjang!')">+ Keranjang</a>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-img">Gambar Produk</div>
+                <div class="card-img">Tumbler Stainless</div>
                 <div class="card-body">
                     <div class="card-title">Botol Minum Tumbler Stainless Steel 500ml</div>
                     <div class="card-price">Rp 68.000</div>
                     <div class="card-footer">
                         <span class="rating">★ 4.9</span>
-                        <span>Terjual 900+</span>
+                        <span>900 Terjual</span>
                     </div>
-                    <a href="detail-produk.html?id=7" class="btn-action">Beli Sekarang</a>
+                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Tumbler ke keranjang!')">+ Keranjang</a>
                 </div>
             </div>
 
             <div class="card">
-                <div class="card-img">Gambar Produk</div>
+                <div class="card-img">Powerbank 10k</div>
                 <div class="card-body">
                     <div class="card-title">Powerbank Fast Charging 10000mAh Slim</div>
                     <div class="card-price">Rp 115.000</div>
                     <div class="card-footer">
                         <span class="rating">★ 4.8</span>
-                        <span>Terjual 1,5rb</span>
+                        <span>1,5rb Terjual</span>
                     </div>
-                    <a href="detail-produk.html?id=8" class="btn-action">Beli Sekarang</a>
+                    <a href="customer.html" class="btn-beli" onclick="alert('Berhasil menambah Powerbank ke keranjang!')">+ Keranjang</a>
                 </div>
             </div>
 

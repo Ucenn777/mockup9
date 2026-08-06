@@ -19,31 +19,29 @@ background:#f5f5f5;
 }
 
 header{
-background:#fff;
+background:#ff5722;
 padding:15px;
 display:flex;
-align-items:center;
 justify-content:space-between;
-box-shadow:0 2px 5px rgba(0,0,0,.1);
+align-items:center;
 position:sticky;
 top:0;
 }
 
 .logo{
+color:white;
 font-size:28px;
 font-weight:bold;
-color:#ff5722;
 }
 
 .search{
-flex:1;
-margin:0 20px;
+width:45%;
 }
 
 .search input{
 width:100%;
 padding:10px;
-border:1px solid #ddd;
+border:0;
 border-radius:5px;
 }
 
@@ -54,26 +52,17 @@ align-items:center;
 }
 
 .menu a{
+color:white;
 text-decoration:none;
-color:black;
 font-weight:bold;
 }
 
 .cart{
-position:relative;
-font-size:24px;
+background:white;
+padding:8px 12px;
+border-radius:5px;
 cursor:pointer;
-}
-
-.badge{
-position:absolute;
-top:-8px;
-right:-8px;
-background:red;
-color:white;
-border-radius:50%;
-padding:2px 6px;
-font-size:12px;
+font-weight:bold;
 }
 
 .container{
@@ -91,7 +80,7 @@ width:25%;
 }
 
 .banner{
-background:#ff5722;
+background:#ff7043;
 color:white;
 padding:30px;
 border-radius:10px;
@@ -107,8 +96,9 @@ gap:15px;
 .card{
 background:white;
 border-radius:10px;
-padding:10px;
+overflow:hidden;
 cursor:pointer;
+box-shadow:0 2px 5px rgba(0,0,0,.15);
 transition:.3s;
 }
 
@@ -120,18 +110,21 @@ transform:scale(1.03);
 width:100%;
 height:180px;
 object-fit:cover;
-border-radius:10px;
+}
+
+.info{
+padding:10px;
 }
 
 .nama{
 font-weight:bold;
-margin-top:10px;
+margin-bottom:5px;
 }
 
 .harga{
 color:#ff5722;
-font-size:18px;
-margin-top:5px;
+font-size:20px;
+font-weight:bold;
 }
 
 .sidebar{
@@ -151,6 +144,25 @@ border-radius:5px;
 cursor:pointer;
 }
 
+#popup{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.6);
+}
+
+#detail{
+background:white;
+width:90%;
+max-width:900px;
+margin:40px auto;
+padding:20px;
+border-radius:10px;
+}
+
 </style>
 
 </head>
@@ -159,9 +171,7 @@ cursor:pointer;
 
 <header>
 
-<div class="logo">
-TokoOren
-</div>
+<div class="logo">TokoOren</div>
 
 <div class="search">
 <input type="text" placeholder="Cari produk...">
@@ -173,13 +183,9 @@ TokoOren
 Login Admin
 </a>
 
-<div class="cart" onclick="location.href='cart.html'">
+<div class="cart">
 
-🛒
-
-<span class="badge" id="jumlahCart">
-0
-</span>
+🛒 <span id="badge">0</span>
 
 </div>
 
@@ -193,15 +199,13 @@ Login Admin
 
 <div class="banner">
 
-<h2>Diskon Besar Hari Ini 🔥</h2>
+<h2>Promo Besar Hari Ini 🔥</h2>
 
-<p>Belanja hemat hanya di TokoOren.</p>
+<p>Diskon hingga 50%</p>
 
 </div>
 
 <div class="grid" id="produk">
-
-<!-- Produk akan muncul di Part 2 -->
 
 </div>
 
@@ -213,36 +217,34 @@ Login Admin
 
 <h3>Akun Customer</h3>
 
-<p id="namaUser"></p>
+<button>Keranjang</button>
 
-<button onclick="location.href='cart.html'">
+<button>Checkout</button>
 
-Keranjang
-
-</button>
-
-<button onclick="location.href='riwayat.html'">
-
-Pesanan Saya
-
-</button>
+<button>Pesanan Saya</button>
 
 <button onclick="location.href='index.html'">
-
 Logout
-
 </button>
 
 </div>
+
+</div>
+
+</div>
+
+<div id="popup">
+
+<div id="detail">
 
 </div>
 
 </div>
 
 <script>
-// ==========================
+// ======================
 // DATA PRODUK
-// ==========================
+// ======================
 
 let produk = JSON.parse(localStorage.getItem("produk")) || [
 
@@ -250,35 +252,39 @@ let produk = JSON.parse(localStorage.getItem("produk")) || [
 id:1,
 nama:"Sepatu Sneakers",
 harga:250000,
-gambar:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
-deskripsi:"Sepatu sneakers nyaman dipakai sehari-hari."
+gambar:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500",
+deskripsi:"Sepatu nyaman untuk dipakai sehari-hari."
 },
 
 {
 id:2,
 nama:"Jam Tangan",
 harga:150000,
-gambar:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400",
-deskripsi:"Jam tangan elegan untuk pria dan wanita."
+gambar:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500",
+deskripsi:"Jam tangan elegan dengan desain minimalis."
 },
 
 {
 id:3,
 nama:"Headphone",
 harga:450000,
-gambar:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
-deskripsi:"Headphone bluetooth kualitas premium."
+gambar:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
+deskripsi:"Headphone bluetooth suara jernih."
 },
 
 {
 id:4,
 nama:"Tas Selempang",
 harga:210000,
-gambar:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
-deskripsi:"Tas selempang fashionable."
+gambar:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500",
+deskripsi:"Tas selempang keren dan tahan air."
 }
 
 ];
+
+let keranjang = JSON.parse(localStorage.getItem("keranjang")) || [];
+
+document.getElementById("badge").innerHTML = keranjang.length;
 
 tampilProduk();
 
@@ -288,31 +294,21 @@ let html="";
 
 produk.forEach(function(p){
 
-html+=`
+html += `
 
-<div class="card" onclick="detailProduk(${p.id})">
+<div class="card" onclick="lihatProduk(${p.id})">
 
 <img src="${p.gambar}">
+
+<div class="info">
 
 <div class="nama">${p.nama}</div>
 
 <div class="harga">
-Rp ${Number(p.harga).toLocaleString('id-ID')}
+Rp ${Number(p.harga).toLocaleString("id-ID")}
 </div>
 
-<button style="
-width:100%;
-margin-top:10px;
-padding:10px;
-background:#ff5722;
-color:white;
-border:0;
-border-radius:5px;
-">
-
-Lihat Produk
-
-</button>
+</div>
 
 </div>
 
@@ -320,157 +316,35 @@ Lihat Produk
 
 });
 
-document.getElementById("produk").innerHTML=html;
+document.getElementById("produk").innerHTML = html;
 
 }
 
-function detailProduk(id){
+function lihatProduk(id){
 
-localStorage.setItem("detailProduk",id);
+let p = produk.find(x => x.id==id);
 
-location.href="detail.html";
+document.getElementById("popup").style.display="block";
 
-}
+document.getElementById("detail").innerHTML=`
 
-let cart=JSON.parse(localStorage.getItem("cart"))||[];
+<img src="${p.gambar}" style="width:100%;max-height:350px;object-fit:cover;border-radius:10px;">
 
-document.getElementById("jumlahCart").innerHTML=cart.length;
-<!DOCTYPE html>
-<html lang="id">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detail Produk</title>
+<h2 style="margin-top:15px;">
+${p.nama}
+</h2>
 
-<style>
+<h1 style="color:#ff5722;">
+Rp ${Number(p.harga).toLocaleString("id-ID")}
+</h1>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
-body{
-background:#f5f5f5;
-}
-
-header{
-background:#ff5722;
-color:white;
-padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.container{
-max-width:1200px;
-margin:auto;
-padding:20px;
-display:flex;
-gap:20px;
-flex-wrap:wrap;
-}
-
-.kiri{
-flex:1;
-background:white;
-padding:20px;
-border-radius:10px;
-}
-
-.kiri img{
-width:100%;
-border-radius:10px;
-}
-
-.kanan{
-flex:1;
-background:white;
-padding:20px;
-border-radius:10px;
-}
-
-h2{
-margin-bottom:10px;
-}
-
-.harga{
-font-size:28px;
-color:#ff5722;
-font-weight:bold;
-margin:15px 0;
-}
-
-button{
-width:100%;
-padding:12px;
-margin-top:10px;
-border:0;
-border-radius:8px;
-cursor:pointer;
-font-size:16px;
-}
-
-.cart{
-background:#ff9800;
-color:white;
-}
-
-.buy{
-background:#ff5722;
-color:white;
-}
-
-.qty{
-display:flex;
-gap:10px;
-align-items:center;
-margin-top:15px;
-}
-
-.qty button{
-width:40px;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<header>
-
-<h2>TokoOren</h2>
-
-<a href="customer.html" style="color:white;text-decoration:none;">
-⬅ Kembali
-</a>
-
-</header>
-
-<div class="container">
-
-<div class="kiri">
-
-<img id="gambar">
-
-</div>
-
-<div class="kanan">
-
-<h2 id="nama"></h2>
-
-<div class="harga" id="harga"></div>
-
-<p id="deskripsi"></p>
+<p>${p.deskripsi}</p>
 
 <br>
 
-<b>Warna</b>
+<label>Warna</label>
 
-<select>
+<select style="width:100%;padding:10px;">
 <option>Hitam</option>
 <option>Putih</option>
 <option>Merah</option>
@@ -478,92 +352,237 @@ width:40px;
 
 <br><br>
 
-<b>Jumlah</b>
+<label>Jumlah</label>
 
-<div class="qty">
+<input id="jumlah" type="number" value="1" min="1" style="width:100%;padding:10px;">
 
-<button onclick="kurang()">-</button>
+<br><br>
 
-<span id="jumlah">1</span>
+<button onclick="tambahKeranjang(${p.id})"
+style="width:100%;padding:12px;background:#ff5722;color:white;border:0;border-radius:5px;">
 
-<button onclick="tambah()">+</button>
-
-</div>
-
-<button class="cart" onclick="tambahCart()">
-
-🛒 Tambah Keranjang
+Tambah ke Keranjang
 
 </button>
 
-<button class="buy">
+<br><br>
 
-⚡ Beli Sekarang
+<button onclick="tutupPopup()"
+style="width:100%;padding:12px;">
+
+Tutup
 
 </button>
 
-</div>
+`;
 
-</div>
+}
 
-<script>
-let produk = JSON.parse(localStorage.getItem("produk")) || [];
+function tutupPopup(){
 
-let id = Number(localStorage.getItem("detailProduk"));
+document.getElementById("popup").style.display="none";
 
-let barang = produk.find(function(p){
-    return p.id == id;
+}
+function tambahKeranjang(id){
+
+let p = produk.find(x=>x.id==id);
+
+let jumlah = Number(document.getElementById("jumlah").value);
+
+let keranjang = JSON.parse(localStorage.getItem("keranjang")) || [];
+
+let ada = keranjang.find(x=>x.id==id);
+
+if(ada){
+
+ada.jumlah += jumlah;
+ada.total = ada.jumlah * ada.harga;
+
+}else{
+
+keranjang.push({
+
+id:p.id,
+nama:p.nama,
+harga:p.harga,
+gambar:p.gambar,
+jumlah:jumlah,
+total:p.harga*jumlah
+
 });
 
-// Jika belum ada produk dari admin, pakai contoh
-if(!barang){
-    barang = {
-        id:1,
-        nama:"Produk Contoh",
-        harga:100000,
-        gambar:"https://via.placeholder.com/400",
-        deskripsi:"Produk belum ditambahkan oleh admin."
-    };
 }
 
-document.getElementById("nama").innerHTML = barang.nama;
-document.getElementById("harga").innerHTML = "Rp " + Number(barang.harga).toLocaleString("id-ID");
-document.getElementById("gambar").src = barang.gambar;
-document.getElementById("deskripsi").innerHTML = barang.deskripsi;
+localStorage.setItem(
+"keranjang",
+JSON.stringify(keranjang)
+);
 
-let jumlah = 1;
+document.getElementById("badge").innerHTML=keranjang.length;
 
-function tambah(){
-    jumlah++;
-    document.getElementById("jumlah").innerHTML = jumlah;
+alert("Berhasil ditambahkan ke keranjang!");
+
+tutupPopup();
+
 }
 
-function kurang(){
-    if(jumlah > 1){
-        jumlah--;
-        document.getElementById("jumlah").innerHTML = jumlah;
-    }
+document.querySelector(".sidebar button").onclick=function(){
+
+let keranjang=JSON.parse(localStorage.getItem("keranjang"))||[];
+
+let html="<h2>Keranjang</h2>";
+
+if(keranjang.length==0){
+
+html+="<p>Keranjang masih kosong.</p>";
+
+}else{
+
+keranjang.forEach(function(k,index){
+
+html+=`
+
+<div style="border:1px solid #ddd;padding:10px;margin-top:10px;border-radius:8px;">
+
+<input type="checkbox" checked id="cek${index}">
+
+<img src="${k.gambar}" width="70">
+
+<h3>${k.nama}</h3>
+
+<p>Jumlah : ${k.jumlah}</p>
+
+<p>Rp ${Number(k.total).toLocaleString('id-ID')}</p>
+
+</div>
+
+`;
+
+});
+
+html+=`
+
+<button onclick="checkout()"
+style="width:100%;padding:12px;margin-top:15px;background:#ff5722;color:white;border:0;border-radius:6px;">
+
+Checkout
+
+</button>
+
+`;
+
 }
 
-function tambahCart(){
+document.getElementById("detail").innerHTML=html;
 
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+document.getElementById("popup").style.display="block";
 
-    cart.push({
-        id:barang.id,
-        nama:barang.nama,
-        harga:barang.harga,
-        gambar:barang.gambar,
-        jumlah:jumlah,
-        total:barang.harga * jumlah
-    });
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-
-    alert("Barang berhasil ditambahkan ke keranjang!");
-
-    location.href = "cart.html";
 }
+
+function checkout(){
+
+let keranjang=JSON.parse(localStorage.getItem("keranjang"))||[];
+
+let pesanan=JSON.parse(localStorage.getItem("pesanan"))||[];
+
+keranjang.forEach(function(k){
+
+pesanan.push({
+
+nama:k.nama,
+
+harga:k.harga,
+
+jumlah:k.jumlah,
+
+total:k.total,
+
+status:"Menunggu"
+
+});
+
+});
+
+localStorage.setItem(
+"pesanan",
+JSON.stringify(pesanan)
+);
+
+localStorage.removeItem("keranjang");
+
+document.getElementById("badge").innerHTML="0";
+
+alert("Checkout berhasil!");
+
+tutupPopup();
+
+}
+// ===========================
+// FITUR SEARCH
+// ===========================
+
+const cari = document.querySelector(".search input");
+
+cari.addEventListener("keyup", function(){
+
+let keyword = this.value.toLowerCase();
+
+let hasil = produk.filter(function(p){
+
+return p.nama.toLowerCase().includes(keyword);
+
+});
+
+let html="";
+
+hasil.forEach(function(p){
+
+html += `
+
+<div class="card" onclick="lihatProduk(${p.id})">
+
+<img src="${p.gambar}">
+
+<div class="info">
+
+<div class="nama">${p.nama}</div>
+
+<div class="harga">
+
+Rp ${Number(p.harga).toLocaleString("id-ID")}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("produk").innerHTML = html;
+
+});
+
+// ===========================
+// TUTUP POPUP KLIK LUAR
+// ===========================
+
+window.onclick=function(e){
+
+if(e.target==document.getElementById("popup")){
+
+tutupPopup();
+
+}
+
+}
+
+// ===========================
+// TUTUP FILE
+// ===========================
+
 </script>
 
 </body>

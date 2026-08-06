@@ -1,55 +1,181 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>Toko Online</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TokoOren - Login</title>
 
 <style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
 body{
-    font-family:Arial;
-    background:#f2f2f2;
-    text-align:center;
-    padding-top:100px;
+background:#f5f5f5;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
 }
 
 .box{
-    background:white;
-    width:300px;
-    margin:auto;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 0 10px #aaa;
+width:350px;
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 0 15px rgba(0,0,0,.2);
+}
+
+h1{
+text-align:center;
+color:#ff5722;
+margin-bottom:5px;
+}
+
+p{
+text-align:center;
+margin-bottom:20px;
+color:#555;
+}
+
+label{
+font-weight:bold;
+}
+
+select,input{
+width:100%;
+padding:12px;
+margin:8px 0 15px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:15px;
 }
 
 button{
-    width:100%;
-    padding:12px;
-    margin:10px 0;
-    border:0;
-    border-radius:10px;
-    background:#007bff;
-    color:white;
-    cursor:pointer;
+width:100%;
+padding:12px;
+background:#ff5722;
+color:white;
+border:none;
+border-radius:8px;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#e64a19;
+}
+
+.daftar{
+margin-top:15px;
+text-align:center;
+}
+
+a{
+text-decoration:none;
+color:#ff5722;
+font-weight:bold;
 }
 </style>
 
 </head>
-
 <body>
 
 <div class="box">
 
-<h1>Toko Online</h1>
+<h1>🛒 TOKOOREN</h1>
 
-<button onclick="location.href='customer.html'">
-Masuk Sebagai Customer
-</button>
+<p>Silakan login untuk melanjutkan</p>
 
-<button onclick="location.href='admin.html'">
-Masuk Admin
-</button>
+<label>Login Sebagai</label>
+
+<select id="role">
+<option value="customer">Customer</option>
+<option value="admin">Admin</option>
+</select>
+
+<label>Username</label>
+
+<input type="text" id="username" placeholder="Masukkan Username">
+
+<label>Password</label>
+
+<input type="password" id="password" placeholder="Masukkan Password">
+
+<button onclick="login()">MASUK</button>
+
+<div class="daftar">
+Belum punya akun?
+<a href="register.html">Daftar Customer</a>
+</div>
 
 </div>
 
+<script>
+
+if(localStorage.getItem("adminUser")==null){
+
+localStorage.setItem("adminUser","admin");
+localStorage.setItem("adminPass","12345");
+
+}
+
+function login(){
+
+let role=document.getElementById("role").value;
+let user=document.getElementById("username").value;
+let pass=document.getElementById("password").value;
+
+if(user==""||pass==""){
+
+alert("Username dan Password wajib diisi");
+
+return;
+
+}
+
+if(role=="customer"){
+
+let u=localStorage.getItem("customerUser");
+let p=localStorage.getItem("customerPass");
+
+if(user==u && pass==p){
+
+localStorage.setItem("loginCustomer","true");
+
+location.href="customer/home.html";
+
+}else{
+
+alert("Login Customer gagal");
+
+}
+
+}else{
+
+let u=localStorage.getItem("adminUser");
+let p=localStorage.getItem("adminPass");
+
+if(user==u && pass==p){
+
+localStorage.setItem("loginAdmin","true");
+
+location.href="admin/dashboard.html";
+
+}else{
+
+alert("Login Admin gagal");
+
+}
+
+}
+
+}
+
+</script>
 
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TokoKu - Admin Control Panel</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #f4f6f8; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 12px; }
@@ -77,6 +78,14 @@
         .stat-label { font-size: 10px; font-weight: bold; color: #777; text-transform: uppercase; margin-bottom: 4px; }
         .stat-val { font-size: 18px; font-weight: bold; color: #222; }
 
+        /* Chart Section Grid Layout */
+        .charts-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+        @media (min-width: 800px) { .charts-grid { grid-template-columns: 2fr 1fr; } }
+
+        .chart-card { background: #fff; border-radius: 6px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .chart-card h3 { font-size: 12px; font-weight: bold; color: #333; margin-bottom: 10px; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+        .chart-box { position: relative; height: 220px; width: 100%; }
+
         .panel-box { background: #fff; border-radius: 6px; padding: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 15px; }
         .panel-title { font-size: 12px; font-weight: bold; color: #222; text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 6px; }
 
@@ -97,7 +106,7 @@
             display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;
         }
         .img-preview-container img {
-            width: 55px; height: 55px; object-fit: cover; border-radius: 4px; border: 1px solid #ddd;
+            width: 55px; height: 55px; object-fit: cover; border-radius: 4px; border: 2px solid #ee4d2d;
         }
 
         /* Tables */
@@ -137,7 +146,7 @@
             </div>
 
             <div class="menu-list">
-                <button class="menu-item active" onclick="switchTab('dashboard', this)">📊 Ikhtisar</button>
+                <button class="menu-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</button>
                 <button class="menu-item" onclick="switchTab('input', this)">➕ Tambah Barang</button>
                 <button class="menu-item" onclick="switchTab('view', this)">📦 Stok Produk</button>
                 <button class="menu-item" onclick="switchTab('reports', this)">📋 Pesanan Masuk</button>
@@ -150,7 +159,7 @@
 
         <div class="content-area">
             <div class="header-bar">
-                <h2 id="current-section-title">Ikhtisar Dashboard</h2>
+                <h2 id="current-section-title">Dashboard Utama</h2>
                 <button onclick="adminLogout()" style="background:#ee4d2d; color:#fff; border:none; padding: 6px 12px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">Keluar</button>
             </div>
 
@@ -167,6 +176,21 @@
                     <div class="stat-card">
                         <div class="stat-label">Total Pendapatan</div>
                         <div class="stat-val" id="stat-total-revenue">Rp 0</div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>📈 Grafik Penjualan Harian</h3>
+                        <div class="chart-box">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>📊 Distribusi Kategori</h3>
+                        <div class="chart-box">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
                     </div>
                 </div>
 
@@ -199,7 +223,7 @@
                     </div>
                     
                     <div class="form-row">
-                        <label>Upload Foto Produk (Bisa pilih lebih dari 1 foto)</label>
+                        <label>Upload Foto Produk (Pilih 1 atau Lebih Foto)</label>
                         <input type="file" id="new-img-file" accept="image/*" multiple required onchange="previewImages(event)">
                         <div id="image-previews" class="img-preview-container"></div>
                     </div>
@@ -253,6 +277,8 @@
 
     <script>
         const ADMIN_PASSWORD = "admin123";
+        let salesChartInstance = null;
+        let categoryChartInstance = null;
 
         window.onload = function() {
             if (!localStorage.getItem('toko_products')) {
@@ -284,6 +310,7 @@
             updateDashboardStats();
             renderAdminProductTable();
             renderAdminSalesTable();
+            renderCharts();
         }
 
         function adminLogout() {
@@ -301,10 +328,13 @@
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
             document.getElementById('tab-' + tabName).style.display = 'block';
 
-            const titles = { 'dashboard': 'Ikhtisar Dashboard', 'input': 'Tambah Barang Baru', 'view': 'Kelola Stok Barang', 'reports': 'Laporan Pesanan Masuk' };
+            const titles = { 'dashboard': 'Dashboard Utama', 'input': 'Tambah Barang Baru', 'view': 'Kelola Stok Barang', 'reports': 'Laporan Pesanan Masuk' };
             document.getElementById('current-section-title').innerText = titles[tabName];
 
-            if(tabName === 'dashboard') updateDashboardStats();
+            if(tabName === 'dashboard') {
+                updateDashboardStats();
+                renderCharts();
+            }
             if(tabName === 'view') renderAdminProductTable();
             if(tabName === 'reports') renderAdminSalesTable();
         }
@@ -319,13 +349,71 @@
             document.getElementById("stat-total-revenue").innerText = "Rp " + totalRev.toLocaleString('id-ID');
         }
 
-        // Preview foto langsung saat dipilih dari galeri
+        /* RENDERING GRAFIK */
+        function renderCharts() {
+            const sales = JSON.parse(localStorage.getItem('toko_sales')) || [];
+            const prods = getProducts();
+
+            // 1. Line Chart: Penjualan Harian
+            const salesDates = sales.length > 0 ? sales.map(s => s.date || 'Order') : ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Ming'];
+            const salesTotals = sales.length > 0 ? sales.map(s => s.total) : [0, 0, 0, 0, 0, 0, 0];
+
+            const ctxSales = document.getElementById('salesChart').getContext('2d');
+            if (salesChartInstance) salesChartInstance.destroy();
+            
+            salesChartInstance = new Chart(ctxSales, {
+                type: 'line',
+                data: {
+                    labels: salesDates,
+                    datasets: [{
+                        label: 'Pendapatan (Rp)',
+                        data: salesTotals,
+                        borderColor: '#ee4d2d',
+                        backgroundColor: 'rgba(238, 77, 45, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+
+            // 2. Doughnut Chart: Distribusi Kategori
+            const categories = ['Gaming', 'Elektronik', 'Sepatu', 'Aksesoris'];
+            const catCounts = categories.map(cat => prods.filter(p => p.category === cat).length);
+
+            const ctxCat = document.getElementById('categoryChart').getContext('2d');
+            if (categoryChartInstance) categoryChartInstance.destroy();
+
+            categoryChartInstance = new Chart(ctxCat, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: catCounts,
+                        backgroundColor: ['#ee4d2d', '#2196f3', '#4caf50', '#ff9800']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } }
+                }
+            });
+        }
+
+        // Preview foto-foto saat dipilih
         function previewImages(event) {
             const container = document.getElementById("image-previews");
             container.innerHTML = "";
             const files = event.target.files;
 
-            if (files) {
+            if (files && files.length > 0) {
                 Array.from(files).forEach(file => {
                     const reader = new FileReader();
                     reader.onload = function(e) {
@@ -338,7 +426,7 @@
             }
         }
 
-        // Proses simpan banyak foto ke localStorage
+        // Memproses dan menyimpan SEMUA foto yang di-upload
         function handleAddNewProduct(e) {
             e.preventDefault();
             const name = document.getElementById("new-name").value;
@@ -365,15 +453,15 @@
                         name: name,
                         category: category,
                         price: price,
-                        img: base64Images[0], // Foto sampul utama
-                        images: base64Images, // Array berisi seluruh foto yang diupload
+                        img: base64Images[0],    // Cover foto utama
+                        images: base64Images,    // Array berisi SEMUA foto yang di-upload
                         stock: stock,
                         rating: "5.0",
                         sold: "Baru"
                     });
 
                     saveProducts(prods);
-                    alert(`Produk berhasil disimpan dengan ${base64Images.length} foto!`);
+                    alert(`Produk berhasil disimpan dengan total ${base64Images.length} foto!`);
                     document.getElementById("add-product-form").reset();
                     document.getElementById("image-previews").innerHTML = "";
                     switchTab('view', document.querySelectorAll('.menu-item')[2]);

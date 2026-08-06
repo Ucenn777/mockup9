@@ -1,183 +1,55 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TokoOren | Login</title>
+<title>Toko Online</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
-}
-
 body{
-    background:linear-gradient(135deg,#ff6600,#ff9900);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-}
-
-.container{
-    width:90%;
-    max-width:420px;
-    background:#fff;
-    border-radius:20px;
-    padding:30px;
-    box-shadow:0 10px 25px rgba(0,0,0,.2);
+    font-family:Arial;
+    background:#f2f2f2;
     text-align:center;
+    padding-top:100px;
 }
 
-.logo{
-    font-size:60px;
+.box{
+    background:white;
+    width:300px;
+    margin:auto;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 0 10px #aaa;
 }
 
-h1{
-    color:#ff6600;
-    margin-top:10px;
-}
-
-p{
-    color:#666;
-    margin:10px 0 25px;
-}
-
-.tabs{
-    display:flex;
-    margin-bottom:20px;
-}
-
-.tabs button{
-    width:50%;
-    padding:12px;
-    border:none;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
-}
-
-.active{
-    background:#ff6600;
-    color:white;
-}
-
-.inactive{
-    background:#333;
-    color:white;
-}
-
-input{
+button{
     width:100%;
     padding:12px;
-    margin-bottom:15px;
-    border:1px solid #ccc;
-    border-radius:8px;
-    font-size:15px;
-}
-
-.loginBtn{
-    width:100%;
-    padding:12px;
-    background:#ff6600;
+    margin:10px 0;
+    border:0;
+    border-radius:10px;
+    background:#007bff;
     color:white;
-    border:none;
-    border-radius:8px;
-    font-size:16px;
     cursor:pointer;
-}
-
-.loginBtn:hover{
-    background:#e65c00;
-}
-
-#register{
-    display:block;
-    margin-top:15px;
-    color:#ff6600;
-    text-decoration:none;
-    font-weight:bold;
-}
-
-footer{
-    margin-top:25px;
-    color:#888;
-    font-size:13px;
-}
-
-@media(max-width:480px){
-
-.container{
-    padding:20px;
-}
-
-h1{
-    font-size:28px;
-}
-
 }
 </style>
+
 </head>
+
 <body>
 
-<div class="container">
+<div class="box">
 
-<div class="logo">🛒</div>
+<h1>Toko Online</h1>
 
-<h1>TokoOren</h1>
+<button onclick="location.href='customer.html'">
+Masuk Sebagai Customer
+</button>
 
-<p>Silakan Login</p>
-
-<div class="tabs">
-<button class="active" onclick="customer()">Customer</button>
-<button class="inactive" onclick="admin()">Admin</button>
-</div>
-
-<input type="text" placeholder="Username">
-
-<input type="password" placeholder="Password">
-
-<button class="loginBtn" onclick="login()">Login</button>
-
-<a href="#" id="register">Daftar Akun Customer</a>
-
-<footer>
-© 2026 TokoOren
-</footer>
+<button onclick="location.href='admin.html'">
+Masuk Admin
+</button>
 
 </div>
 
-<script>
-
-let tipe="customer";
-
-function customer(){
-tipe="customer";
-document.querySelectorAll(".tabs button")[0].className="active";
-document.querySelectorAll(".tabs button")[1].className="inactive";
-document.getElementById("register").style.display="block";
-}
-
-function admin(){
-tipe="admin";
-document.querySelectorAll(".tabs button")[1].className="active";
-document.querySelectorAll(".tabs button")[0].className="inactive";
-document.getElementById("register").style.display="none";
-}
-
-function login(){
-
-if(tipe=="customer"){
-window.location.href="customer.html";
-}else{
-window.location.href="admin.html";
-}
-
-}
-
-</script>
 
 </body>
 </html>

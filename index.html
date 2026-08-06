@@ -3,22 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TokoOren - Login</title>
+<title>TokoOren | Login</title>
 
 <style>
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:'Segoe UI',sans-serif;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
 body{
-    background:linear-gradient(135deg,#ff6b00,#ff9800);
+    background:linear-gradient(135deg,#ff6600,#ff9900);
     display:flex;
     justify-content:center;
     align-items:center;
-    height:100vh;
+    min-height:100vh;
 }
 
 .container{
@@ -26,55 +26,79 @@ body{
     max-width:420px;
     background:#fff;
     border-radius:20px;
-    padding:35px;
+    padding:30px;
+    box-shadow:0 10px 25px rgba(0,0,0,.2);
     text-align:center;
-    box-shadow:0 10px 30px rgba(0,0,0,.2);
 }
 
 .logo{
-    font-size:40px;
-    margin-bottom:10px;
+    font-size:60px;
 }
 
 h1{
-    color:#ff6b00;
-    margin-bottom:10px;
+    color:#ff6600;
+    margin-top:10px;
 }
 
 p{
     color:#666;
-    margin-bottom:30px;
+    margin:10px 0 25px;
 }
 
-.btn{
-    display:block;
-    width:100%;
-    padding:15px;
-    margin:12px 0;
+.tabs{
+    display:flex;
+    margin-bottom:20px;
+}
+
+.tabs button{
+    width:50%;
+    padding:12px;
     border:none;
-    border-radius:10px;
-    text-decoration:none;
-    font-size:18px;
+    font-size:16px;
     font-weight:bold;
-    transition:.3s;
+    cursor:pointer;
 }
 
-.customer{
-    background:#ff6b00;
+.active{
+    background:#ff6600;
     color:white;
 }
 
-.customer:hover{
-    background:#e85d00;
-}
-
-.admin{
-    background:#222;
+.inactive{
+    background:#333;
     color:white;
 }
 
-.admin:hover{
-    background:#444;
+input{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:15px;
+}
+
+.loginBtn{
+    width:100%;
+    padding:12px;
+    background:#ff6600;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.loginBtn:hover{
+    background:#e65c00;
+}
+
+#register{
+    display:block;
+    margin-top:15px;
+    color:#ff6600;
+    text-decoration:none;
+    font-weight:bold;
 }
 
 footer{
@@ -86,20 +110,15 @@ footer{
 @media(max-width:480px){
 
 .container{
-padding:25px;
+    padding:20px;
 }
 
 h1{
-font-size:28px;
-}
-
-.btn{
-font-size:16px;
+    font-size:28px;
 }
 
 }
 </style>
-
 </head>
 <body>
 
@@ -109,22 +128,56 @@ font-size:16px;
 
 <h1>TokoOren</h1>
 
-<p>Silakan pilih jenis login.</p>
+<p>Silakan Login</p>
 
-<a href="customer/login.html" class="btn customer">
-👤 Login Customer
-</a>
+<div class="tabs">
+<button class="active" onclick="customer()">Customer</button>
+<button class="inactive" onclick="admin()">Admin</button>
+</div>
 
-<a href="admin/login.html" class="btn admin">
-🛠 Login Admin
-</a>
+<input type="text" placeholder="Username">
+
+<input type="password" placeholder="Password">
+
+<button class="loginBtn" onclick="login()">Login</button>
+
+<a href="#" id="register">Daftar Akun Customer</a>
 
 <footer>
-© 2026 TokoOren<br>
-Marketplace Modern
+© 2026 TokoOren
 </footer>
 
 </div>
+
+<script>
+
+let tipe="customer";
+
+function customer(){
+tipe="customer";
+document.querySelectorAll(".tabs button")[0].className="active";
+document.querySelectorAll(".tabs button")[1].className="inactive";
+document.getElementById("register").style.display="block";
+}
+
+function admin(){
+tipe="admin";
+document.querySelectorAll(".tabs button")[1].className="active";
+document.querySelectorAll(".tabs button")[0].className="inactive";
+document.getElementById("register").style.display="none";
+}
+
+function login(){
+
+if(tipe=="customer"){
+window.location.href="customer.html";
+}else{
+window.location.href="admin.html";
+}
+
+}
+
+</script>
 
 </body>
 </html>

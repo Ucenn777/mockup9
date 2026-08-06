@@ -1,589 +1,221 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TokoOren</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Customer</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-<style>
+        body {
+            background-color: #f4f6f9;
+            padding: 15px;
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
+        /* Navbar Responsif */
+        .navbar {
+            background-color: #ffffff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
 
-body{
-background:#f5f5f5;
-}
+        .btn-logout {
+            background-color: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
 
-header{
-background:#ff5722;
-padding:15px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-position:sticky;
-top:0;
-}
+        .btn-logout:hover {
+            background-color: #bd2130;
+        }
 
-.logo{
-color:white;
-font-size:28px;
-font-weight:bold;
-}
+        /* Layout Utama: Grid & Flexbook agar Responsif */
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-.search{
-width:45%;
-}
+        /* Media Query untuk Layar Desktop (Desktop First / Responsive Layout) */
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+            }
+        }
 
-.search input{
-width:100%;
-padding:10px;
-border:0;
-border-radius:5px;
-}
+        .catalog {
+            flex: 3;
+        }
 
-.menu{
-display:flex;
-gap:15px;
-align-items:center;
-}
+        .cart {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
 
-.menu a{
-color:white;
-text-decoration:none;
-font-weight:bold;
-}
+        /* Responsive Grid untuk Kartu Produk */
+        .grid-produk {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
 
-.cart{
-background:white;
-padding:8px 12px;
-border-radius:5px;
-cursor:pointer;
-font-weight:bold;
-}
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-.container{
-display:flex;
-padding:20px;
-gap:20px;
-}
+        .card h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
 
-.left{
-width:75%;
-}
+        /* Fitur Rating & Jumlah Pembelian */
+        .info-produk {
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.right{
-width:25%;
-}
+        .rating {
+            color: #ffc107;
+            font-weight: bold;
+        }
 
-.banner{
-background:#ff7043;
-color:white;
-padding:30px;
-border-radius:10px;
-margin-bottom:20px;
-}
+        .terjual {
+            color: #6c757d;
+        }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:15px;
-}
+        .harga {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
 
-.card{
-background:white;
-border-radius:10px;
-overflow:hidden;
-cursor:pointer;
-box-shadow:0 2px 5px rgba(0,0,0,.15);
-transition:.3s;
-}
+        /* Styling Tombol dengan Link Page */
+        .btn {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
-.card:hover{
-transform:scale(1.03);
-}
+        .btn-beli {
+            background-color: #007bff;
+            color: white;
+        }
 
-.card img{
-width:100%;
-height:180px;
-object-fit:cover;
-}
+        .btn-beli:hover {
+            background-color: #0056b3;
+        }
 
-.info{
-padding:10px;
-}
+        .btn-checkout {
+            background-color: #28a745;
+            color: white;
+            margin-top: 15px;
+        }
 
-.nama{
-font-weight:bold;
-margin-bottom:5px;
-}
-
-.harga{
-color:#ff5722;
-font-size:20px;
-font-weight:bold;
-}
-
-.sidebar{
-background:white;
-border-radius:10px;
-padding:15px;
-}
-
-.sidebar button{
-width:100%;
-padding:10px;
-margin-top:10px;
-background:#ff5722;
-color:white;
-border:0;
-border-radius:5px;
-cursor:pointer;
-}
-
-#popup{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.6);
-}
-
-#detail{
-background:white;
-width:90%;
-max-width:900px;
-margin:40px auto;
-padding:20px;
-border-radius:10px;
-}
-
-</style>
-
+        .btn-checkout:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
-
 <body>
 
-<header>
-
-<div class="logo">TokoOren</div>
-
-<div class="search">
-<input type="text" placeholder="Cari produk...">
-</div>
-
-<div class="menu">
-
-<a href="admin.html">
-Login Admin
-</a>
-
-<div class="cart">
-
-🛒 <span id="badge">0</span>
-
-</div>
-
-</div>
-
-</header>
-
-<div class="container">
-
-<div class="left">
-
-<div class="banner">
-
-<h2>Promo Besar Hari Ini 🔥</h2>
-
-<p>Diskon hingga 50%</p>
-
-</div>
-
-<div class="grid" id="produk">
-
-</div>
-
-</div>
-
-<div class="right">
-
-<div class="sidebar">
-
-<h3>Akun Customer</h3>
-
-<button>Keranjang</button>
-
-<button>Checkout</button>
-
-<button>Pesanan Saya</button>
-
-<button onclick="location.href='index.html'">
-Logout
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-<div id="popup">
-
-<div id="detail">
-
-</div>
-
-</div>
-
-<script>
-// ======================
-// DATA PRODUK
-// ======================
-
-let produk = JSON.parse(localStorage.getItem("produk")) || [
-
-{
-id:1,
-nama:"Sepatu Sneakers",
-harga:250000,
-gambar:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500",
-deskripsi:"Sepatu nyaman untuk dipakai sehari-hari."
-},
-
-{
-id:2,
-nama:"Jam Tangan",
-harga:150000,
-gambar:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500",
-deskripsi:"Jam tangan elegan dengan desain minimalis."
-},
-
-{
-id:3,
-nama:"Headphone",
-harga:450000,
-gambar:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500",
-deskripsi:"Headphone bluetooth suara jernih."
-},
-
-{
-id:4,
-nama:"Tas Selempang",
-harga:210000,
-gambar:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500",
-deskripsi:"Tas selempang keren dan tahan air."
-}
-
-];
-
-let keranjang = JSON.parse(localStorage.getItem("keranjang")) || [];
-
-document.getElementById("badge").innerHTML = keranjang.length;
-
-tampilProduk();
-
-function tampilProduk(){
-
-let html="";
-
-produk.forEach(function(p){
-
-html += `
-
-<div class="card" onclick="lihatProduk(${p.id})">
-
-<img src="${p.gambar}">
-
-<div class="info">
-
-<div class="nama">${p.nama}</div>
-
-<div class="harga">
-Rp ${Number(p.harga).toLocaleString("id-ID")}
-</div>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-document.getElementById("produk").innerHTML = html;
-
-}
-
-function lihatProduk(id){
-
-let p = produk.find(x => x.id==id);
-
-document.getElementById("popup").style.display="block";
-
-document.getElementById("detail").innerHTML=`
-
-<img src="${p.gambar}" style="width:100%;max-height:350px;object-fit:cover;border-radius:10px;">
-
-<h2 style="margin-top:15px;">
-${p.nama}
-</h2>
-
-<h1 style="color:#ff5722;">
-Rp ${Number(p.harga).toLocaleString("id-ID")}
-</h1>
-
-<p>${p.deskripsi}</p>
-
-<br>
-
-<label>Warna</label>
-
-<select style="width:100%;padding:10px;">
-<option>Hitam</option>
-<option>Putih</option>
-<option>Merah</option>
-</select>
-
-<br><br>
-
-<label>Jumlah</label>
-
-<input id="jumlah" type="number" value="1" min="1" style="width:100%;padding:10px;">
-
-<br><br>
-
-<button onclick="tambahKeranjang(${p.id})"
-style="width:100%;padding:12px;background:#ff5722;color:white;border:0;border-radius:5px;">
-
-Tambah ke Keranjang
-
-</button>
-
-<br><br>
-
-<button onclick="tutupPopup()"
-style="width:100%;padding:12px;">
-
-Tutup
-
-</button>
-
-`;
-
-}
-
-function tutupPopup(){
-
-document.getElementById("popup").style.display="none";
-
-}
-function tambahKeranjang(id){
-
-let p = produk.find(x=>x.id==id);
-
-let jumlah = Number(document.getElementById("jumlah").value);
-
-let keranjang = JSON.parse(localStorage.getItem("keranjang")) || [];
-
-let ada = keranjang.find(x=>x.id==id);
-
-if(ada){
-
-ada.jumlah += jumlah;
-ada.total = ada.jumlah * ada.harga;
-
-}else{
-
-keranjang.push({
-
-id:p.id,
-nama:p.nama,
-harga:p.harga,
-gambar:p.gambar,
-jumlah:jumlah,
-total:p.harga*jumlah
-
-});
-
-}
-
-localStorage.setItem(
-"keranjang",
-JSON.stringify(keranjang)
-);
-
-document.getElementById("badge").innerHTML=keranjang.length;
-
-alert("Berhasil ditambahkan ke keranjang!");
-
-tutupPopup();
-
-}
-
-document.querySelector(".sidebar button").onclick=function(){
-
-let keranjang=JSON.parse(localStorage.getItem("keranjang"))||[];
-
-let html="<h2>Keranjang</h2>";
-
-if(keranjang.length==0){
-
-html+="<p>Keranjang masih kosong.</p>";
-
-}else{
-
-keranjang.forEach(function(k,index){
-
-html+=`
-
-<div style="border:1px solid #ddd;padding:10px;margin-top:10px;border-radius:8px;">
-
-<input type="checkbox" checked id="cek${index}">
-
-<img src="${k.gambar}" width="70">
-
-<h3>${k.nama}</h3>
-
-<p>Jumlah : ${k.jumlah}</p>
-
-<p>Rp ${Number(k.total).toLocaleString('id-ID')}</p>
-
-</div>
-
-`;
-
-});
-
-html+=`
-
-<button onclick="checkout()"
-style="width:100%;padding:12px;margin-top:15px;background:#ff5722;color:white;border:0;border-radius:6px;">
-
-Checkout
-
-</button>
-
-`;
-
-}
-
-document.getElementById("detail").innerHTML=html;
-
-document.getElementById("popup").style.display="block";
-
-}
-
-function checkout(){
-
-let keranjang=JSON.parse(localStorage.getItem("keranjang"))||[];
-
-let pesanan=JSON.parse(localStorage.getItem("pesanan"))||[];
-
-keranjang.forEach(function(k){
-
-pesanan.push({
-
-nama:k.nama,
-
-harga:k.harga,
-
-jumlah:k.jumlah,
-
-total:k.total,
-
-status:"Menunggu"
-
-});
-
-});
-
-localStorage.setItem(
-"pesanan",
-JSON.stringify(pesanan)
-);
-
-localStorage.removeItem("keranjang");
-
-document.getElementById("badge").innerHTML="0";
-
-alert("Checkout berhasil!");
-
-tutupPopup();
-
-}
-// ===========================
-// FITUR SEARCH
-// ===========================
-
-const cari = document.querySelector(".search input");
-
-cari.addEventListener("keyup", function(){
-
-let keyword = this.value.toLowerCase();
-
-let hasil = produk.filter(function(p){
-
-return p.nama.toLowerCase().includes(keyword);
-
-});
-
-let html="";
-
-hasil.forEach(function(p){
-
-html += `
-
-<div class="card" onclick="lihatProduk(${p.id})">
-
-<img src="${p.gambar}">
-
-<div class="info">
-
-<div class="nama">${p.nama}</div>
-
-<div class="harga">
-
-Rp ${Number(p.harga).toLocaleString("id-ID")}
-
-</div>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-document.getElementById("produk").innerHTML = html;
-
-});
-
-// ===========================
-// TUTUP POPUP KLIK LUAR
-// ===========================
-
-window.onclick=function(e){
-
-if(e.target==document.getElementById("popup")){
-
-tutupPopup();
-
-}
-
-}
-
-// ===========================
-// TUTUP FILE
-// ===========================
-
-</script>
+    <div class="navbar">
+        <h2>Halo, Customer! 👋</h2>
+        <a href="index.html" class="btn-logout">Logout</a>
+    </div>
+
+    <div class="container">
+        
+        <div class="catalog">
+            <h3 style="margin-bottom: 15px;">Daftar Produk</h3>
+            <div class="grid-produk">
+
+                <div class="card">
+                    <div>
+                        <h3>Kopi Hitam</h3>
+                        <div class="info-produk">
+                            <span class="rating">★ 4.8</span>
+                            <span class="terjual">Terjual 150+</span>
+                        </div>
+                        <p class="harga">Rp 15.000</p>
+                    </div>
+                    <a href="detail-produk.html?id=1" class="btn btn-beli">Beli Sekarang</a>
+                </div>
+
+                <div class="card">
+                    <div>
+                        <h3>Es Teh Manis</h3>
+                        <div class="info-produk">
+                            <span class="rating">★ 4.9</span>
+                            <span class="terjual">Terjual 500+</span>
+                        </div>
+                        <p class="harga">Rp 5.000</p>
+                    </div>
+                    <a href="detail-produk.html?id=2" class="btn btn-beli">Beli Sekarang</a>
+                </div>
+
+                <div class="card">
+                    <div>
+                        <h3>Roti Bakar</h3>
+                        <div class="info-produk">
+                            <span class="rating">★ 4.7</span>
+                            <span class="terjual">Terjual 80+</span>
+                        </div>
+                        <p class="harga">Rp 12.000</p>
+                    </div>
+                    <a href="detail-produk.html?id=3" class="btn btn-beli">Beli Sekarang</a>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="cart">
+            <h3>Keranjang Saya</h3>
+            <hr style="margin: 10px 0; border: 0.5px solid #eee;">
+            
+            <p style="font-size: 14px;">1x Kopi Hitam - Rp 15.000</p>
+            
+            <hr style="margin: 10px 0; border: 0.5px solid #eee;">
+            <p><strong>Total: Rp 15.000</strong></p>
+            
+            <a href="checkout.html" class="btn btn-checkout">Proses Checkout</a>
+        </div>
+
+    </div>
 
 </body>
 </html>

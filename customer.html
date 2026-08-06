@@ -3,793 +3,565 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TokoKu - Customer</title>
-
-<link rel="stylesheet" href="style.css">
+<title>TokoOren - Customer</title>
 
 <style>
 
-body{
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
 font-family:Arial,sans-serif;
+}
+
+body{
 background:#f5f5f5;
 }
 
+/* HEADER */
+
 header{
-background:#ee4d2d;
-padding:10px;
+background:#ff6600;
 display:flex;
 align-items:center;
-gap:10px;
+justify-content:space-between;
+padding:15px 20px;
 position:sticky;
 top:0;
-z-index:1000;
+z-index:100;
 }
 
 .logo{
-color:#fff;
-font-size:22px;
+font-size:28px;
 font-weight:bold;
+color:white;
 }
 
 .search{
 flex:1;
+margin:0 20px;
+}
+
+.search input{
+width:100%;
 padding:10px;
 border:none;
-border-radius:5px;
+border-radius:8px;
 outline:none;
 }
 
 .icon{
-font-size:22px;
-color:white;
-cursor:pointer;
-}
-
-.kategori{
 display:flex;
-overflow:auto;
-gap:10px;
-padding:10px;
+gap:20px;
+font-size:24px;
+color:white;
+}
+
+.badge{
+background:red;
+color:white;
+border-radius:50%;
+padding:2px 7px;
+font-size:12px;
+position:relative;
+top:-12px;
+left:-10px;
+}
+
+/* LAYOUT */
+
+.container{
+display:flex;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:220px;
 background:white;
+height:calc(100vh - 70px);
+padding:20px;
+position:sticky;
+top:70px;
 }
 
-.kategori button{
-padding:8px 15px;
-border:none;
-background:#ffe7df;
-color:#ee4d2d;
-border-radius:20px;
-font-weight:bold;
-cursor:pointer;
-white-space:nowrap;
+.sidebar h2{
+margin-bottom:20px;
+color:#ff6600;
 }
 
-.produk{
+.sidebar a{
+display:block;
+padding:12px;
+margin-bottom:8px;
+text-decoration:none;
+color:#333;
+border-radius:8px;
+}
+
+.sidebar a:hover{
+background:#ff6600;
+color:white;
+}
+
+/* CONTENT */
+
+.content{
+flex:1;
+padding:20px;
+}
+
+.banner{
+background:linear-gradient(90deg,#ff6600,#ff9900);
+padding:35px;
+border-radius:15px;
+color:white;
+margin-bottom:25px;
+}
+
+.banner h1{
+margin-bottom:10px;
+}
+
+.grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:15px;
-padding:15px;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:20px;
 }
 
 .card{
 background:white;
-border-radius:10px;
+border-radius:12px;
 overflow:hidden;
-box-shadow:0 2px 8px rgba(0,0,0,.15);
-transition:.2s;
-cursor:pointer;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+transition:.3s;
 }
 
 .card:hover{
-transform:translateY(-3px);
+transform:translateY(-5px);
 }
 
 .card img{
 width:100%;
-height:180px;
+height:220px;
 object-fit:cover;
 }
 
 .info{
-padding:10px;
+padding:15px;
 }
 
 .nama{
-font-size:15px;
 font-weight:bold;
+margin-bottom:8px;
+height:40px;
 }
 
 .harga{
-margin-top:8px;
 font-size:20px;
 font-weight:bold;
-color:#ee4d2d;
+color:#ff6600;
+margin-bottom:8px;
 }
 
 .rating{
-margin-top:5px;
-font-size:12px;
-color:orange;
+color:#ffc107;
+font-size:14px;
+margin-bottom:10px;
 }
 
-.jumlah{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:10px;
-margin-top:10px;
-}
-
-.jumlah button{
-width:30px;
-height:30px;
-border:none;
-background:#ddd;
-border-radius:5px;
-cursor:pointer;
-}
-
-.jumlah input{
-width:40px;
-text-align:center;
-}
-
-.aksi{
-display:flex;
-gap:5px;
-margin-top:10px;
-}
-
-.keranjang{
-flex:1;
-background:#ffd9cf;
-color:#ee4d2d;
-border:none;
+button{
+width:100%;
 padding:10px;
-border-radius:5px;
-cursor:pointer;
-}
-
-.beli{
-flex:1;
-background:#ee4d2d;
+border:none;
+background:#ff6600;
 color:white;
-border:none;
-padding:10px;
-border-radius:5px;
+border-radius:8px;
 cursor:pointer;
+}
+
+button:hover{
+background:#e65c00;
 }
 
 @media(max-width:768px){
 
-.produk{
-grid-template-columns:repeat(2,1fr);
+.container{
+flex-direction:column;
+}
+
+.sidebar{
+width:100%;
+height:auto;
+display:flex;
+overflow:auto;
+gap:10px;
+}
+
+.sidebar a{
+white-space:nowrap;
+}
+
+.search{
+margin:0 10px;
 }
 
 }
 
 </style>
-
 </head>
 
 <body>
 
 <header>
 
-<div class="logo">🛒 TokoKu</div>
+<div class="logo">🛒 TokoOren</div>
 
-<input
-type="text"
-class="search"
-placeholder="Cari Produk...">
+<div class="search">
+<input type="text" placeholder="Cari produk...">
+</div>
 
-<div class="icon">🛒</div>
+<div class="icon">
 
-<div class="icon"
-onclick="location.href='index.html'">
-🚪
+<div>
+🛒
+<span class="badge">0</span>
+</div>
+
+👤
+
 </div>
 
 </header>
 
-<div class="kategori">
+<div class="container">
 
-<button>Semua</button>
-<button>Elektronik</button>
-<button>Gaming</button>
-<button>Fashion</button>
-<button>Sepatu</button>
-<button>Aksesoris</button>
+<div class="sidebar">
+
+<h2>Menu</h2>
+
+<a href="#">🏠 Beranda</a>
+
+<a href="#">📱 Elektronik</a>
+
+<a href="#">👕 Fashion</a>
+
+<a href="#">👟 Sepatu</a>
+
+<a href="#">⌚ Aksesoris</a>
+
+<a href="#">🛒 Keranjang</a>
+
+<a href="#">📦 Pesanan Saya</a>
+
+<a href="#">👤 Profil</a>
+
+<a href="index.html">🚪 Logout</a>
 
 </div>
 
-<div class="produk">
-<!-- PRODUK 1 -->
+<div class="content">
+
+<div class="banner">
+
+<h1>🔥 Flash Sale</h1>
+
+<p>Diskon sampai 70% hari ini.</p>
+
+</div>
+
+<div class="grid">
+<!-- Produk 1 -->
 <div class="card">
-<img src="https://picsum.photos/300?random=1">
+<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600" alt="iPhone">
+
 <div class="info">
 
-<div class="nama">Mouse Gaming RGB</div>
-
-<div class="harga">Rp150.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.9 | 1,2RB Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
+<div class="nama">
+iPhone 15 Pro Max 256GB
 </div>
 
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
+<div class="harga">
+Rp18.999.000
 </div>
+
+<div class="rating">
+⭐⭐⭐⭐⭐ 4.9 | Terjual 2RB+
+</div>
+
+<button>+ Keranjang</button>
 
 </div>
 </div>
 
-<!-- PRODUK 2 -->
+<!-- Produk 2 -->
+
 <div class="card">
-<img src="https://picsum.photos/300?random=2">
+<img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600" alt="Laptop">
+
 <div class="info">
 
-<div class="nama">Keyboard Mechanical RGB</div>
-
-<div class="harga">Rp289.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.8 | 980 Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
+<div class="nama">
+Laptop ASUS ROG Gaming
 </div>
 
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
+<div class="harga">
+Rp15.500.000
 </div>
+
+<div class="rating">
+⭐⭐⭐⭐⭐ 4.8 | Terjual 1RB+
+</div>
+
+<button>+ Keranjang</button>
 
 </div>
 </div>
 
-<!-- PRODUK 3 -->
+<!-- Produk 3 -->
+
 <div class="card">
-<img src="https://picsum.photos/300?random=3">
+<img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600" alt="Sepatu">
+
 <div class="info">
 
-<div class="nama">Headset Gaming</div>
-
-<div class="harga">Rp399.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 5.0 | 2RB Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
+<div class="nama">
+Nike Air Max
 </div>
 
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
+<div class="harga">
+Rp1.250.000
 </div>
+
+<div class="rating">
+⭐⭐⭐⭐⭐ 4.9 | Terjual 5RB+
+</div>
+
+<button>+ Keranjang</button>
 
 </div>
 </div>
 
-<!-- PRODUK 4 -->
+<!-- Produk 4 -->
+
 <div class="card">
-<img src="https://picsum.photos/300?random=4">
+<img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600" alt="Kaos">
+
 <div class="info">
 
-<div class="nama">Samsung Galaxy A25</div>
-
-<div class="harga">Rp3.499.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.9 | 600 Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
+<div class="nama">
+Kaos Oversize Premium
 </div>
 
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
+<div class="harga">
+Rp125.000
 </div>
+
+<div class="rating">
+⭐⭐⭐⭐⭐ 4.8 | Terjual 9RB+
+</div>
+
+<button>+ Keranjang</button>
 
 </div>
 </div>
 
-<!-- PRODUK 5 -->
+<!-- Produk 5 -->
+
 <div class="card">
-<img src="https://picsum.photos/300?random=5">
+<img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600" alt="Headset">
+
 <div class="info">
 
-<div class="nama">Smartwatch</div>
-
-<div class="harga">Rp899.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.8 | 1RB Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
+<div class="nama">
+Headset Bluetooth JBL
 </div>
 
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
+<div class="harga">
+Rp699.000
 </div>
+
+<div class="rating">
+⭐⭐⭐⭐⭐ 4.9 | Terjual 3RB+
+</div>
+
+<button>+ Keranjang</button>
 
 </div>
 </div>
-<!-- PRODUK 6 -->
+
+<!-- Produk 6 -->
+
 <div class="card">
-<img src="https://picsum.photos/300?random=6">
+<img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=600" alt="Smartwatch">
+
 <div class="info">
 
-<div class="nama">Sepatu Sneakers</div>
-
-<div class="harga">Rp459.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.9 | 3RB Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
+<div class="nama">
+Samsung Galaxy Watch
 </div>
 
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
+<div class="harga">
+Rp3.250.000
 </div>
 
-</div>
-</div>
-
-<!-- PRODUK 7 -->
-<div class="card">
-<img src="https://picsum.photos/300?random=7">
-<div class="info">
-
-<div class="nama">Laptop Gaming</div>
-
-<div class="harga">Rp12.999.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 5.0 | 350 Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
+<div class="rating">
+⭐⭐⭐⭐⭐ 4.8 | Terjual 2RB+
 </div>
 
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
-</div>
-
-</div>
-</div>
-
-<!-- PRODUK 8 -->
-<div class="card">
-<img src="https://picsum.photos/300?random=8">
-<div class="info">
-
-<div class="nama">Power Bank 20.000mAh</div>
-
-<div class="harga">Rp199.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.7 | 4RB Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
-</div>
-<!-- PRODUK 11 -->
-<div class="card">
-<img src="https://picsum.photos/300?random=11">
-<div class="info">
-
-<div class="nama">Flashdisk 64GB</div>
-
-<div class="harga">Rp129.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.8 | 1,8RB Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
-</div>
-
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
-</div>
-
-</div>
-</div>
-
-<!-- PRODUK 12 -->
-<div class="card">
-<img src="https://picsum.photos/300?random=12">
-<div class="info">
-
-<div class="nama">Monitor Gaming 24 Inch</div>
-
-<div class="harga">Rp2.199.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.9 | 720 Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
-</div>
-
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
-</div>
-
-</div>
-</div>
-
-<!-- PRODUK 13 -->
-<div class="card">
-<img src="https://picsum.photos/300?random=13">
-<div class="info">
-
-<div class="nama">Gaming Chair</div>
-
-<div class="harga">Rp1.899.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.8 | 540 Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
-</div>
-
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
-</div>
-
-</div>
-</div>
-
-<!-- PRODUK 14 -->
-<div class="card">
-<img src="https://picsum.photos/300?random=14">
-<div class="info">
-
-<div class="nama">Gaming Desk</div>
-
-<div class="harga">Rp2.499.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.9 | 310 Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
-</div>
-
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
-</div>
-
-</div>
-</div>
-
-<!-- PRODUK 15 -->
-<div class="card">
-<img src="https://picsum.photos/300?random=15">
-<div class="info">
-
-<div class="nama">Kaos Polos Premium</div>
-
-<div class="harga">Rp89.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.7 | 5RB Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
-</div>
-
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
-</div>
-
-</div>
-</div>
-<!-- PRODUK 16 -->
-<div class="card">
-<img src="https://picsum.photos/300?random=16">
-<div class="info">
-
-<div class="nama">Hoodie Polos</div>
-
-<div class="harga">Rp179.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.8 | 2,5RB Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
-</div>
-
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
-</div>
-
-</div>
-</div>
-
-<!-- PRODUK 17 -->
-<div class="card">
-<img src="https://picsum.photos/300?random=17">
-<div class="info">
-
-<div class="nama">Jaket Pria Casual</div>
-
-<div class="harga">Rp249.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.9 | 1,4RB Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
-</div>
-
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
-</div>
-
-</div>
-</div>
-
-<!-- PRODUK 18 -->
-<div class="card">
-<img src="https://picsum.photos/300?random=18">
-<div class="info">
-
-<div class="nama">Tas Ransel</div>
-
-<div class="harga">Rp199.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.8 | 950 Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
-</div>
-
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
-</div>
-
-</div>
-</div>
-
-<!-- PRODUK 19 -->
-<div class="card">
-<img src="https://picsum.photos/300?random=19">
-<div class="info">
-
-<div class="nama">Botol Minum 1 Liter</div>
-
-<div class="harga">Rp79.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.7 | 3RB Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
-</div>
-
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
-</div>
-
-</div>
-</div>
-
-<!-- PRODUK 20 -->
-<div class="card">
-<img src="https://picsum.photos/300?random=20">
-<div class="info">
-
-<div class="nama">Webcam Full HD</div>
-
-<div class="harga">Rp399.000</div>
-
-<div class="rating">⭐⭐⭐⭐⭐ 4.8 | 870 Terjual</div>
-
-<div class="jumlah">
-<button onclick="kurang(this)">-</button>
-<input type="text" value="1" readonly>
-<button onclick="tambah(this)">+</button>
-</div>
-
-<div class="aksi">
-<button class="keranjang">🛒 Keranjang</button>
-<button class="beli">⚡ Beli</button>
-</div>
+<button>+ Keranjang</button>
 
 </div>
 </div>
 
 </div>
+
+</div>
+
+</div>
+<!-- Keranjang -->
+<div id="cartBox" style="display:none;position:fixed;top:80px;right:20px;width:350px;background:#fff;padding:20px;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,.3);z-index:999;max-height:500px;overflow:auto;">
+
+<h2>Keranjang</h2>
+
+<div id="cartList">
+Belum ada barang.
+</div>
+
+<hr>
+
+<h3>Total :
+<span id="totalHarga">Rp0</span>
+</h3>
+
+<button onclick="checkout()">
+Checkout
+</button>
+
+</div>
+
 <script>
 
-// ====================
-// PENCARIAN PRODUK
-// ====================
+let keranjang=[];
 
-const cari = document.querySelector(".search");
+const badge=document.querySelector(".badge");
 
-cari.addEventListener("keyup", function(){
-
-let keyword = this.value.toLowerCase();
-
-document.querySelectorAll(".card").forEach(function(card){
-
-let nama = card.querySelector(".nama").innerText.toLowerCase();
-
-card.style.display = nama.includes(keyword) ? "block" : "none";
-
-});
-
-});
-
-// ====================
-// TOMBOL + DAN -
-// ====================
-
-function tambah(btn){
-
-let input = btn.parentElement.querySelector("input");
-
-input.value = parseInt(input.value)+1;
-
+document.querySelector(".icon").onclick=function(){
+toggleCart();
 }
 
-function kurang(btn){
-
-let input = btn.parentElement.querySelector("input");
-
-if(parseInt(input.value)>1){
-
-input.value = parseInt(input.value)-1;
-
-}
-
-}
-
-// ====================
-// DATA KERANJANG
-// ====================
-
-let keranjang = JSON.parse(localStorage.getItem("keranjang")) || [];
-
-// ====================
-// TAMBAH KE KERANJANG
-// ====================
-
-document.querySelectorAll(".keranjang").forEach(function(btn){
-
-btn.onclick=function(e){
-
-e.stopPropagation();
-
-let card=this.closest(".card");
-
-let nama=card.querySelector(".nama").innerText;
-
-let harga=card.querySelector(".harga").innerText;
-
-let gambar=card.querySelector("img").src;
-
-let jumlah=parseInt(card.querySelector("input").value);
+function tambahKeranjang(nama,harga){
 
 keranjang.push({
-
 nama:nama,
-
-harga:harga,
-
-gambar:gambar,
-
-jumlah:jumlah
-
+harga:harga
 });
+
+badge.innerHTML=keranjang.length;
 
 localStorage.setItem("keranjang",JSON.stringify(keranjang));
 
-alert("Produk berhasil ditambahkan ke keranjang");
+tampilKeranjang();
+
+alert("Barang berhasil ditambahkan.");
 
 }
+
+function tampilKeranjang(){
+
+let data=JSON.parse(localStorage.getItem("keranjang"))||[];
+
+keranjang=data;
+
+let html="";
+
+let total=0;
+
+if(data.length==0){
+
+html="Belum ada barang.";
+
+}else{
+
+data.forEach((item,index)=>{
+
+html+=`
+<div style="margin-bottom:15px;border-bottom:1px solid #ddd;padding-bottom:10px;">
+
+<b>${item.nama}</b><br>
+
+Rp ${item.harga.toLocaleString()}<br><br>
+
+<button onclick="hapusBarang(${index})">Hapus</button>
+
+</div>
+`;
+
+total+=item.harga;
 
 });
 
-// ====================
-// BELI SEKARANG
-// ====================
+}
 
-document.querySelectorAll(".beli").forEach(function(btn){
+document.getElementById("cartList").innerHTML=html;
 
-btn.onclick=function(e){
+document.getElementById("totalHarga").innerHTML="Rp "+total.toLocaleString();
 
-e.stopPropagation();
-
-let card=this.closest(".card");
-
-let nama=card.querySelector(".nama").innerText;
-
-alert("Membeli "+nama);
+badge.innerHTML=data.length;
 
 }
 
-});
+function hapusBarang(index){
 
-// ====================
-// DETAIL PRODUK
-// ====================
+keranjang.splice(index,1);
 
-document.querySelectorAll(".card").forEach(function(card){
+localStorage.setItem("keranjang",JSON.stringify(keranjang));
 
-card.onclick=function(){
-
-let nama=this.querySelector(".nama").innerText;
-
-alert("Detail Produk : "+nama);
-
-/*
-Nanti diganti membuka
-halaman detail.html
-atau modal detail
-*/
+tampilKeranjang();
 
 }
 
-});
+function toggleCart(){
 
-// ====================
-// LOGOUT
-// ====================
+let box=document.getElementById("cartBox");
 
-function logout(){
+if(box.style.display=="block"){
 
-if(confirm("Yakin ingin logout?")){
+box.style.display="none";
 
-location.href="index.html";
+}else{
+
+box.style.display="block";
 
 }
+
+}
+
+function checkout(){
+
+if(keranjang.length==0){
+
+alert("Keranjang masih kosong.");
+
+return;
+
+}
+
+localStorage.setItem("pesanan",JSON.stringify(keranjang));
+
+alert("Checkout berhasil!");
+
+keranjang=[];
+
+localStorage.setItem("keranjang","[]");
+
+tampilKeranjang();
+
+}
+
+window.onload=function(){
+
+tampilKeranjang();
 
 }
 

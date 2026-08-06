@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TokoKu</title>
+<title>TokoKu - Login</title>
 
 <style>
 
@@ -15,211 +15,71 @@ font-family:Arial,sans-serif;
 }
 
 body{
-background:#f5f5f5;
-}
-
-/* HEADER */
-
-header{
-position:sticky;
-top:0;
+background:linear-gradient(135deg,#ee4d2d,#ff8a50);
 display:flex;
+justify-content:center;
 align-items:center;
-gap:10px;
-background:#ee4d2d;
-padding:10px;
-z-index:1000;
+height:100vh;
+}
+
+.container{
+background:#fff;
+width:90%;
+max-width:400px;
+padding:30px;
+border-radius:15px;
+text-align:center;
+box-shadow:0 5px 20px rgba(0,0,0,.2);
 }
 
 .logo{
-color:#fff;
-font-size:22px;
-font-weight:bold;
+font-size:60px;
 }
 
-.search{
-flex:1;
-padding:10px;
-border:none;
-border-radius:5px;
-outline:none;
-}
-
-.icon{
-color:#fff;
-font-size:22px;
-cursor:pointer;
-}
-
-/* BANNER */
-
-.banner{
-padding:10px;
-}
-
-.banner img{
-width:100%;
-height:180px;
-border-radius:10px;
-object-fit:cover;
-}
-
-/* KATEGORI */
-
-.kategori{
-display:flex;
-gap:8px;
-overflow-x:auto;
-padding:10px;
-background:#fff;
-}
-
-.kategori::-webkit-scrollbar{
-display:none;
-}
-
-.kategori button{
-border:none;
-background:#ffe7df;
-color:#ee4d2d;
-padding:8px 14px;
-border-radius:20px;
-font-weight:bold;
-cursor:pointer;
-white-space:nowrap;
-}
-
-/* PRODUK */
-
-.produk{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px;
-padding:10px;
-}
-
-.card{
-background:#fff;
-border-radius:10px;
-overflow:hidden;
-box-shadow:0 2px 8px rgba(0,0,0,.15);
-}
-
-.card img{
-width:100%;
-height:150px;
-object-fit:cover;
-}
-
-.info{
-padding:10px;
-}
-
-.nama{
-font-size:14px;
-font-weight:bold;
-height:38px;
-overflow:hidden;
-}
-
-.harga{
-margin-top:8px;
-font-size:22px;
-font-weight:bold;
+h1{
+margin:15px 0;
 color:#ee4d2d;
 }
 
-.rating{
-margin-top:5px;
-font-size:12px;
-color:#ff9800;
+p{
+color:#666;
+margin-bottom:25px;
 }
 
-.aksi{
-display:flex;
-gap:5px;
-margin-top:10px;
-}
-
-.edit{
-flex:1;
-background:#f59e0b;
-color:white;
+button{
+width:100%;
+padding:14px;
+margin:10px 0;
 border:none;
-padding:8px;
-border-radius:5px;
+border-radius:10px;
+font-size:17px;
+font-weight:bold;
 cursor:pointer;
+transition:.3s;
 }
 
-.hapus{
-flex:1;
-background:#ef4444;
-color:white;
-border:none;
-padding:8px;
-border-radius:5px;
-cursor:pointer;
-}
-
-#tambah{
-margin:10px;
-width:calc(100% - 20px);
-padding:12px;
-border:none;
+.customer{
 background:#ee4d2d;
-color:white;
-font-size:16px;
-font-weight:bold;
-border-radius:8px;
-cursor:pointer;
+color:#fff;
 }
 
-/* RESPONSIVE */
-
-@media(max-width:768px){
-
-header{
-padding:8px;
+.customer:hover{
+background:#d84326;
 }
 
-.logo{
-font-size:20px;
+.admin{
+background:#333;
+color:#fff;
 }
 
-.search{
-font-size:14px;
+.admin:hover{
+background:#111;
 }
 
-.banner img{
-height:140px;
-}
-
-.produk{
-grid-template-columns:repeat(2,1fr);
-gap:8px;
-}
-
-.card img{
-height:120px;
-}
-
-.nama{
+.footer{
+margin-top:20px;
 font-size:13px;
-}
-
-.harga{
-font-size:18px;
-}
-
-.rating{
-font-size:11px;
-}
-
-.edit,.hapus{
-font-size:12px;
-padding:7px;
-}
-
+color:#888;
 }
 
 </style>
@@ -228,241 +88,29 @@ padding:7px;
 
 <body>
 
-<header>
+<div class="container">
 
-<div class="logo">🛒 TokoKu</div>
+<div class="logo">🛒</div>
 
-<input class="search" type="text" placeholder="Cari produk...">
+<h1>TokoKu</h1>
 
-<div class="icon">🔔</div>
+<p>Sistem Penjualan Online</p>
 
-<div class="icon">🛒</div>
+<button class="customer"
+onclick="location.href='customer.html'">
+👤 Login Customer
+</button>
 
-</header>
+<button class="admin"
+onclick="location.href='admin.html'">
+👨‍💼 Login Admin
+</button>
 
-<div class="banner">
-<img src="https://picsum.photos/1000/300">
+<div class="footer">
+© 2026 TokoKu
 </div>
 
-<div class="kategori">
-<button>Elektronik</button>
-<button>Gaming</button>
-<button>Fashion</button>
-<button>Sepatu</button>
-<button>Aksesoris</button>
-<button>Promo</button>
 </div>
-
-<div class="produk">
-<div class="card">
-<img src="https://picsum.photos/300?random=1" alt="Mouse Gaming">
-<div class="info">
-<div class="nama">Mouse Gaming RGB</div>
-<div class="harga">Rp150.000</div>
-<div class="rating">⭐⭐⭐⭐⭐ 4.9 | 1,2RB Terjual</div>
-<div class="aksi">
-<button class="edit">Edit</button>
-<button class="hapus">Hapus</button>
-</div>
-</div>
-</div>
-
-<div class="card">
-<img src="https://picsum.photos/300?random=2" alt="Keyboard">
-<div class="info">
-<div class="nama">Keyboard Mechanical RGB</div>
-<div class="harga">Rp289.000</div>
-<div class="rating">⭐⭐⭐⭐⭐ 4.8 | 980 Terjual</div>
-<div class="aksi">
-<button class="edit">Edit</button>
-<button class="hapus">Hapus</button>
-</div>
-</div>
-</div>
-
-<div class="card">
-<img src="https://picsum.photos/300?random=3" alt="Headset">
-<div class="info">
-<div class="nama">Headset Gaming</div>
-<div class="harga">Rp399.000</div>
-<div class="rating">⭐⭐⭐⭐⭐ 5.0 | 2RB Terjual</div>
-<div class="aksi">
-<button class="edit">Edit</button>
-<button class="hapus">Hapus</button>
-</div>
-</div>
-</div>
-
-<div class="card">
-<img src="https://picsum.photos/300?random=4" alt="HP">
-<div class="info">
-<div class="nama">Smartphone Android</div>
-<div class="harga">Rp3.499.000</div>
-<div class="rating">⭐⭐⭐⭐⭐ 4.9 | 600 Terjual</div>
-<div class="aksi">
-<button class="edit">Edit</button>
-<button class="hapus">Hapus</button>
-</div>
-</div>
-</div>
-
-<div class="card">
-<img src="https://picsum.photos/300?random=5" alt="Smartwatch">
-<div class="info">
-<div class="nama">Smartwatch</div>
-<div class="harga">Rp899.000</div>
-<div class="rating">⭐⭐⭐⭐⭐ 4.8 | 1RB Terjual</div>
-<div class="aksi">
-<button class="edit">Edit</button>
-<button class="hapus">Hapus</button>
-</div>
-</div>
-</div>
-
-<div class="card">
-<img src="https://picsum.photos/300?random=6" alt="Sepatu">
-<div class="info">
-<div class="nama">Sepatu Sneakers</div>
-<div class="harga">Rp459.000</div>
-<div class="rating">⭐⭐⭐⭐⭐ 4.9 | 3RB Terjual</div>
-<div class="aksi">
-<button class="edit">Edit</button>
-<button class="hapus">Hapus</button>
-</div>
-</div>
-</div>
-
-<div class="card">
-<img src="https://picsum.photos/300?random=7" alt="Laptop">
-<div class="info">
-<div class="nama">Laptop Gaming</div>
-<div class="harga">Rp12.999.000</div>
-<div class="rating">⭐⭐⭐⭐⭐ 5.0 | 350 Terjual</div>
-<div class="aksi">
-<button class="edit">Edit</button>
-<button class="hapus">Hapus</button>
-</div>
-</div>
-</div>
-
-<div class="card">
-<img src="https://picsum.photos/300?random=8" alt="Power Bank">
-<div class="info">
-<div class="nama">Power Bank 20.000mAh</div>
-<div class="harga">Rp199.000</div>
-<div class="rating">⭐⭐⭐⭐⭐ 4.7 | 4RB Terjual</div>
-<div class="aksi">
-<button class="edit">Edit</button>
-<button class="hapus">Hapus</button>
-</div>
-</div>
-</div>
-</div>
-
-<button id="tambah">+ Tambah Produk</button>
-
-<script>
-
-// Cari Produk
-const cari=document.querySelector(".search");
-
-cari.addEventListener("keyup",function(){
-
-let keyword=this.value.toLowerCase();
-
-document.querySelectorAll(".card").forEach(function(card){
-
-let nama=card.querySelector(".nama").innerText.toLowerCase();
-
-card.style.display=nama.includes(keyword)?"block":"none";
-
-});
-
-});
-
-// Edit Produk
-document.querySelectorAll(".edit").forEach(function(btn){
-
-btn.onclick=function(){
-
-let card=this.closest(".card");
-
-let nama=card.querySelector(".nama");
-
-let harga=card.querySelector(".harga");
-
-let n=prompt("Nama Produk :",nama.innerText);
-
-if(n) nama.innerText=n;
-
-let h=prompt("Harga Produk :",harga.innerText.replace("Rp","").replace(/\./g,""));
-
-if(h){
-
-harga.innerText="Rp"+Number(h).toLocaleString("id-ID");
-
-}
-
-}
-
-});
-
-// Hapus Produk
-document.querySelectorAll(".hapus").forEach(function(btn){
-
-btn.onclick=function(){
-
-if(confirm("Hapus produk ini?")){
-
-this.closest(".card").remove();
-
-}
-
-}
-
-});
-
-// Tambah Produk
-document.getElementById("tambah").onclick=function(){
-
-let nama=prompt("Nama Produk");
-
-if(!nama)return;
-
-let harga=prompt("Harga Produk");
-
-if(!harga)return;
-
-let gambar=prompt("Link Gambar Produk");
-
-if(!gambar){
-
-gambar="https://picsum.photos/300?random="+Math.floor(Math.random()*1000);
-
-}
-
-let html=`
-<div class="card">
-<img src="${gambar}">
-<div class="info">
-<div class="nama">${nama}</div>
-<div class="harga">Rp${Number(harga).toLocaleString("id-ID")}</div>
-<div class="rating">⭐⭐⭐⭐⭐ Produk Baru</div>
-<div class="aksi">
-<button class="edit">Edit</button>
-<button class="hapus">Hapus</button>
-</div>
-</div>
-</div>
-`;
-
-document.querySelector(".produk").insertAdjacentHTML("beforeend",html);
-
-location.reload();
-
-}
-
-</script>
 
 </body>
 </html>

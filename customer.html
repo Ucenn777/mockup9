@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TokoOren</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f5f5;
+}
+
+header{
+background:#fff;
+padding:15px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+box-shadow:0 2px 5px rgba(0,0,0,.1);
+position:sticky;
+top:0;
+}
+
+.logo{
+font-size:28px;
+font-weight:bold;
+color:#ff5722;
+}
+
+.search{
+flex:1;
+margin:0 20px;
+}
+
+.search input{
+width:100%;
+padding:10px;
+border:1px solid #ddd;
+border-radius:5px;
+}
+
+.menu{
+display:flex;
+gap:15px;
+align-items:center;
+}
+
+.menu a{
+text-decoration:none;
+color:black;
+font-weight:bold;
+}
+
+.cart{
+position:relative;
+font-size:24px;
+cursor:pointer;
+}
+
+.badge{
+position:absolute;
+top:-8px;
+right:-8px;
+background:red;
+color:white;
+border-radius:50%;
+padding:2px 6px;
+font-size:12px;
+}
+
+.container{
+display:flex;
+padding:20px;
+gap:20px;
+}
+
+.left{
+width:75%;
+}
+
+.right{
+width:25%;
+}
+
+.banner{
+background:#ff5722;
+color:white;
+padding:30px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:15px;
+}
+
+.card{
+background:white;
+border-radius:10px;
+padding:10px;
+cursor:pointer;
+transition:.3s;
+}
+
+.card:hover{
+transform:scale(1.03);
+}
+
+.card img{
+width:100%;
+height:180px;
+object-fit:cover;
+border-radius:10px;
+}
+
+.nama{
+font-weight:bold;
+margin-top:10px;
+}
+
+.harga{
+color:#ff5722;
+font-size:18px;
+margin-top:5px;
+}
+
+.sidebar{
+background:white;
+border-radius:10px;
+padding:15px;
+}
+
+.sidebar button{
+width:100%;
+padding:10px;
+margin-top:10px;
+background:#ff5722;
+color:white;
+border:0;
+border-radius:5px;
+cursor:pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+TokoOren
+</div>
+
+<div class="search">
+<input type="text" placeholder="Cari produk...">
+</div>
+
+<div class="menu">
+
+<a href="admin.html">
+Login Admin
+</a>
+
+<div class="cart" onclick="location.href='cart.html'">
+
+🛒
+
+<span class="badge" id="jumlahCart">
+0
+</span>
+
+</div>
+
+</div>
+
+</header>
+
+<div class="container">
+
+<div class="left">
+
+<div class="banner">
+
+<h2>Diskon Besar Hari Ini 🔥</h2>
+
+<p>Belanja hemat hanya di TokoOren.</p>
+
+</div>
+
+<div class="grid" id="produk">
+
+<!-- Produk akan muncul di Part 2 -->
+
+</div>
+
+</div>
+
+<div class="right">
+
+<div class="sidebar">
+
+<h3>Akun Customer</h3>
+
+<p id="namaUser"></p>
+
+<button onclick="location.href='cart.html'">
+
+Keranjang
+
+</button>
+
+<button onclick="location.href='riwayat.html'">
+
+Pesanan Saya
+
+</button>
+
+<button onclick="location.href='index.html'">
+
+Logout
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+// ==========================
+// DATA PRODUK
+// ==========================
+
+let produk = JSON.parse(localStorage.getItem("produk")) || [
+
+{
+id:1,
+nama:"Sepatu Sneakers",
+harga:250000,
+gambar:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
+deskripsi:"Sepatu sneakers nyaman dipakai sehari-hari."
+},
+
+{
+id:2,
+nama:"Jam Tangan",
+harga:150000,
+gambar:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400",
+deskripsi:"Jam tangan elegan untuk pria dan wanita."
+},
+
+{
+id:3,
+nama:"Headphone",
+harga:450000,
+gambar:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+deskripsi:"Headphone bluetooth kualitas premium."
+},
+
+{
+id:4,
+nama:"Tas Selempang",
+harga:210000,
+gambar:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400",
+deskripsi:"Tas selempang fashionable."
+}
+
+];
+
+tampilProduk();
+
+function tampilProduk(){
+
+let html="";
+
+produk.forEach(function(p){
+
+html+=`
+
+<div class="card" onclick="detailProduk(${p.id})">
+
+<img src="${p.gambar}">
+
+<div class="nama">${p.nama}</div>
+
+<div class="harga">
+Rp ${Number(p.harga).toLocaleString('id-ID')}
+</div>
+
+<button style="
+width:100%;
+margin-top:10px;
+padding:10px;
+background:#ff5722;
+color:white;
+border:0;
+border-radius:5px;
+">
+
+Lihat Produk
+
+</button>
+
+</div>
+
+`;
+
+});
+
+document.getElementById("produk").innerHTML=html;
+
+}
+
+function detailProduk(id){
+
+localStorage.setItem("detailProduk",id);
+
+location.href="detail.html";
+
+}
+
+let cart=JSON.parse(localStorage.getItem("cart"))||[];
+
+document.getElementById("jumlahCart").innerHTML=cart.length;
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detail Produk</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#f5f5f5;
+}
+
+header{
+background:#ff5722;
+color:white;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:20px;
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.kiri{
+flex:1;
+background:white;
+padding:20px;
+border-radius:10px;
+}
+
+.kiri img{
+width:100%;
+border-radius:10px;
+}
+
+.kanan{
+flex:1;
+background:white;
+padding:20px;
+border-radius:10px;
+}
+
+h2{
+margin-bottom:10px;
+}
+
+.harga{
+font-size:28px;
+color:#ff5722;
+font-weight:bold;
+margin:15px 0;
+}
+
+button{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:0;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+}
+
+.cart{
+background:#ff9800;
+color:white;
+}
+
+.buy{
+background:#ff5722;
+color:white;
+}
+
+.qty{
+display:flex;
+gap:10px;
+align-items:center;
+margin-top:15px;
+}
+
+.qty button{
+width:40px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h2>TokoOren</h2>
+
+<a href="customer.html" style="color:white;text-decoration:none;">
+⬅ Kembali
+</a>
+
+</header>
+
+<div class="container">
+
+<div class="kiri">
+
+<img id="gambar">
+
+</div>
+
+<div class="kanan">
+
+<h2 id="nama"></h2>
+
+<div class="harga" id="harga"></div>
+
+<p id="deskripsi"></p>
+
+<br>
+
+<b>Warna</b>
+
+<select>
+<option>Hitam</option>
+<option>Putih</option>
+<option>Merah</option>
+</select>
+
+<br><br>
+
+<b>Jumlah</b>
+
+<div class="qty">
+
+<button onclick="kurang()">-</button>
+
+<span id="jumlah">1</span>
+
+<button onclick="tambah()">+</button>
+
+</div>
+
+<button class="cart" onclick="tambahCart()">
+
+🛒 Tambah Keranjang
+
+</button>
+
+<button class="buy">
+
+⚡ Beli Sekarang
+
+</button>
+
+</div>
+
+</div>
+
+<script>
+let produk = JSON.parse(localStorage.getItem("produk")) || [];
+
+let id = Number(localStorage.getItem("detailProduk"));
+
+let barang = produk.find(function(p){
+    return p.id == id;
+});
+
+// Jika belum ada produk dari admin, pakai contoh
+if(!barang){
+    barang = {
+        id:1,
+        nama:"Produk Contoh",
+        harga:100000,
+        gambar:"https://via.placeholder.com/400",
+        deskripsi:"Produk belum ditambahkan oleh admin."
+    };
+}
+
+document.getElementById("nama").innerHTML = barang.nama;
+document.getElementById("harga").innerHTML = "Rp " + Number(barang.harga).toLocaleString("id-ID");
+document.getElementById("gambar").src = barang.gambar;
+document.getElementById("deskripsi").innerHTML = barang.deskripsi;
+
+let jumlah = 1;
+
+function tambah(){
+    jumlah++;
+    document.getElementById("jumlah").innerHTML = jumlah;
+}
+
+function kurang(){
+    if(jumlah > 1){
+        jumlah--;
+        document.getElementById("jumlah").innerHTML = jumlah;
+    }
+}
+
+function tambahCart(){
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    cart.push({
+        id:barang.id,
+        nama:barang.nama,
+        harga:barang.harga,
+        gambar:barang.gambar,
+        jumlah:jumlah,
+        total:barang.harga * jumlah
+    });
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+    alert("Barang berhasil ditambahkan ke keranjang!");
+
+    location.href = "cart.html";
+}
+</script>
+
+</body>
+</html>

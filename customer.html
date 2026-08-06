@@ -1,571 +1,229 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TokoOren - Customer</title>
+
+<title>Customer Toko</title>
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
 body{
-background:#f5f5f5;
+    font-family:Arial;
+    margin:0;
+    background:#f2f2f2;
 }
-
-/* HEADER */
 
 header{
-background:#ff6600;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:15px 20px;
-position:sticky;
-top:0;
-z-index:100;
+    background:#007bff;
+    color:white;
+    padding:15px;
+    text-align:center;
 }
-
-.logo{
-font-size:28px;
-font-weight:bold;
-color:white;
-}
-
-.search{
-flex:1;
-margin:0 20px;
-}
-
-.search input{
-width:100%;
-padding:10px;
-border:none;
-border-radius:8px;
-outline:none;
-}
-
-.icon{
-display:flex;
-gap:20px;
-font-size:24px;
-color:white;
-}
-
-.badge{
-background:red;
-color:white;
-border-radius:50%;
-padding:2px 7px;
-font-size:12px;
-position:relative;
-top:-12px;
-left:-10px;
-}
-
-/* LAYOUT */
 
 .container{
-display:flex;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-width:220px;
-background:white;
-height:calc(100vh - 70px);
-padding:20px;
-position:sticky;
-top:70px;
-}
-
-.sidebar h2{
-margin-bottom:20px;
-color:#ff6600;
-}
-
-.sidebar a{
-display:block;
-padding:12px;
-margin-bottom:8px;
-text-decoration:none;
-color:#333;
-border-radius:8px;
-}
-
-.sidebar a:hover{
-background:#ff6600;
-color:white;
-}
-
-/* CONTENT */
-
-.content{
-flex:1;
-padding:20px;
-}
-
-.banner{
-background:linear-gradient(90deg,#ff6600,#ff9900);
-padding:35px;
-border-radius:15px;
-color:white;
-margin-bottom:25px;
-}
-
-.banner h1{
-margin-bottom:10px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-gap:20px;
+    padding:20px;
 }
 
 .card{
-background:white;
-border-radius:12px;
-overflow:hidden;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
-transition:.3s;
-}
-
-.card:hover{
-transform:translateY(-5px);
+    background:white;
+    padding:15px;
+    margin:10px;
+    border-radius:12px;
+    display:inline-block;
+    width:220px;
+    vertical-align:top;
 }
 
 .card img{
-width:100%;
-height:220px;
-object-fit:cover;
-}
-
-.info{
-padding:15px;
-}
-
-.nama{
-font-weight:bold;
-margin-bottom:8px;
-height:40px;
-}
-
-.harga{
-font-size:20px;
-font-weight:bold;
-color:#ff6600;
-margin-bottom:8px;
-}
-
-.rating{
-color:#ffc107;
-font-size:14px;
-margin-bottom:10px;
+    width:100%;
+    height:150px;
+    object-fit:cover;
 }
 
 button{
-width:100%;
-padding:10px;
-border:none;
-background:#ff6600;
-color:white;
-border-radius:8px;
-cursor:pointer;
+    background:#007bff;
+    color:white;
+    border:0;
+    padding:10px;
+    border-radius:8px;
+    cursor:pointer;
 }
 
-button:hover{
-background:#e65c00;
-}
-
-@media(max-width:768px){
-
-.container{
-flex-direction:column;
-}
-
-.sidebar{
-width:100%;
-height:auto;
-display:flex;
-overflow:auto;
-gap:10px;
-}
-
-.sidebar a{
-white-space:nowrap;
-}
-
-.search{
-margin:0 10px;
-}
-
+.cart{
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    background:white;
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0 0 10px #aaa;
 }
 
 </style>
+
 </head>
+
 
 <body>
 
+
 <header>
 
-<div class="logo">🛒 TokoOren</div>
+<h1>Toko Online</h1>
 
-<div class="search">
-<input type="text" placeholder="Cari produk...">
-</div>
-
-<div class="icon">
-
-<div>
-🛒
-<span class="badge">0</span>
-</div>
-
-👤
-
-</div>
+<p>Halaman Customer</p>
 
 </header>
 
-<div class="container">
 
-<div class="sidebar">
 
-<h2>Menu</h2>
-
-<a href="#">🏠 Beranda</a>
-
-<a href="#">📱 Elektronik</a>
-
-<a href="#">👕 Fashion</a>
-
-<a href="#">👟 Sepatu</a>
-
-<a href="#">⌚ Aksesoris</a>
-
-<a href="#">🛒 Keranjang</a>
-
-<a href="#">📦 Pesanan Saya</a>
-
-<a href="#">👤 Profil</a>
-
-<a href="index.html">🚪 Logout</a>
+<div class="container" id="produk">
 
 </div>
 
-<div class="content">
 
-<div class="banner">
 
-<h1>🔥 Flash Sale</h1>
 
-<p>Diskon sampai 70% hari ini.</p>
+<div class="cart">
 
-</div>
+<h3>Keranjang</h3>
 
-<div class="grid">
-<!-- Produk 1 -->
-<div class="card">
-<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600" alt="iPhone">
+<p id="jumlahCart">
+0 Barang
+</p>
 
-<div class="info">
 
-<div class="nama">
-iPhone 15 Pro Max 256GB
-</div>
-
-<div class="harga">
-Rp18.999.000
-</div>
-
-<div class="rating">
-⭐⭐⭐⭐⭐ 4.9 | Terjual 2RB+
-</div>
-
-<button>+ Keranjang</button>
-
-</div>
-</div>
-
-<!-- Produk 2 -->
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600" alt="Laptop">
-
-<div class="info">
-
-<div class="nama">
-Laptop ASUS ROG Gaming
-</div>
-
-<div class="harga">
-Rp15.500.000
-</div>
-
-<div class="rating">
-⭐⭐⭐⭐⭐ 4.8 | Terjual 1RB+
-</div>
-
-<button>+ Keranjang</button>
-
-</div>
-</div>
-
-<!-- Produk 3 -->
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600" alt="Sepatu">
-
-<div class="info">
-
-<div class="nama">
-Nike Air Max
-</div>
-
-<div class="harga">
-Rp1.250.000
-</div>
-
-<div class="rating">
-⭐⭐⭐⭐⭐ 4.9 | Terjual 5RB+
-</div>
-
-<button>+ Keranjang</button>
-
-</div>
-</div>
-
-<!-- Produk 4 -->
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=600" alt="Kaos">
-
-<div class="info">
-
-<div class="nama">
-Kaos Oversize Premium
-</div>
-
-<div class="harga">
-Rp125.000
-</div>
-
-<div class="rating">
-⭐⭐⭐⭐⭐ 4.8 | Terjual 9RB+
-</div>
-
-<button>+ Keranjang</button>
-
-</div>
-</div>
-
-<!-- Produk 5 -->
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600" alt="Headset">
-
-<div class="info">
-
-<div class="nama">
-Headset Bluetooth JBL
-</div>
-
-<div class="harga">
-Rp699.000
-</div>
-
-<div class="rating">
-⭐⭐⭐⭐⭐ 4.9 | Terjual 3RB+
-</div>
-
-<button>+ Keranjang</button>
-
-</div>
-</div>
-
-<!-- Produk 6 -->
-
-<div class="card">
-<img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=600" alt="Smartwatch">
-
-<div class="info">
-
-<div class="nama">
-Samsung Galaxy Watch
-</div>
-
-<div class="harga">
-Rp3.250.000
-</div>
-
-<div class="rating">
-⭐⭐⭐⭐⭐ 4.8 | Terjual 2RB+
-</div>
-
-<button>+ Keranjang</button>
-
-</div>
-</div>
-
-</div>
-
-</div>
-
-</div>
-<!-- Keranjang -->
-<div id="cartBox" style="display:none;position:fixed;top:80px;right:20px;width:350px;background:#fff;padding:20px;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,.3);z-index:999;max-height:500px;overflow:auto;">
-
-<h2>Keranjang</h2>
-
-<div id="cartList">
-Belum ada barang.
-</div>
-
-<hr>
-
-<h3>Total :
-<span id="totalHarga">Rp0</span>
-</h3>
-
-<button onclick="checkout()">
-Checkout
+<button onclick="lihatCart()">
+Lihat Keranjang
 </button>
 
 </div>
 
+
+
 <script>
+
+
+let barang=[];
 
 let keranjang=[];
 
-const badge=document.querySelector(".badge");
 
-document.querySelector(".icon").onclick=function(){
-toggleCart();
-}
 
-function tambahKeranjang(nama,harga){
+// ambil barang dari admin
 
-keranjang.push({
-nama:nama,
-harga:harga
-});
+function loadBarang(){
 
-badge.innerHTML=keranjang.length;
+let data=localStorage.getItem("barang");
 
-localStorage.setItem("keranjang",JSON.stringify(keranjang));
 
-tampilKeranjang();
+if(data){
 
-alert("Barang berhasil ditambahkan.");
+barang=JSON.parse(data);
 
 }
 
-function tampilKeranjang(){
 
-let data=JSON.parse(localStorage.getItem("keranjang"))||[];
+tampilProduk();
 
-keranjang=data;
+}
+
+
+
+
+function tampilProduk(){
+
 
 let html="";
 
-let total=0;
 
-if(data.length==0){
+barang.forEach(function(b,i){
 
-html="Belum ada barang.";
-
-}else{
-
-data.forEach((item,index)=>{
 
 html+=`
-<div style="margin-bottom:15px;border-bottom:1px solid #ddd;padding-bottom:10px;">
 
-<b>${item.nama}</b><br>
+<div class="card">
 
-Rp ${item.harga.toLocaleString()}<br><br>
+<img src="${b.foto}">
 
-<button onclick="hapusBarang(${index})">Hapus</button>
+<h3>${b.nama}</h3>
+
+<p>Rp ${b.harga}</p>
+
+
+<button onclick="tambah(${i})">
+Tambah Keranjang
+</button>
+
 
 </div>
+
 `;
 
-total+=item.harga;
 
 });
 
-}
 
-document.getElementById("cartList").innerHTML=html;
+document.getElementById("produk").innerHTML=html;
 
-document.getElementById("totalHarga").innerHTML="Rp "+total.toLocaleString();
-
-badge.innerHTML=data.length;
 
 }
 
-function hapusBarang(index){
 
-keranjang.splice(index,1);
 
-localStorage.setItem("keranjang",JSON.stringify(keranjang));
 
-tampilKeranjang();
+function tambah(i){
 
-}
 
-function toggleCart(){
+keranjang.push(barang[i]);
 
-let box=document.getElementById("cartBox");
 
-if(box.style.display=="block"){
+document.getElementById("jumlahCart").innerHTML=
+keranjang.length+" Barang";
 
-box.style.display="none";
 
-}else{
+alert("Masuk keranjang");
 
-box.style.display="block";
 
 }
 
-}
 
-function checkout(){
+
+
+function lihatCart(){
+
 
 if(keranjang.length==0){
 
-alert("Keranjang masih kosong.");
+alert("Keranjang kosong");
 
 return;
 
 }
 
-localStorage.setItem("pesanan",JSON.stringify(keranjang));
 
-alert("Checkout berhasil!");
+let isi="";
 
-keranjang=[];
 
-localStorage.setItem("keranjang","[]");
+keranjang.forEach(function(k){
 
-tampilKeranjang();
+isi+=k.nama+" - Rp "+k.harga+"\n";
 
-}
+});
 
-window.onload=function(){
 
-tampilKeranjang();
+alert(isi);
+
 
 }
+
+
+
+
+loadBarang();
+
 
 </script>
+
 
 </body>
 </html>

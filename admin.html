@@ -51,25 +51,43 @@
         .badge-shipping { background: #e0f2fe; color: #0284c7; }
         .badge-completed { background: #d1fae5; color: #059669; }
 
-        /* Kontrol Status & Tombol Aksi yang Lebih Rapi */
+        /* Aksi Susun ke Bawah (Vertical Group) */
+        .action-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 130px;
+        }
+
         .status-select {
-            padding: 6px 8px;
+            width: 100%;
+            padding: 6px;
             border: 1px solid #d1d5db;
-            border-radius: 6px;
+            border-radius: 4px;
             font-size: 11px;
             background: #fff;
             outline: none;
             cursor: pointer;
             font-weight: 500;
-            margin-right: 5px;
         }
         .status-select:focus { border-color: #f97316; }
 
-        .btn-action { padding: 6px 12px; border: none; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; color: #fff; transition: 0.2s; }
+        .btn-action { 
+            width: 100%;
+            padding: 6px; 
+            border: none; 
+            border-radius: 4px; 
+            font-size: 11px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            color: #fff; 
+            transition: 0.2s; 
+            text-align: center;
+        }
         .btn-save-status { background: #10b981; }
         .btn-save-status:hover { background: #059669; }
         
-        .btn-edit { background: #f59e0b; margin-right: 4px; }
+        .btn-edit { background: #f59e0b; }
         .btn-edit:hover { background: #d97706; }
         .btn-del { background: #ef4444; }
         .btn-del:hover { background: #dc2626; }
@@ -163,8 +181,8 @@
                         <th>Pembeli & Kontak</th>
                         <th>Barang Dibeli</th>
                         <th>Total</th>
-                        <th>Status Saat Ini</th>
-                        <th>Ubah Status & Aksi</th>
+                        <th>Status</th>
+                        <th>Aksi / Kelola Status</th>
                     </tr>
                 </thead>
                 <tbody id="admin-orders-table"></tbody>
@@ -316,7 +334,7 @@
                         <td>Rp ${p.price.toLocaleString('id-ID')}</td>
                         <td><b>${p.stock} pcs</b></td>
                         <td>
-                            <button class="btn-action btn-edit" onclick="openEditModal(${idx})">Edit</button>
+                            <button class="btn-action btn-edit" onclick="openEditModal(${idx})" style="margin-bottom:4px;">Edit</button>
                             <button class="btn-action btn-del" onclick="deleteProduct(${idx})">Hapus</button>
                         </td>
                     </tr>
@@ -421,13 +439,15 @@
                         <td><b>Rp ${ord.total.toLocaleString('id-ID')}</b></td>
                         <td><span class="badge ${statusBadge}">${currentStatus}</span></td>
                         <td>
-                            <select id="status-select-${ord.orderId}" class="status-select">
-                                <option value="Pending" ${currentStatus === 'Pending' ? 'selected' : ''}>Pending</option>
-                                <option value="Sedang Dikirim" ${currentStatus === 'Sedang Dikirim' ? 'selected' : ''}>Sedang Dikirim</option>
-                                <option value="Selesai" ${currentStatus === 'Selesai' ? 'selected' : ''}>Selesai</option>
-                            </select>
-                            <button class="btn-action btn-save-status" onclick="updateOrderStatus('${ord.orderId}')">Simpan</button>
-                            <button class="btn-action btn-del" onclick="deleteOrder('${ord.orderId}')">Hapus</button>
+                            <div class="action-container">
+                                <select id="status-select-${ord.orderId}" class="status-select">
+                                    <option value="Pending" ${currentStatus === 'Pending' ? 'selected' : ''}>Pending</option>
+                                    <option value="Sedang Dikirim" ${currentStatus === 'Sedang Dikirim' ? 'selected' : ''}>Sedang Dikirim</option>
+                                    <option value="Selesai" ${currentStatus === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                                </select>
+                                <button class="btn-action btn-save-status" onclick="updateOrderStatus('${ord.orderId}')">Simpan</button>
+                                <button class="btn-action btn-del" onclick="deleteOrder('${ord.orderId}')">Hapus</button>
+                            </div>
                         </td>
                     </tr>
                 `;

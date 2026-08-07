@@ -1,127 +1,210 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login TokoOren</title>
+    <style>
+        /* RESET TOTAL DARI UJUNG KE UJUNG */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
 
-<title>TokoOren Login</title>
+        /* MEMAKSA BODY & HTML FULL SCREEN (100% DESKTOP & MOBILE) */
+        html, body {
+            width: 100vw;
+            height: 100dvh; /* Mengunci tinggi penuh viewport */
+            background-color: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Mencegah scroll yang tidak perlu */
+        }
 
-<style>
+        /* CONTAINER UTAMA (FULL SCREEN FLEXBOX) */
+        .login-page-container {
+            width: 100vw;
+            height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: #f4f6f8;
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
+        /* KARTU LOGIN TOKOOREN */
+        .login-card {
+            width: 100%;
+            max-width: 360px;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 30px 24px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
 
-body{
-background:#f5f5f5;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
+        /* LOGO & TITLE */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
 
-.box{
-width:350px;
-background:#fff;
-padding:25px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.2);
-}
+        .brand-header img, .brand-icon {
+            font-size: 24px;
+        }
 
-h1{
-text-align:center;
-color:#ff5722;
-margin-bottom:20px;
-}
+        .brand-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #ee4d2d; /* Warna Khas TokoOren */
+            letter-spacing: 0.5px;
+        }
 
-select,
-input{
-width:100%;
-padding:12px;
-margin:8px 0;
-border:1px solid #ccc;
-border-radius:8px;
-font-size:15px;
-}
+        /* FORM ELEMENTS */
+        .form-group {
+            margin-bottom: 14px;
+            text-align: left;
+        }
 
-button{
-width:100%;
-padding:12px;
-margin-top:10px;
-background:#ff5722;
-color:white;
-border:none;
-border-radius:8px;
-font-size:16px;
-cursor:pointer;
-}
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            background-color: #f8fafc;
+            color: #334155;
+            transition: all 0.2s ease;
+        }
 
-button:hover{
-background:#e64a19;
-}
+        .form-control:focus {
+            border-color: #ee4d2d;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(238, 77, 45, 0.15);
+        }
 
-</style>
+        select.form-control {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%3c64748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
 
+        /* BUTTON LOGIN */
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background-color: #ee4d2d;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+            margin-top: 8px;
+            text-transform: uppercase;
+        }
+
+        .btn-login:hover {
+            background-color: #d73211;
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+
+        /* NOTIFIKASI ERROR */
+        .error-msg {
+            color: #dc2626;
+            font-size: 12px;
+            margin-bottom: 12px;
+            display: none;
+            font-weight: 600;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="box">
+    <div class="login-page-container">
+        <div class="login-card">
+            
+            <div class="brand-header">
+                <span class="brand-icon">🛒</span>
+                <span class="brand-title">TOKOOREN</span>
+            </div>
 
-<h1>🛒 TOKOOREN</h1>
+            <div id="error-message" class="error-msg">Username / Password Salah!</div>
 
-<select id="role">
-<option value="">Pilih Login</option>
-<option value="admin">Admin</option>
-<option value="customer">Customer</option>
-</select>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <select id="user-role" class="form-control" onchange="toggleRoleInput()">
+                        <option value="admin">Admin</option>
+                        <option value="customer">Customer / Pembeli</option>
+                    </select>
+                </div>
 
-<input type="text" id="username" placeholder="Username">
+                <div class="form-group">
+                    <input type="text" id="username" class="form-control" placeholder="Username / ID..." required value="1">
+                </div>
 
-<input type="password" id="password" placeholder="Password">
+                <div class="form-group">
+                    <input type="password" id="password" class="form-control" placeholder="Password..." required>
+                </div>
 
-<button onclick="login()">Masuk</button>
+                <button type="submit" class="btn-login">Masuk</button>
+            </form>
 
-<script>
-function login(){
+        </div>
+    </div>
 
-let role=document.getElementById("role").value;
-let username=document.getElementById("username").value.trim();
-let password=document.getElementById("password").value.trim();
+    <script>
+        function toggleRoleInput() {
+            const role = document.getElementById("user-role").value;
+            const usernameInput = document.getElementById("username");
+            
+            if (role === "admin") {
+                usernameInput.value = "1";
+                usernameInput.placeholder = "ID Admin";
+            } else {
+                usernameInput.value = "";
+                usernameInput.placeholder = "Username Customer";
+            }
+        }
 
-if(role==""){
-alert("Pilih Admin atau Customer!");
-return;
-}
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const role = document.getElementById("user-role").value;
+            const pass = document.getElementById("password").value;
+            const errorMsg = document.getElementById("error-message");
 
-if(username==""){
-alert("Username wajib diisi!");
-return;
-}
+            errorMsg.style.display = "none";
 
-if(password==""){
-alert("Password wajib diisi!");
-return;
-}
-
-// Simpan data login (opsional)
-localStorage.setItem("username", username);
-localStorage.setItem("role", role);
-
-// Langsung masuk sesuai pilihan
-if(role=="admin"){
-location.href="admin.html";
-}else{
-location.href="customer.html";
-}
-
-}
-</script>
-
-</div>
-
+            if (role === "admin") {
+                // Password default admin
+                if (pass === "admin123" || pass === "1") {
+                    localStorage.setItem('toko_admin_logged', 'true');
+                    window.location.href = "admin.html"; // Redirect ke halaman dashboard admin
+                } else {
+                    errorMsg.innerText = "Password Admin Salah! (Gunakan: admin123)";
+                    errorMsg.style.display = "block";
+                }
+            } else {
+                // Login Customer
+                localStorage.setItem('toko_customer_logged', 'true');
+                window.location.href = "store.html"; // Redirect ke toko customer
+            }
+        }
+    </script>
 </body>
 </html>

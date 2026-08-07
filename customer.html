@@ -79,6 +79,11 @@
         .thumb-gallery img { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; cursor: pointer; flex-shrink: 0; }
         .thumb-gallery img.active { border-color: #f97316; border-width: 2px; }
 
+        .form-group { margin-bottom: 12px; text-align: left; }
+        .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #4b5563; text-transform: uppercase; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; outline: none; }
+        .form-group textarea { resize: vertical; height: 60px; }
+
         .btn-primary { background: #f97316; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 11px; width: 100%; }
         .btn-primary:hover { background: #ea580c; }
 
@@ -148,12 +153,39 @@
     <div class="modal-overlay" id="cart-modal">
         <div class="modal-content">
             <button class="close-modal" onclick="closeModal('cart-modal')">&times;</button>
-            <h3 style="margin-bottom: 15px; font-size: 15px;">Tas Belanja Anda</h3>
-            <div id="cart-items-container"></div>
-            <div style="margin-top: 15px; border-top: 1px solid #e5e7eb; padding-top: 12px; display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 12px;">Total: <span id="cart-total-price" style="color: #ea580c; font-weight: bold;">Rp 0</span></span>
-                <button class="btn-primary" style="width: auto; padding: 8px 16px;" onclick="processCheckout()">Checkout</button>
+            <h3 style="margin-bottom: 12px; font-size: 15px;">Tas Belanja & Checkout</h3>
+            
+            <div id="cart-items-container" style="max-height: 140px; overflow-y: auto; margin-bottom: 10px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;"></div>
+            
+            <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 12px; font-weight: bold;">Total Belanja:</span>
+                <span id="cart-total-price" style="color: #ea580c; font-weight: bold; font-size: 14px;">Rp 0</span>
             </div>
+
+            <form id="checkout-form" onsubmit="processCheckout(event)">
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="buyer-name" required placeholder="Masukkan nama penerima...">
+                </div>
+                <div class="form-group">
+                    <label>Nomor HP / WhatsApp</label>
+                    <input type="tel" id="buyer-phone" required placeholder="Contoh: 08123456789">
+                </div>
+                <div class="form-group">
+                    <label>Alamat Pengiriman Lengkap</label>
+                    <textarea id="buyer-address" required placeholder="Jalan, RT/RW, Kecamatan, Kota..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Metode Pembayaran</label>
+                    <select id="buyer-payment" required>
+                        <option value="">-- Pilih Metode Pembayaran --</option>
+                        <option value="Transfer Bank (BCA/Mandiri)">Transfer Bank (BCA / Mandiri)</option>
+                        <option value="E-Wallet (Dana / OVO / GoPay)">E-Wallet (Dana / OVO / GoPay)</option>
+                        <option value="COD (Bayar di Tempat)">COD (Bayar di Tempat)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Kirim Pesanan Sekarang</button>
+            </form>
         </div>
     </div>
 
@@ -290,14 +322,14 @@
             container.innerHTML = "";
             let total = 0;
             if(cart.length === 0) {
-                container.innerHTML = "<p style='text-align:center; color:#6b7280; padding:15px;'>Tas belanja kosong.</p>";
+                container.innerHTML = "<p style='text-align:center; color:#6b7280; padding:10px;'>Tas belanja kosong.</p>";
             } else {
                 cart.forEach((item, idx) => {
                     total += item.price;
                     container.innerHTML += `
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:8px;">
-                            <div><b>${item.name}</b><br><small style="color:#ea580c;">Rp ${item.price.toLocaleString('id-ID')}</small></div>
-                            <button onclick="removeFromCart(${idx})" style="background:#ef4444; color:#fff; border:none; padding:2px 6px; border-radius:4px; font-size:10px; cursor:pointer;">Hapus</button>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:11px;">
+                            <div><b>${item.name}</b> - <span style="color:#ea580c;">Rp ${item.price.toLocaleString('id-ID')}</span></div>
+                            <button onclick="removeFromCart(${idx})" style="background:#ef4444; color:#fff; border:none; padding:2px 5px; border-radius:4px; font-size:10px; cursor:pointer;">Hapus</button>
                         </div>
                     `;
                 });
@@ -314,12 +346,18 @@
             updateCartBadge();
         }
 
-        function processCheckout() {
+        function processCheckout(event) {
+            event.preventDefault();
             let cart = getCart();
             if (cart.length === 0) {
                 alert("Tas belanjaan kamu masih kosong!");
                 return;
             }
+
+            const name = document.getElementById("buyer-name").value;
+            const phone = document.getElementById("buyer-phone").value;
+            const address = document.getElementById("buyer-address").value;
+            const payment = document.getElementById("buyer-payment").value;
 
             let products = getProducts();
             let orders = JSON.parse(localStorage.getItem('toko_orders')) || [];
@@ -338,6 +376,7 @@
             let newOrder = {
                 orderId: 'UCEN-' + Date.now().toString().slice(-5),
                 date: new Date().toLocaleString('id-ID'),
+                buyer: { name, phone, address, payment },
                 items: cart,
                 total: totalAmount,
                 status: 'Pending'
@@ -349,9 +388,10 @@
             saveCart([]);
             updateCartBadge();
             closeModal('cart-modal');
+            document.getElementById("checkout-form").reset();
             renderProducts();
 
-            alert(`🎉 Pesanan Berhasil!\nNomor Pesanan: ${newOrder.orderId}\nTotal: Rp ${totalAmount.toLocaleString('id-ID')}\nPesanan telah otomatis diteruskan ke Admin!`);
+            alert(`🎉 Pesanan Berhasil!\nNomor Pesanan: ${newOrder.orderId}\nTotal: Rp ${totalAmount.toLocaleString('id-ID')}\nPesanan atas nama ${name} telah dikirim ke Admin!`);
         }
 
         function searchProducts() {

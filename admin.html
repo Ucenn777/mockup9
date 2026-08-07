@@ -61,31 +61,23 @@
         table th { background: #f1f5f9; font-weight: bold; color: #475569; }
 
         .status-select {
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            border: 1px solid #cbd5e1;
-            cursor: pointer;
-            outline: none;
+            padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid #cbd5e1; cursor: pointer; outline: none;
         }
         .status-pending { background-color: #fef3c7; color: #d97706; border-color: #fcd34d; }
         .status-proses { background-color: #e0f2fe; color: #0369a1; border-color: #7dd3fc; }
         .status-kirim { background-color: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
         .status-selesai { background-color: #dcfce7; color: #15803d; border-color: #86efac; }
 
-        .btn-add-stock {
-            background-color: #10b981;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-left: 6px;
+        .btn-edit { background-color: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; margin-right: 4px; }
+        .btn-edit:hover { background-color: #d97706; }
+        .btn-del { background-color: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .btn-del:hover { background-color: #dc2626; }
+
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); 
+            display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px;
         }
-        .btn-add-stock:hover { background-color: #059669; }
+        .modal-content { background: #fff; border-radius: 10px; max-width: 450px; width: 100%; padding: 20px; position: relative; }
 
         @media (max-width: 768px) {
             .admin-dashboard-wrapper { flex-direction: column; }
@@ -127,10 +119,10 @@
 
             <div class="sidebar-menu">
                 <button class="sidebar-btn active" onclick="switchTab('dashboard', this)">📊 Dashboard</button>
-                <button class="sidebar-btn" onclick="switchTab('orders', this)">🛍️ Pesanan Masuk (<span id="order-count">0</span>)</button>
+                <button class="sidebar-btn" onclick="switchTab('orders', this)">🛍️ Pesanan (<span id="order-count">0</span>)</button>
                 <button class="sidebar-btn" onclick="switchTab('input', this)">➕ Input Barang</button>
                 <button class="sidebar-btn" onclick="switchTab('view', this)">📦 Kelola Stok</button>
-                <button onclick="resetDataProdukAdmin()" class="sidebar-btn" style="color: #f97316;">🔄 Refresh Produk</button>
+                <button onclick="resetDataProdukAdmin()" class="sidebar-btn" style="color: #f97316;">🔄 Refresh</button>
                 <button onclick="adminLogout()" class="sidebar-btn" style="color: #ef4444;">🚪 Logout</button>
             </div>
         </div>
@@ -169,7 +161,7 @@
                                 <th>Waktu</th>
                                 <th>Barang Dibeli</th>
                                 <th>Total Bayar</th>
-                                <th>Status Pesanan</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -182,7 +174,7 @@
                 <form id="add-product-form" onsubmit="handleAddNewProduct(event)" style="max-width: 600px; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
                     <div class="form-group">
                         <label>Nama Barang</label>
-                        <input type="text" id="new-name" required placeholder="Contoh: Power Bank 20.000mAh">
+                        <input type="text" id="new-name" required placeholder="Contoh: Power Bank">
                     </div>
                     <div class="form-group">
                         <label>Harga (Rp)</label>
@@ -208,7 +200,7 @@
                                 <th>Foto</th>
                                 <th>Nama Barang</th>
                                 <th>Harga</th>
-                                <th>Sisa Stok & Tambah</th>
+                                <th>Stok</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -216,6 +208,35 @@
                     </table>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px; font-size: 15px; color: #1c1917;">Edit Produk</h3>
+            <form onsubmit="saveEditedProduct(event)">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label>Nama Barang</label>
+                    <input type="text" id="edit-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Harga (Rp)</label>
+                    <input type="number" id="edit-price" required>
+                </div>
+                <div class="form-group">
+                    <label>Stok</label>
+                    <input type="number" id="edit-stock" required>
+                </div>
+                <div class="form-group">
+                    <label>Ganti Foto Baru (Opsional)</label>
+                    <input type="file" id="edit-img-file" accept="image/*">
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 15px;">
+                    <button type="button" onclick="closeEditModal()" style="flex:1; background:#cbd5e1; border:none; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer;">Batal</button>
+                    <button type="submit" class="btn-primary" style="flex:1;">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -306,7 +327,7 @@
             let orders = getOrders();
 
             if (orders.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding: 20px;'>Belum ada pesanan masuk dari customer.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding: 20px;'>Belum ada pesanan masuk.</td></tr>";
                 return;
             }
 
@@ -327,12 +348,12 @@
                         <td>
                             <select class="status-select ${statusClass}" onchange="changeOrderStatus(${index}, this.value)">
                                 <option value="Pending" ${currentStatus==='Pending'?'selected':''}>⏳ Pending</option>
-                                <option value="Sedang Diproses" ${currentStatus==='Sedang Diproses'?'selected':''}>⚙️ Sedang Diproses</option>
-                                <option value="Sedang Dikirim" ${currentStatus==='Sedang Dikirim'?'selected':''}>🚚 Sedang Dikirim</option>
+                                <option value="Sedang Diproses" ${currentStatus==='Sedang Diproses'?'selected':''}>⚙️ Proses</option>
+                                <option value="Sedang Dikirim" ${currentStatus==='Sedang Dikirim'?'selected':''}>🚚 Kirim</option>
                                 <option value="Selesai" ${currentStatus==='Selesai'?'selected':''}>✅ Selesai</option>
                             </select>
                         </td>
-                        <td><button onclick="deleteOrder(${index})" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Hapus</button></td>
+                        <td><button onclick="deleteOrder(${index})" class="btn-del">Hapus</button></td>
                     </tr>
                 `;
             });
@@ -370,26 +391,64 @@
                         <td><img src="${mainImg}" style="width:40px; height:40px; object-fit:cover; border-radius:6px;" onerror="this.src='${FALLBACK_PB_IMG}'"></td>
                         <td><b>${p.name}</b></td>
                         <td>Rp ${p.price.toLocaleString('id-ID')}</td>
+                        <td><b>${p.stock} pcs</b></td>
                         <td>
-                            <b>${p.stock} pcs</b> 
-                            <button class="btn-add-stock" onclick="addStockPrompt(${p.id})">(+ Tambah)</button>
+                            <button class="btn-edit" onclick="openEditModal(${p.id})">Edit</button>
+                            <button class="btn-del" onclick="deleteProduct(${p.id})">Hapus</button>
                         </td>
-                        <td><button onclick="deleteProduct(${p.id})" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Hapus</button></td>
                     </tr>
                 `;
             });
         }
 
-        function addStockPrompt(id) {
+        function openEditModal(id) {
             let prods = getProducts();
-            let prod = prods.find(p => p.id === id);
-            if(prod) {
-                let addQty = prompt(`Tambah stok untuk "${prod.name}":\n(Masukkan jumlah unit yang ingin ditambahkan)`, "5");
-                if(addQty !== null && !isNaN(addQty) && parseInt(addQty) > 0) {
-                    prod.stock += parseInt(addQty);
+            let p = prods.find(item => item.id === id);
+            if(p) {
+                document.getElementById("edit-id").value = p.id;
+                document.getElementById("edit-name").value = p.name;
+                document.getElementById("edit-price").value = p.price;
+                document.getElementById("edit-stock").value = p.stock;
+                document.getElementById("edit-img-file").value = "";
+                document.getElementById("edit-modal").style.display = "flex";
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById("edit-modal").style.display = "none";
+        }
+
+        function saveEditedProduct(e) {
+            e.preventDefault();
+            let id = parseInt(document.getElementById("edit-id").value);
+            let name = document.getElementById("edit-name").value;
+            let price = parseInt(document.getElementById("edit-price").value);
+            let stock = parseInt(document.getElementById("edit-stock").value);
+            let fileInput = document.getElementById("edit-img-file");
+
+            let prods = getProducts();
+            let p = prods.find(item => item.id === id);
+
+            if(p) {
+                p.name = name;
+                p.price = price;
+                p.stock = stock;
+
+                if(fileInput.files.length > 0) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        p.images = [event.target.result];
+                        saveProducts(prods);
+                        closeEditModal();
+                        renderAdminProductTable();
+                        alert("✨ Produk berhasil diperbarui dengan foto baru!");
+                    };
+                    reader.readAsDataURL(fileInput.files[0]);
+                } else {
                     saveProducts(prods);
+                    closeEditModal();
                     renderAdminProductTable();
-                    alert(`✅ Stok ${prod.name} berhasil ditambahkan! Stok saat ini: ${prod.stock} pcs`);
+                    alert("✨ Produk berhasil diperbarui!");
                 }
             }
         }

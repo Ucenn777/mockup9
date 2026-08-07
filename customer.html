@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toko Fadli Jaya - Exclusive Store</title>
+    <title>Toko Ucen - Exclusive Store</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #f8f9fa; color: #222; overflow-x: hidden; animation: fadeInBody 0.5s ease; }
@@ -128,8 +128,12 @@
 
         .detail-flex { display: flex; gap: 15px; flex-direction: column; }
         @media(min-width: 576px) { .detail-flex { flex-direction: row; } }
-        .detail-img { width: 100%; max-width: 200px; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb; margin: 0 auto; }
-        
+        .detail-img-area { width: 100%; max-width: 200px; margin: 0 auto; }
+        .detail-img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb; }
+        .thumb-gallery { display: flex; gap: 4px; margin-top: 6px; overflow-x: auto; }
+        .thumb-gallery img { width: 38px; height: 38px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; cursor: pointer; }
+        .thumb-gallery img.active { border-color: #b8972e; border-width: 2px; }
+
         .color-chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0; }
         .color-chip { padding: 4px 10px; border: 1px solid #d1d5db; border-radius: 20px; font-size: 10px; cursor: pointer; background: #f9fafb; transition: all 0.2s; }
         .color-chip.active { border-color: #b8972e; color: #fff; background: #b8972e; font-weight: bold; transform: scale(1.05); }
@@ -161,12 +165,12 @@
 
     <div class="marquee-container">
         <marquee behavior="scroll" direction="left" scrollamount="5">
-            ✦ SELAMAT DATANG DI TOKO FADLI JAYA ✦ PUSAT BELANJA ONLINE TERPERCAYA DENGAN KOLEKSI TERBAIK DAN BERKUALITAS ✦
+            ✦ SELAMAT DATANG DI TOKO UCEN ✦ PUSAT BELANJA ONLINE TERPERCAYA DENGAN KOLEKSI TERBAIK DAN BERKUALITAS ✦
         </marquee>
     </div>
 
     <header>
-        <div class="logo" onclick="location.reload()">Toko Fadli Jaya</div>
+        <div class="logo" onclick="location.reload()">Toko Ucen</div>
         <div class="search-bar">
             <input type="text" id="search-input" placeholder="Cari nama barang..." oninput="searchProducts()">
             <button class="search-btn" onclick="searchProducts()">Cari</button>
@@ -179,23 +183,25 @@
 
     <section class="hero">
         <h1>Koleksi Pilihan Terbaik</h1>
-        <p>Temukan berbagai produk berkualitas tinggi dengan penawaran harga terbaik.</p>
+        <p>Temukan berbagai produk berkualitas tinggi dengan penawaran harga terbaik di Toko Ucen.</p>
     </section>
 
     <main class="container">
         <div class="section-title">
-            <span>Katalog Produk</span>
+            <span>Katalog Produk Toko Ucen</span>
             <span id="search-info" style="font-size: 10px; color: #6b7280; font-weight: normal;"></span>
         </div>
         <div class="product-grid" id="product-grid"></div>
     </main>
 
-    <!-- MODAL DETAIL BARANG -->
     <div class="modal-overlay" id="product-detail-modal">
         <div class="modal-content">
             <button class="close-modal" onclick="closeModal('product-detail-modal')">&times;</button>
             <div class="detail-flex">
-                <img id="detail-img" src="" alt="Produk" class="detail-img" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80'">
+                <div class="detail-img-area">
+                    <img id="detail-img" src="" alt="Produk" class="detail-img" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80'">
+                    <div id="thumb-gallery-container" class="thumb-gallery"></div>
+                </div>
                 <div style="flex: 1;">
                     <h3 id="detail-name" style="font-size: 14px; font-weight: 500; margin-bottom: 4px;"></h3>
                     <div id="detail-price" style="font-size: 13px; font-weight: 600; color: #b8972e; margin-bottom: 6px;"></div>
@@ -228,7 +234,6 @@
         </div>
     </div>
 
-    <!-- MODAL KERANJANG -->
     <div class="modal-overlay" id="cart-modal">
         <div class="modal-content">
             <button class="close-modal" onclick="closeModal('cart-modal')">&times;</button>
@@ -241,7 +246,6 @@
         </div>
     </div>
 
-    <!-- MODAL CHECKOUT -->
     <div class="modal-overlay" id="checkout-modal">
         <div class="modal-content" style="max-width: 420px;">
             <button class="close-modal" onclick="closeModal('checkout-modal')">&times;</button>
@@ -264,7 +268,7 @@
         </div>
     </div>
 
-    <footer>&copy; 2026 Toko Fadli Jaya.</footer>
+    <footer>&copy; 2026 Toko Ucen. All Rights Reserved.</footer>
 
     <script>
         if (!localStorage.getItem('toko_cart')) localStorage.setItem('toko_cart', JSON.stringify([]));
@@ -273,7 +277,6 @@
         let selectedColor = "";
         let currentQty = 1;
 
-        // Efek suara notifikasi pesanan masuk ke keranjang (cash register bell / chime)
         const orderAddedSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
         orderAddedSound.volume = 0.6;
 
@@ -286,7 +289,7 @@
 
         function playOrderAddedSound() {
             orderAddedSound.currentTime = 0;
-            orderAddedSound.play().catch(e => console.log("Audio diizinkan setelah interaksi pengguna"));
+            orderAddedSound.play().catch(e => console.log("Audio ready"));
         }
 
         function showToast(message) {
@@ -301,14 +304,15 @@
             const grid = document.getElementById("product-grid");
             grid.innerHTML = "";
             if (products.length === 0) {
-                grid.innerHTML = "<p style='grid-column: span 4; text-align: center; color: #6b7280; padding: 30px; font-size: 11px;'>Produk tidak ditemukan.</p>";
+                grid.innerHTML = "<p style='grid-column: span 4; text-align: center; color: #6b7280; padding: 30px; font-size: 11px;'>Produk belum tersedia di Toko Ucen.</p>";
                 return;
             }
             products.forEach(p => {
+                const displayImg = p.img || (p.images && p.images[0]) || '';
                 grid.innerHTML += `
                     <div class="product-card" id="card-${p.id}" onclick="handleCardClick(this, ${p.id})">
                         <div>
-                            <div class="product-img-wrap"><img src="${p.img}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80'"></div>
+                            <div class="product-img-wrap"><img src="${displayImg}" class="product-img" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80'"></div>
                             <div class="product-name">${p.name}</div>
                             <div class="product-price">Rp ${p.price.toLocaleString('id-ID')}</div>
                         </div>
@@ -350,11 +354,24 @@
             currentActiveProduct = getProducts().find(p => p.id === id);
             if (!currentActiveProduct) return;
             
-            document.getElementById("detail-img").src = currentActiveProduct.img;
+            const allImgs = currentActiveProduct.images && currentActiveProduct.images.length > 0 
+                ? currentActiveProduct.images 
+                : [currentActiveProduct.img];
+
+            document.getElementById("detail-img").src = allImgs[0];
             document.getElementById("detail-name").innerText = currentActiveProduct.name;
             document.getElementById("detail-price").innerText = "Rp " + currentActiveProduct.price.toLocaleString('id-ID');
             document.getElementById("detail-stock").innerText = "Stok Tersedia: " + currentActiveProduct.stock;
             
+            // GALERI FOTO KECIL
+            const thumbContainer = document.getElementById("thumb-gallery-container");
+            thumbContainer.innerHTML = "";
+            if(allImgs.length > 1) {
+                allImgs.forEach((imgSrc, idx) => {
+                    thumbContainer.innerHTML += `<img src="${imgSrc}" class="${idx===0?'active':''}" onclick="changeMainImg(this, '${imgSrc}')">`;
+                });
+            }
+
             currentQty = 1;
             document.getElementById("detail-qty").innerText = currentQty;
 
@@ -369,6 +386,12 @@
 
             renderComments();
             openModal('product-detail-modal');
+        }
+
+        function changeMainImg(el, src) {
+            document.querySelectorAll('.thumb-gallery img').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById("detail-img").src = src;
         }
 
         function selectColor(el, col) {
@@ -419,7 +442,7 @@
             let p = getProducts().find(item => item.id === id);
             if (p) {
                 if(p.stock <= 0) { alert("Stok habis!"); return; }
-                playOrderAddedSound(); // Putar suara pesanan masuk keranjang
+                playOrderAddedSound();
                 addToCartData(p, p.colors ? p.colors[0] : 'Default', 1);
                 showToast(`✨ Pesanan ${p.name} masuk ke keranjang!`);
             }
@@ -429,7 +452,7 @@
             let p = getProducts().find(item => item.id === id);
             if (p) {
                 if(p.stock <= 0) { alert("Stok habis!"); return; }
-                playOrderAddedSound(); // Putar suara pesanan masuk keranjang
+                playOrderAddedSound();
                 addToCartData(p, p.colors ? p.colors[0] : 'Default', 1);
                 openCheckoutForm();
             }
@@ -438,7 +461,7 @@
         function addCurrentProductToCart() {
             if (!currentActiveProduct) return;
             if(currentActiveProduct.stock <= 0) { alert("Stok habis!"); return; }
-            playOrderAddedSound(); // Putar suara pesanan masuk keranjang
+            playOrderAddedSound();
             addToCartData(currentActiveProduct, selectedColor, currentQty);
             closeModal('product-detail-modal');
             showToast(`✨ Pesanan ${currentActiveProduct.name} masuk ke keranjang!`);
@@ -446,9 +469,10 @@
 
         function addToCartData(prod, color, qty) {
             let cart = getCart();
+            let mainImg = prod.img || (prod.images && prod.images[0]) || '';
             let exist = cart.find(i => i.id === prod.id && i.color === color);
             if (exist) { exist.qty += qty; } 
-            else { cart.push({ id: prod.id, name: prod.name, price: prod.price, img: prod.img, color: color, qty: qty, checked: true }); }
+            else { cart.push({ id: prod.id, name: prod.name, price: prod.price, img: mainImg, color: color, qty: qty, checked: true }); }
             saveCart(cart);
             updateCartBadge();
         }
@@ -522,7 +546,7 @@
             let cart = getCart();
             let selected = cart.filter(i => i.checked);
             let subtotal = selected.reduce((s, i) => s + (i.price * i.qty), 0);
-            let orderId = "FADLI-" + Math.floor(100000 + Math.random() * 900000);
+            let orderId = "UCEN-" + Math.floor(100000 + Math.random() * 900000);
             let summary = selected.map(i => `${i.name} (${i.color}) x${i.qty}`).join(", ");
 
             let sales = JSON.parse(localStorage.getItem('toko_sales')) || [];
@@ -544,7 +568,7 @@
             updateCartBadge();
             closeModal('checkout-modal');
             
-            alert("Pesanan berhasil dikirim ke Admin!");
+            alert("Pesanan berhasil dikirim ke Admin Toko Ucen!");
             renderProducts();
         }
     </script>

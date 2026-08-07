@@ -3,529 +3,318 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOKO UCEN JAYA - Admin Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Dashboard Admin - TOKO UCEN JAYA</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { width: 100%; min-height: 100vh; background-color: #f8fafc; color: #333; }
+        body { display: flex; height: 100vh; background-color: #f3f4f6; overflow: hidden; }
+
+        /* Sidebar */
+        .sidebar { width: 250px; background: #1f2937; color: #fff; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
+        .sidebar-top h2 { font-size: 16px; margin-bottom: 5px; color: #f97316; letter-spacing: 1px; }
+        .sidebar-top p { font-size: 11px; color: #9ca3af; margin-bottom: 30px; }
         
-        #login-wrapper { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1c1917; 
-            display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px;
+        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .nav-links li a { 
+            color: #d1d5db; text-decoration: none; font-size: 13px; padding: 10px 14px; 
+            border-radius: 6px; display: block; transition: 0.2s; 
         }
-        .login-box { background: #fff; padding: 30px; border-radius: 12px; width: 100%; max-width: 380px; text-align: center; }
+        .nav-links li a:hover, .nav-links li a.active { background: #f97316; color: #fff; font-weight: bold; }
 
-        .admin-dashboard-wrapper { display: flex; width: 100%; min-height: 100vh; }
-
-        .admin-sidebar { 
-            width: 250px; background: #1c1917; color: #fff; padding: 20px 15px; 
-            display: flex; flex-direction: column; flex-shrink: 0; 
+        .sidebar-bottom a { 
+            color: #ef4444; text-decoration: none; font-size: 13px; padding: 10px 14px; 
+            border-radius: 6px; display: block; background: rgba(239, 68, 68, 0.1); text-align: center; font-weight: bold;
         }
+        .sidebar-bottom a:hover { background: #ef4444; color: #fff; }
+
+        /* Main Content */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 25px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .header-top h1 { font-size: 18px; color: #111; }
+
+        .card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .card-title { font-size: 14px; font-weight: bold; margin-bottom: 15px; color: #374151; text-transform: uppercase; }
+
+        /* Tabel */
+        table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+        th, td { padding: 12px 10px; border-bottom: 1px solid #e5e7eb; }
+        th { background: #f9fafb; font-weight: bold; color: #4b5563; text-transform: uppercase; font-size: 11px; }
+
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; display: inline-block; }
+        .badge-pending { background: #fef3c7; color: #d97706; }
+        .badge-shipping { background: #e0f2fe; color: #0284c7; }
+        .badge-completed { background: #d1fae5; color: #059669; }
+
+        /* Tombol Aksi Admin */
+        .btn-action { padding: 5px 10px; border: none; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; color: #fff; margin-right: 4px; }
+        .btn-ship { background: #0ea5e9; }
+        .btn-ship:hover { background: #0284c7; }
+        .btn-done { background: #10b981; }
+        .btn-done:hover { background: #059669; }
+        .btn-del { background: #ef4444; }
+        .btn-del:hover { background: #dc2626; }
+
+        /* Filter Pesanan */
+        .filter-container { display: flex; gap: 8px; margin-bottom: 15px; }
+        .filter-btn { padding: 6px 12px; border: 1px solid #d1d5db; background: #fff; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; color: #4b5563; }
+        .filter-btn.active { background: #f97316; color: #fff; border-color: #f97316; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #4b5563; text-transform: uppercase; }
+        .form-group input { width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; outline: none; }
         
-        .admin-profile-area { text-align: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
-        .admin-avatar { width: 45px; height: 45px; border-radius: 50%; background: #f97316; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; margin: 0 auto 8px auto; }
-        .admin-name { font-size: 13px; font-weight: bold; }
-
-        .sidebar-menu { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-        
-        .sidebar-btn {
-            background: transparent; border: none; color: #a8a29e; padding: 12px 15px; text-align: left;
-            border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s;
-        }
-        .sidebar-btn:hover, .sidebar-btn.active { background: #f97316; color: #fff; }
-
-        .admin-main-content { flex: 1; padding: 25px; background: #f8fafc; overflow-y: auto; }
-
-        .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; }
-        .top-header h2 { font-size: 16px; font-weight: bold; color: #1c1917; text-transform: uppercase; }
-
-        .dashboard-split-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-
-        .dash-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); border-left: 4px solid #f97316; }
-        .dash-card-title { font-size: 11px; font-weight: bold; color: #64748b; text-transform: uppercase; margin-bottom: 6px; }
-        .dash-card-value { font-size: 20px; font-weight: bold; color: #1c1917; }
-
-        .widget-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-        .widget-title { font-size: 12px; font-weight: bold; color: #1c1917; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
-
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 5px; color: #475569; text-transform: uppercase; }
-        .form-group input { width: 100%; padding: 10px; background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; outline: none; }
-
-        .btn-primary { background: #f97316; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; text-transform: uppercase; }
+        .btn-primary { background: #f97316; color: #fff; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 11px; text-transform: uppercase; }
         .btn-primary:hover { background: #ea580c; }
-
-        .table-wrap { width: 100%; overflow-x: auto; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 600px; }
-        table th, table td { border-bottom: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; vertical-align: middle; }
-        table th { background: #f1f5f9; font-weight: bold; color: #475569; }
-
-        .status-select {
-            padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid #cbd5e1; cursor: pointer; outline: none;
-        }
-        .status-pending { background-color: #fef3c7; color: #d97706; border-color: #fcd34d; }
-        .status-proses { background-color: #e0f2fe; color: #0369a1; border-color: #7dd3fc; }
-        .status-kirim { background-color: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
-        .status-selesai { background-color: #dcfce7; color: #15803d; border-color: #86efac; }
-
-        .btn-edit { background-color: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; margin-right: 4px; }
-        .btn-edit:hover { background-color: #d97706; }
-        .btn-del { background-color: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; }
-        .btn-del:hover { background-color: #dc2626; }
-
-        .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); 
-            display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px;
-        }
-        .modal-content { background: #fff; border-radius: 10px; max-width: 450px; width: 100%; padding: 20px; position: relative; }
-
-        @media (max-width: 768px) {
-            .admin-dashboard-wrapper { flex-direction: column; }
-            .admin-sidebar { width: 100%; height: auto; padding: 15px; }
-            .sidebar-menu { flex-direction: row; flex-wrap: wrap; justify-content: space-between; }
-            .sidebar-btn { flex: 1; text-align: center; padding: 8px 5px; font-size: 11px; white-space: nowrap; }
-            .admin-main-content { padding: 15px; }
-            .admin-profile-area { display: flex; align-items: center; gap: 10px; text-align: left; margin-bottom: 10px; padding-bottom: 10px; }
-            .admin-avatar { margin: 0; width: 35px; height: 35px; font-size: 14px; }
-        }
     </style>
 </head>
 <body>
 
-    <div id="login-wrapper">
-        <div class="login-box">
-            <h2 style="color: #ea580c; margin-bottom: 10px;">🔒 TOKO UCEN JAYA</h2>
-            <p style="font-size: 12px; color: #64748b; margin-bottom: 15px;">Password Admin: <b>admin123</b></p>
-            <form onsubmit="handleAdminLogin(event)">
-                <div class="form-group">
-                    <input type="password" id="admin-password" required placeholder="Masukkan Password...">
-                </div>
-                <button type="submit" class="btn-primary" style="width: 100%;">MASUK DASBOR</button>
-            </form>
+    <div class="sidebar">
+        <div class="sidebar-top">
+            <h2>TOKO UCEN JAYA</h2>
+            <p>Admin Panel</p>
+            <ul class="nav-links">
+                <li><a href="#" onclick="switchTab('dashboard', event)" class="active" id="nav-dashboard">📊 Dashboard / Stok</a></li>
+                <li><a href="#" onclick="switchTab('orders', event)" id="nav-orders">📦 Pesanan Masuk</a></li>
+                <li><a href="#" onclick="switchTab('add', event)" id="nav-add">➕ Tambah Produk</a></li>
+            </ul>
+        </div>
+        <div class="sidebar-bottom">
+            <a href="index.html">🚪 Keluar (Logout)</a>
         </div>
     </div>
 
-    <div class="admin-dashboard-wrapper" id="admin-main-panel" style="display: none;">
-        <div class="admin-sidebar">
-            <a href="customer.html" style="color:#a8a29e; text-decoration:none; font-size:11px; margin-bottom:12px; display:block;">&larr; Ke Halaman Toko</a>
+    <div class="main-content">
+        <div class="header-top">
+            <h1 id="page-title">Dashboard Stok Produk</h1>
+            <a href="customer.html" target="_blank" style="font-size: 12px; color: #f97316; text-decoration: none; font-weight: bold;">🔗 Lihat Toko Customer</a>
+        </div>
+
+        <div id="tab-dashboard" class="card">
+            <div class="card-title">Daftar Stok Barang Toko</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Foto</th>
+                        <th>Nama Barang</th>
+                        <th>Harga</th>
+                        <th>Stok</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-product-table"></tbody>
+            </table>
+        </div>
+
+        <div id="tab-orders" class="card" style="display: none;">
+            <div class="card-title">Kelola Pesanan Pelanggan</div>
             
-            <div class="admin-profile-area">
-                <div class="admin-avatar">U</div>
-                <div>
-                    <div class="admin-name">Admin Toko Ucen</div>
-                    <div style="font-size: 10px; color: #a8a29e;">Administrator</div>
-                </div>
+            <div class="filter-container">
+                <button class="filter-btn active" onclick="filterOrders('All', this)">Semua</button>
+                <button class="filter-btn" onclick="filterOrders('Pending', this)">Pending</button>
+                <button class="filter-btn" onclick="filterOrders('Sedang Dikirim', this)">Sedang Dikirim</button>
+                <button class="filter-btn" onclick="filterOrders('Selesai', this)">Selesai</button>
             </div>
 
-            <div class="sidebar-menu">
-                <button class="sidebar-btn active" onclick="switchTab('dashboard', this)">📊 Dashboard</button>
-                <button class="sidebar-btn" onclick="switchTab('orders', this)">🛍️ Pesanan (<span id="order-count">0</span>)</button>
-                <button class="sidebar-btn" onclick="switchTab('input', this)">➕ Input Barang</button>
-                <button class="sidebar-btn" onclick="switchTab('view', this)">📦 Kelola Stok</button>
-                <button onclick="resetDataProdukAdmin()" class="sidebar-btn" style="color: #f97316;">🔄 Refresh</button>
-                <button onclick="adminLogout()" class="sidebar-btn" style="color: #ef4444;">🚪 Logout</button>
-            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID / Waktu</th>
+                        <th>Pembeli & Alamat</th>
+                        <th>Barang Dibeli</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Aksi Status</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-orders-table"></tbody>
+            </table>
         </div>
 
-        <div class="admin-main-content">
-            <div class="top-header">
-                <h2 id="current-section-title">Dashboard Overview</h2>
-            </div>
-
-            <div id="tab-dashboard" class="tab-content">
-                <div class="dashboard-split-grid">
-                    <div class="dash-card">
-                        <div class="dash-card-title">Total Jenis Produk</div>
-                        <div class="dash-card-value" id="stat-total-prod">0</div>
-                    </div>
-                    <div class="dash-card" style="border-left-color: #10b981;">
-                        <div class="dash-card-title">Total Pendapatan Masuk</div>
-                        <div class="dash-card-value" id="stat-total-revenue">Rp 0</div>
-                    </div>
-                </div>
-
-                <div class="widget-box">
-                    <div class="widget-title">📈 Grafik Performa Penjualan Mingguan</div>
-                    <div style="position: relative; height: 220px; width: 100%;">
-                        <canvas id="salesChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-orders" class="tab-content" style="display: none;">
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID Pesanan</th>
-                                <th>Waktu</th>
-                                <th>Barang Dibeli</th>
-                                <th>Total Bayar</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-orders-table-body"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="tab-input" class="tab-content" style="display: none;">
-                <form id="add-product-form" onsubmit="handleAddNewProduct(event)" style="max-width: 600px; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                    <div class="form-group">
-                        <label>Nama Barang</label>
-                        <input type="text" id="new-name" required placeholder="Contoh: Power Bank">
-                    </div>
-                    <div class="form-group">
-                        <label>Harga (Rp)</label>
-                        <input type="number" id="new-price" required placeholder="Contoh: 199000">
-                    </div>
-                    <div class="form-group">
-                        <label>Upload Foto Produk</label>
-                        <input type="file" id="new-img-file" accept="image/*" multiple required>
-                    </div>
-                    <div class="form-group">
-                        <label>Stok Awal</label>
-                        <input type="number" id="new-stock" value="10" required>
-                    </div>
-                    <button type="submit" class="btn-primary" style="width: 100%;">Simpan Barang Baru</button>
-                </form>
-            </div>
-
-            <div id="tab-view" class="tab-content" style="display: none;">
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Foto</th>
-                                <th>Nama Barang</th>
-                                <th>Harga</th>
-                                <th>Stok</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="admin-product-table-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="edit-modal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 15px; font-size: 15px; color: #1c1917;">Edit Produk</h3>
-            <form onsubmit="saveEditedProduct(event)">
-                <input type="hidden" id="edit-id">
+        <div id="tab-add" class="card" style="display: none; max-width: 500px;">
+            <div class="card-title">Tambah Produk Baru</div>
+            <form onsubmit="addNewProduct(event)">
                 <div class="form-group">
-                    <label>Nama Barang</label>
-                    <input type="text" id="edit-name" required>
+                    <label>Nama Produk</label>
+                    <input type="text" id="new-name" required placeholder="Contoh: Tas Laptop">
                 </div>
                 <div class="form-group">
                     <label>Harga (Rp)</label>
-                    <input type="number" id="edit-price" required>
+                    <input type="number" id="new-price" required placeholder="Contoh: 150000">
                 </div>
                 <div class="form-group">
-                    <label>Stok</label>
-                    <input type="number" id="edit-stock" required>
+                    <label>Stok Awal</label>
+                    <input type="number" id="new-stock" required placeholder="Contoh: 10">
                 </div>
                 <div class="form-group">
-                    <label>Ganti Foto Baru (Opsional)</label>
-                    <input type="file" id="edit-img-file" accept="image/*">
+                    <label>Link Foto Produk (URL)</label>
+                    <input type="url" id="new-img" required placeholder="https://images.unsplash.com/...">
                 </div>
-                <div style="display: flex; gap: 8px; margin-top: 15px;">
-                    <button type="button" onclick="closeEditModal()" style="flex:1; background:#cbd5e1; border:none; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer;">Batal</button>
-                    <button type="submit" class="btn-primary" style="flex:1;">Simpan</button>
-                </div>
+                <button type="submit" class="btn-primary">Simpan Produk Baru</button>
             </form>
         </div>
     </div>
 
     <script>
-        const ADMIN_PASSWORD = "admin123";
-        let salesChartInstance = null;
-        const FALLBACK_PB_IMG = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300";
+        const FALLBACK_IMG = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80";
 
-        const DEFAULT_PRODUCTS = [
-            { id: 1, name: "Mouse Gaming RGB", price: 150000, stock: 6, images: ["https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=300"] },
-            { id: 2, name: "Keyboard Mechanical RGB", price: 289000, stock: 10, images: ["https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=300"] },
-            { id: 3, name: "Headset Gaming", price: 399000, stock: 8, images: ["https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=300"] },
-            { id: 4, name: "Smartphone Android", price: 3499000, stock: 4, images: ["https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300"] },
-            { id: 5, name: "Smartwatch", price: 899000, stock: 12, images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300"] },
-            { id: 6, name: "Sepatu Sneakers", price: 459000, stock: 20, images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300"] },
-            { id: 7, name: "Laptop Gaming", price: 12999000, stock: 2, images: ["https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=300"] },
-            { id: 8, name: "Power Bank 20.000mAh", price: 199000, stock: 25, images: ["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Power_bank_20000mAh.jpg/500px-Power_bank_20000mAh.jpg"] }
-        ];
+        function getProducts() {
+            return JSON.parse(localStorage.getItem('toko_products')) || [];
+        }
+        function saveProducts(p) { localStorage.setItem('toko_products', JSON.stringify(p)); }
+
+        function getOrders() {
+            return JSON.parse(localStorage.getItem('toko_orders')) || [];
+        }
+        function saveOrders(o) { localStorage.setItem('toko_orders', JSON.stringify(o)); }
 
         window.onload = function() {
-            if(!localStorage.getItem('toko_products')) {
-                localStorage.setItem('toko_products', JSON.stringify(DEFAULT_PRODUCTS));
-            }
-            if(localStorage.getItem('toko_admin_logged') === 'true') showAdminPanelDirect();
+            renderAdminProducts();
+            renderAdminOrders();
         };
 
-        function resetDataProdukAdmin() {
-            localStorage.setItem('toko_products', JSON.stringify(DEFAULT_PRODUCTS));
-            renderAdminProductTable();
-            updateDashboardStats();
-            alert("Data produk berhasil di-refresh ke katalog default!");
-        }
-
-        function handleAdminLogin(e) {
-            e.preventDefault();
-            if(document.getElementById("admin-password").value === ADMIN_PASSWORD) {
-                localStorage.setItem('toko_admin_logged', 'true');
-                showAdminPanelDirect();
-            } else {
-                alert("Password salah! (Gunakan: admin123)");
+        function switchTab(tab, event) {
+            document.querySelectorAll('.card').forEach(c => c.style.display = 'none');
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+            
+            if(tab === 'dashboard') {
+                document.getElementById('tab-dashboard').style.display = 'block';
+                document.getElementById('page-title').innerText = 'Dashboard Stok Produk';
+                renderAdminProducts();
+            } else if(tab === 'orders') {
+                document.getElementById('tab-orders').style.display = 'block';
+                document.getElementById('page-title').innerText = 'Kelola Pesanan Masuk';
+                renderAdminOrders();
+            } else if(tab === 'add') {
+                document.getElementById('tab-add').style.display = 'block';
+                document.getElementById('page-title').innerText = 'Tambah Produk Baru';
             }
+            if(event) event.target.classList.add('active');
         }
 
-        function showAdminPanelDirect() {
-            document.getElementById("login-wrapper").style.display = "none";
-            document.getElementById("admin-main-panel").style.display = "flex";
-            updateDashboardStats();
-            renderOrdersTable();
-            renderAdminProductTable();
-            initChart();
-        }
-
-        function adminLogout() {
-            localStorage.removeItem('toko_admin_logged');
-            location.reload();
-        }
-
-        function getProducts() { return JSON.parse(localStorage.getItem('toko_products')) || []; }
-        function saveProducts(prods) { localStorage.setItem('toko_products', JSON.stringify(prods)); }
-        function getOrders() { return JSON.parse(localStorage.getItem('toko_orders')) || []; }
-
-        function switchTab(tabName, btnElement) {
-            document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
-            if(btnElement) btnElement.classList.add('active');
-
-            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-            document.getElementById('tab-' + tabName).style.display = 'block';
-
-            if(tabName === 'dashboard') {
-                updateDashboardStats();
-                setTimeout(initChart, 100);
-            }
-            if(tabName === 'orders') renderOrdersTable();
-            if(tabName === 'view') renderAdminProductTable();
-        }
-
-        function updateDashboardStats() {
-            document.getElementById("stat-total-prod").innerText = getProducts().length;
-            let orders = getOrders();
-            let totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
-            document.getElementById("stat-total-revenue").innerText = "Rp " + totalRevenue.toLocaleString('id-ID');
-            document.getElementById("order-count").innerText = orders.length;
-        }
-
-        function renderOrdersTable() {
-            const tbody = document.getElementById("admin-orders-table-body");
+        function renderAdminProducts() {
+            let products = getProducts();
+            let tbody = document.getElementById("admin-product-table");
             tbody.innerHTML = "";
-            let orders = getOrders();
-
-            if (orders.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding: 20px;'>Belum ada pesanan masuk.</td></tr>";
+            if(products.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#6b7280;'>Belum ada produk.</td></tr>";
                 return;
             }
-
-            orders.forEach((o, index) => {
-                let itemsList = o.items.map(i => `• ${i.name} (Rp ${i.price.toLocaleString('id-ID')})`).join('<br>');
-                let currentStatus = o.status || 'Pending';
-                let statusClass = 'status-pending';
-                if(currentStatus === 'Sedang Diproses') statusClass = 'status-proses';
-                if(currentStatus === 'Sedang Dikirim') statusClass = 'status-kirim';
-                if(currentStatus === 'Selesai') statusClass = 'status-selesai';
-
+            products.forEach((p, idx) => {
+                let img = (p.images && p.images[0]) || p.img || FALLBACK_IMG;
                 tbody.innerHTML += `
                     <tr>
-                        <td><b>${o.orderId}</b></td>
-                        <td><small>${o.date}</small></td>
-                        <td>${itemsList}</td>
-                        <td><b style="color:#ea580c;">Rp ${o.total.toLocaleString('id-ID')}</b></td>
-                        <td>
-                            <select class="status-select ${statusClass}" onchange="changeOrderStatus(${index}, this.value)">
-                                <option value="Pending" ${currentStatus==='Pending'?'selected':''}>⏳ Pending</option>
-                                <option value="Sedang Diproses" ${currentStatus==='Sedang Diproses'?'selected':''}>⚙️ Proses</option>
-                                <option value="Sedang Dikirim" ${currentStatus==='Sedang Dikirim'?'selected':''}>🚚 Kirim</option>
-                                <option value="Selesai" ${currentStatus==='Selesai'?'selected':''}>✅ Selesai</option>
-                            </select>
-                        </td>
-                        <td><button onclick="deleteOrder(${index})" class="btn-del">Hapus</button></td>
-                    </tr>
-                `;
-            });
-        }
-
-        function changeOrderStatus(index, newStatus) {
-            let orders = getOrders();
-            orders[index].status = newStatus;
-            localStorage.setItem('toko_orders', JSON.stringify(orders));
-            renderOrdersTable();
-        }
-
-        function deleteOrder(index) {
-            if(confirm("Hapus pesanan ini?")) {
-                let orders = getOrders();
-                orders.splice(index, 1);
-                localStorage.setItem('toko_orders', JSON.stringify(orders));
-                renderOrdersTable();
-                updateDashboardStats();
-            }
-        }
-
-        function renderAdminProductTable() {
-            const tbody = document.getElementById("admin-product-table-body");
-            tbody.innerHTML = "";
-            let prods = getProducts();
-            if(prods.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; padding: 20px;'>Belum ada produk.</td></tr>";
-                return;
-            }
-            prods.forEach(p => {
-                const mainImg = (p.images && p.images[0]) || p.img || FALLBACK_PB_IMG;
-                tbody.innerHTML += `
-                    <tr>
-                        <td><img src="${mainImg}" style="width:40px; height:40px; object-fit:cover; border-radius:6px;" onerror="this.src='${FALLBACK_PB_IMG}'"></td>
+                        <td><img src="${img}" width="35" height="35" style="object-fit:cover; border-radius:4px;" onerror="this.src='${FALLBACK_IMG}'"></td>
                         <td><b>${p.name}</b></td>
                         <td>Rp ${p.price.toLocaleString('id-ID')}</td>
-                        <td><b>${p.stock} pcs</b></td>
+                        <td>${p.stock} pcs</td>
                         <td>
-                            <button class="btn-edit" onclick="openEditModal(${p.id})">Edit</button>
-                            <button class="btn-del" onclick="deleteProduct(${p.id})">Hapus</button>
+                            <button class="btn-action btn-ship" onclick="adjustStock(${idx}, 1)">+ Stk</button>
+                            <button class="btn-action btn-del" onclick="deleteProduct(${idx})">Hapus</button>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        function openEditModal(id) {
-            let prods = getProducts();
-            let p = prods.find(item => item.id === id);
-            if(p) {
-                document.getElementById("edit-id").value = p.id;
-                document.getElementById("edit-name").value = p.name;
-                document.getElementById("edit-price").value = p.price;
-                document.getElementById("edit-stock").value = p.stock;
-                document.getElementById("edit-img-file").value = "";
-                document.getElementById("edit-modal").style.display = "flex";
-            }
+        function adjustStock(idx, amount) {
+            let products = getProducts();
+            products[idx].stock += amount;
+            if(products[idx].stock < 0) products[idx].stock = 0;
+            saveProducts(products);
+            renderAdminProducts();
         }
 
-        function closeEditModal() {
-            document.getElementById("edit-modal").style.display = "none";
-        }
-
-        function saveEditedProduct(e) {
-            e.preventDefault();
-            let id = parseInt(document.getElementById("edit-id").value);
-            let name = document.getElementById("edit-name").value;
-            let price = parseInt(document.getElementById("edit-price").value);
-            let stock = parseInt(document.getElementById("edit-stock").value);
-            let fileInput = document.getElementById("edit-img-file");
-
-            let prods = getProducts();
-            let p = prods.find(item => item.id === id);
-
-            if(p) {
-                p.name = name;
-                p.price = price;
-                p.stock = stock;
-
-                if(fileInput.files.length > 0) {
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        p.images = [event.target.result];
-                        saveProducts(prods);
-                        closeEditModal();
-                        renderAdminProductTable();
-                        alert("✨ Produk berhasil diperbarui dengan foto baru!");
-                    };
-                    reader.readAsDataURL(fileInput.files[0]);
-                } else {
-                    saveProducts(prods);
-                    closeEditModal();
-                    renderAdminProductTable();
-                    alert("✨ Produk berhasil diperbarui!");
-                }
-            }
-        }
-
-        function handleAddNewProduct(e) {
-            e.preventDefault();
-            const name = document.getElementById("new-name").value;
-            const price = parseInt(document.getElementById("new-price").value);
-            const fileInput = document.getElementById("new-img-file");
-            const stock = parseInt(document.getElementById("new-stock").value);
-
-            const files = Array.from(fileInput.files);
-            if (files.length === 0) return;
-
-            let imagesArray = [];
-            let loadedCount = 0;
-
-            files.forEach((file) => {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    imagesArray.push(event.target.result);
-                    loadedCount++;
-
-                    if (loadedCount === files.length) {
-                        let prods = getProducts();
-                        prods.unshift({
-                            id: Date.now(),
-                            name: name, 
-                            price: price, 
-                            images: imagesArray,
-                            stock: stock
-                        });
-
-                        saveProducts(prods);
-                        alert(`✨ Berhasil! Produk "${name}" tersimpan.`);
-                        document.getElementById("add-product-form").reset();
-                        switchTab('view', document.querySelectorAll('.sidebar-btn')[3]);
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function deleteProduct(id) {
+        function deleteProduct(idx) {
             if(confirm("Yakin ingin menghapus produk ini?")) {
-                saveProducts(getProducts().filter(p => p.id !== id));
-                renderAdminProductTable();
-                updateDashboardStats();
+                let products = getProducts();
+                products.splice(idx, 1);
+                saveProducts(products);
+                renderAdminProducts();
             }
         }
 
-        function initChart() {
-            const ctx = document.getElementById('salesChart');
-            if(!ctx) return;
-            if(salesChartInstance) salesChartInstance.destroy();
+        function addNewProduct(event) {
+            event.preventDefault();
+            let name = document.getElementById("new-name").value;
+            let price = parseInt(document.getElementById("new-price").value);
+            let stock = parseInt(document.getElementById("new-stock").value);
+            let img = document.getElementById("new-img").value;
 
-            salesChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
-                    datasets: [{
-                        label: 'Penjualan (Rp)',
-                        data: [1500000, 2200000, 1800000, 3800000, 2900000, 4500000, 5100000],
-                        backgroundColor: '#f97316',
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
-                        x: { grid: { display: false } }
-                    }
-                }
+            let products = getProducts();
+            let newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+            
+            products.push({ id: newId, name, price, stock, images: [img] });
+            saveProducts(products);
+            alert("Produk berhasil ditambahkan!");
+            event.target.reset();
+            switchTab('dashboard');
+        }
+
+        let currentFilterStatus = 'All';
+        function filterOrders(status, btnElement) {
+            currentFilterStatus = status;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderAdminOrders();
+        }
+
+        function renderAdminOrders() {
+            let orders = getOrders();
+            let tbody = document.getElementById("admin-orders-table");
+            tbody.innerHTML = "";
+
+            let filtered = orders;
+            if(currentFilterStatus !== 'All') {
+                filtered = orders.filter(o => (o.status || 'Pending') === currentFilterStatus);
+            }
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; color:#6b7280; padding:20px;'>Belum ada data pesanan.</td></tr>";
+                return;
+            }
+
+            filtered.forEach((ord, index) => {
+                let statusBadge = 'badge-pending';
+                let currentStatus = ord.status || 'Pending';
+                if(currentStatus === 'Sedang Dikirim') statusBadge = 'badge-shipping';
+                if(currentStatus === 'Selesai') statusBadge = 'badge-completed';
+
+                let itemsList = ord.items.map(i => `• ${i.name} (Rp ${i.price.toLocaleString('id-ID')})`).join("<br>");
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${ord.orderId}</b><br><span style="font-size:10px; color:#6b7280;">${ord.date}</span></td>
+                        <td><b>${ord.buyer.name}</b> (${ord.buyer.phone})<br><span style="font-size:11px; color:#555;">${ord.buyer.address}</span><br><span style="font-size:10px; color:#0284c7;">Bayar: ${ord.buyer.payment}</span></td>
+                        <td>${itemsList}</td>
+                        <td><b>Rp ${ord.total.toLocaleString('id-ID')}</b></td>
+                        <td><span class="badge ${statusBadge}">${currentStatus}</span></td>
+                        <td>
+                            <button class="btn-action btn-ship" onclick="updateOrderStatus('${ord.orderId}', 'Sedang Dikirim')">Kirim</button>
+                            <button class="btn-action btn-done" onclick="updateOrderStatus('${ord.orderId}', 'Selesai')">Selesai</button>
+                            <button class="btn-action btn-del" onclick="deleteOrder('${ord.orderId}')">Hapus</button>
+                        </td>
+                    </tr>
+                `;
             });
+        }
+
+        function updateOrderStatus(orderId, newStatus) {
+            let orders = getOrders();
+            let ord = orders.find(o => o.orderId === orderId);
+            if(ord) {
+                ord.status = newStatus;
+                saveOrders(orders);
+                renderAdminOrders();
+            }
+        }
+
+        function deleteOrder(orderId) {
+            if(confirm("Yakin ingin menghapus riwayat pesanan ini?")) {
+                let orders = getOrders();
+                orders = orders.filter(o => o.orderId !== orderId);
+                saveOrders(orders);
+                renderAdminOrders();
+            }
         }
     </script>
 </body>

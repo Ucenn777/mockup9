@@ -7,10 +7,26 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { display: flex; height: 100vh; background-color: #f3f4f6; overflow: hidden; }
+        
+        body { 
+            display: flex; 
+            height: 100vh; 
+            background-color: #f3f4f6; 
+            overflow: hidden; 
+        }
 
-        /* Sidebar */
-        .sidebar { width: 260px; background: #1f2937; color: #fff; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
+        /* Sidebar Desktop */
+        .sidebar { 
+            width: 260px; 
+            background: #1f2937; 
+            color: #fff; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            padding: 20px; 
+            transition: 0.3s;
+            z-index: 100;
+        }
         .sidebar-top h2 { font-size: 15px; margin-bottom: 3px; color: #f97316; letter-spacing: 0.5px; }
         .sidebar-top p { font-size: 11px; color: #9ca3af; margin-bottom: 25px; }
         
@@ -27,22 +43,59 @@
         }
         .sidebar-bottom a:hover { background: #ef4444; color: #fff; }
 
+        /* Tombol Hamburger Khusus HP */
+        .mobile-header {
+            display: none;
+            background: #1f2937;
+            color: #fff;
+            padding: 12px 15px;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .hamburger-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
         /* Main Content */
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 25px; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #fff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .header-top h1 { font-size: 16px; color: #111; text-transform: uppercase; }
+        .main-content { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            overflow-y: auto; 
+            padding: 25px; 
+        }
+        
+        .header-top { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 20px; 
+            background: #fff; 
+            padding: 15px 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02); 
+        }
+        .header-top h1 { font-size: 15px; color: #111; text-transform: uppercase; }
 
         .card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .card-title { font-size: 13px; font-weight: bold; margin-bottom: 15px; color: #374151; text-transform: uppercase; border-bottom: 1px solid #f3f4f6; padding-bottom: 8px; }
 
         /* Dashboard Metrics & Chart */
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .metric-card { background: #fff; padding: 18px; border-radius: 8px; border-left: 4px solid #f97316; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .metric-title { font-size: 11px; font-weight: bold; color: #6b7280; text-transform: uppercase; margin-bottom: 6px; }
         .metric-value { font-size: 20px; font-weight: bold; color: #111827; }
 
-        /* Tabel */
-        table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; }
+        /* Tabel Responsive Container */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; min-width: 600px; }
         th, td { padding: 12px 10px; border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
         th { background: #f9fafb; font-weight: bold; color: #4b5563; text-transform: uppercase; font-size: 11px; }
 
@@ -51,12 +104,12 @@
         .badge-shipping { background: #e0f2fe; color: #0284c7; }
         .badge-completed { background: #d1fae5; color: #059669; }
 
-        /* Aksi Susun ke Bawah (Vertical Group) */
+        /* Aksi Susun ke Bawah */
         .action-container {
             display: flex;
             flex-direction: column;
             gap: 5px;
-            width: 130px;
+            width: 120px;
         }
 
         .status-select {
@@ -86,7 +139,6 @@
         }
         .btn-save-status { background: #10b981; }
         .btn-save-status:hover { background: #059669; }
-        
         .btn-edit { background: #f59e0b; }
         .btn-edit:hover { background: #d97706; }
         .btn-del { background: #ef4444; }
@@ -104,14 +156,36 @@
         .btn-primary { background: #f97316; color: #fff; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 11px; text-transform: uppercase; }
         .btn-primary:hover { background: #ea580c; }
 
-        /* Modal Edit */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 100; }
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
         .modal-box { background: #fff; padding: 20px; border-radius: 8px; width: 100%; max-width: 400px; }
+
+        /* MEDIA QUERIES UNTUK TAMPILAN HP (MOBILE) */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow: auto; height: auto; }
+            .sidebar { 
+                position: fixed; 
+                left: -260px; 
+                top: 0; 
+                bottom: 0; 
+                height: 100%; 
+                box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+            }
+            .sidebar.mobile-show { left: 0; }
+            .mobile-header { display: flex; }
+            .main-content { padding: 15px; overflow: visible; }
+            .header-top { flex-direction: column; align-items: flex-start; gap: 8px; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
+    <div class="mobile-header">
+        <h2 style="font-size: 14px; color: #f97316;">TOKO UCEN JAYA</h2>
+        <button class="hamburger-btn" onclick="toggleSidebar()">☰</button>
+    </div>
+
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-top">
             <h2>TOKO UCEN JAYA</h2>
             <p>Admin Panel</p>
@@ -152,18 +226,20 @@
 
         <div id="tab-products" class="card" style="display: none;">
             <div class="card-title">Daftar Stok & Edit Barang Toko</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Foto</th>
-                        <th>Nama Barang</th>
-                        <th>Harga</th>
-                        <th>Stok</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-product-table"></tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Foto</th>
+                            <th>Nama Barang</th>
+                            <th>Harga</th>
+                            <th>Stok</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-product-table"></tbody>
+                </table>
+            </div>
         </div>
 
         <div id="tab-orders" class="card" style="display: none;">
@@ -174,19 +250,21 @@
                 <button class="filter-btn" onclick="filterOrders('Sedang Dikirim', this)">Sedang Dikirim</button>
                 <button class="filter-btn" onclick="filterOrders('Selesai', this)">Selesai</button>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID / Waktu</th>
-                        <th>Pembeli & Kontak</th>
-                        <th>Barang Dibeli</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th>Aksi / Kelola Status</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-orders-table"></tbody>
-            </table>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID / Waktu</th>
+                            <th>Pembeli & Kontak</th>
+                            <th>Barang Dibeli</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Aksi / Kelola Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-orders-table"></tbody>
+                </table>
+            </div>
         </div>
 
         <div id="tab-add" class="card" style="display: none; max-width: 500px;">
@@ -246,14 +324,14 @@
         const FALLBACK_IMG = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80";
         let salesChart = null;
 
-        function getProducts() {
-            return JSON.parse(localStorage.getItem('toko_products')) || [];
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('mobile-show');
         }
+
+        function getProducts() { return JSON.parse(localStorage.getItem('toko_products')) || []; }
         function saveProducts(p) { localStorage.setItem('toko_products', JSON.stringify(p)); }
 
-        function getOrders() {
-            return JSON.parse(localStorage.getItem('toko_orders')) || [];
-        }
+        function getOrders() { return JSON.parse(localStorage.getItem('toko_orders')) || []; }
         function saveOrders(o) { localStorage.setItem('toko_orders', JSON.stringify(o)); }
 
         window.onload = function() {
@@ -285,6 +363,11 @@
                 document.getElementById('page-title').innerText = 'Tambah Produk Baru';
             }
             if(event) event.target.classList.add('active');
+
+            // Tutup sidebar otomatis di HP setelah menu diklik
+            if(window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('mobile-show');
+            }
         }
 
         function renderDashboardStats() {

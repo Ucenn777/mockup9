@@ -111,7 +111,7 @@
             <button class="search-btn" onclick="searchProducts()">Cari</button>
         </div>
         <div class="header-right">
-            <button class="reset-btn" onclick="resetDataProduk()" title="Klik jika gambar Power Bank tidak muncul">🔄 Refresh Data</button>
+            <button class="reset-btn" onclick="resetDataProduk()" title="Klik untuk memuat ulang data">🔄 Refresh Data</button>
             <button class="cart-btn" onclick="openCartModal()">🛒 Bag (<span id="cart-count">0</span>)</button>
             <a href="admin.html" class="admin-profile-btn">👤 Admin</a>
         </div>
@@ -160,7 +160,7 @@
     <footer>&copy; 2026 TOKO UCEN JAYA. All Rights Reserved.</footer>
 
     <script>
-        const FALLBACK_PB_IMG = "https://images.unsplash.com/photo-1609592424109-dd9892f1b177?w=500&q=80";
+        const FALLBACK_IMG = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80";
 
         const DEFAULT_PRODUCTS = [
             { id: 1, name: "Mouse Gaming RGB", price: 150000, stock: 15, images: ["https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500&q=80"] },
@@ -170,7 +170,7 @@
             { id: 5, name: "Smartwatch", price: 899000, stock: 12, images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80"] },
             { id: 6, name: "Sepatu Sneakers", price: 459000, stock: 20, images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80"] },
             { id: 7, name: "Laptop Gaming", price: 12999000, stock: 3, images: ["https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500&q=80"] },
-            { id: 8, name: "Power Bank 20.000mAh", price: 199000, stock: 25, images: [FALLBACK_PB_IMG] }
+            { id: 8, name: "Power Bank 20.000mAh", price: 199000, stock: 25, images: ["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Power_bank_20000mAh.jpg/500px-Power_bank_20000mAh.jpg"] }
         ];
 
         function getProducts() { 
@@ -189,11 +189,10 @@
         function resetDataProduk() {
             localStorage.setItem('toko_products', JSON.stringify(DEFAULT_PRODUCTS));
             renderProducts();
-            alert("Data produk berhasil diperbarui!");
+            alert("Data produk berhasil diperbarui & di-refresh!");
         }
 
         let currentActiveProduct = null;
-
         window.onload = function() { renderProducts(); updateCartBadge(); };
 
         function renderProducts(list = null) {
@@ -205,12 +204,12 @@
                 return;
             }
             products.forEach(p => {
-                let displayImg = (p.images && p.images[0]) || p.img || FALLBACK_PB_IMG;
+                let displayImg = (p.images && p.images[0]) || p.img || FALLBACK_IMG;
                 grid.innerHTML += `
                     <div class="product-card" onclick="openProductDetail(${p.id})">
                         <div>
                             <div class="product-img-wrap">
-                                <img src="${displayImg}" class="product-img" onerror="this.src='${FALLBACK_PB_IMG}'">
+                                <img src="${displayImg}" class="product-img" onerror="this.src='${FALLBACK_IMG}'">
                             </div>
                             <div class="product-name">${p.name}</div>
                             <div class="product-price">Rp ${p.price.toLocaleString('id-ID')}</div>
@@ -234,11 +233,10 @@
             
             const allImgs = (currentActiveProduct.images && currentActiveProduct.images.length > 0) 
                 ? currentActiveProduct.images 
-                : [FALLBACK_PB_IMG];
+                : [FALLBACK_IMG];
 
             const detailImg = document.getElementById("detail-img");
             detailImg.src = allImgs[0];
-            detailImg.onerror = function() { this.src = FALLBACK_PB_IMG; };
 
             document.getElementById("detail-name").innerText = currentActiveProduct.name;
             document.getElementById("detail-price").innerText = "Rp " + currentActiveProduct.price.toLocaleString('id-ID');
@@ -248,7 +246,7 @@
             thumbContainer.innerHTML = "";
             if(allImgs.length > 1) {
                 allImgs.forEach((imgSrc, idx) => {
-                    thumbContainer.innerHTML += `<img src="${imgSrc}" class="${idx===0?'active':''}" onclick="changeMainImg(this, '${imgSrc}')" onerror="this.src='${FALLBACK_PB_IMG}'">`;
+                    thumbContainer.innerHTML += `<img src="${imgSrc}" class="${idx===0?'active':''}" onclick="changeMainImg(this, '${imgSrc}')">`;
                 });
             }
             openModal('product-detail-modal');
@@ -268,7 +266,7 @@
                     return;
                 }
                 let cart = getCart();
-                cart.push({ id: p.id, name: p.name, price: p.price, img: (p.images && p.images[0]) || FALLBACK_PB_IMG });
+                cart.push({ id: p.id, name: p.name, price: p.price, img: (p.images && p.images[0]) || FALLBACK_IMG });
                 saveCart(cart);
                 updateCartBadge();
                 alert(`✨ ${p.name} ditambahkan ke tas!`);

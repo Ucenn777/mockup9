@@ -48,11 +48,6 @@
         .widget-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
         .widget-title { font-size: 12px; font-weight: bold; color: #1c1917; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
 
-        /* Filter Tab Pesanan */
-        .order-filter-bar { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .filter-tab-btn { padding: 6px 12px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; color: #475569; }
-        .filter-tab-btn.active { background: #f97316; color: #fff; border-color: #f97316; }
-
         .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 5px; color: #475569; text-transform: uppercase; }
         .form-group input { width: 100%; padding: 10px; background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12px; outline: none; }
@@ -158,25 +153,15 @@
             </div>
 
             <div id="tab-orders" class="tab-content" style="display: none;">
-                <div class="widget-box" style="padding: 15px; margin-bottom: 15px;">
-                    <div class="order-filter-bar">
-                        <button class="filter-tab-btn active" onclick="filterOrderList('All', this)">Semua Pesanan</button>
-                        <button class="filter-tab-btn" onclick="filterOrderList('Pending', this)">⏳ Pending</button>
-                        <button class="filter-tab-btn" onclick="filterOrderList('Sedang Diproses', this)">⚙️ Sedang Diproses</button>
-                        <button class="filter-tab-btn" onclick="filterOrderList('Sedang Dikirim', this)">🚚 Sedang Dikirim</button>
-                        <button class="filter-tab-btn" onclick="filterOrderList('Selesai', this)">✅ Selesai</button>
-                    </div>
-                </div>
-
                 <div class="table-wrap">
                     <table>
                         <thead>
                             <tr>
-                                <th>ID & Waktu</th>
-                                <th>Info Pembeli</th>
+                                <th>ID Pesanan</th>
+                                <th>Waktu</th>
                                 <th>Barang Dibeli</th>
                                 <th>Total Bayar</th>
-                                <th>Status Pesanan</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -258,7 +243,6 @@
     <script>
         const ADMIN_PASSWORD = "admin123";
         let salesChartInstance = null;
-        let activeOrderFilter = 'All';
         const FALLBACK_PB_IMG = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300";
 
         const DEFAULT_PRODUCTS = [
@@ -321,14 +305,6 @@
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
             document.getElementById('tab-' + tabName).style.display = 'block';
 
-            let titleMap = {
-                'dashboard': 'Dashboard Overview',
-                'orders': 'Kelola Pesanan Masuk',
-                'input': 'Tambah Barang Baru',
-                'view': 'Kelola Stok Produk'
-            };
-            document.getElementById('current-section-title').innerText = titleMap[tabName] || 'Admin Dashboard';
-
             if(tabName === 'dashboard') {
                 updateDashboardStats();
                 setTimeout(initChart, 100);
@@ -345,33 +321,18 @@
             document.getElementById("order-count").innerText = orders.length;
         }
 
-        function filterOrderList(status, btn) {
-            activeOrderFilter = status;
-            document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderOrdersTable();
-        }
-
         function renderOrdersTable() {
             const tbody = document.getElementById("admin-orders-table-body");
             tbody.innerHTML = "";
             let orders = getOrders();
 
-            if(activeOrderFilter !== 'All') {
-                orders = orders.filter(o => (o.status || 'Pending') === activeOrderFilter);
-            }
-
             if (orders.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding: 25px; color:#64748b;'>Belum ada pesanan dengan status ini.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding: 20px;'>Belum ada pesanan masuk.</td></tr>";
                 return;
             }
 
-            let allOrders = getOrders();
-            orders.forEach((o) => {
-                let realIndex = allOrders.findIndex(item => item.orderId === o.orderId);
+            orders.forEach((o, index) => {
                 let itemsList = o.items.map(i => `• ${i.name} (Rp ${i.price.toLocaleString('id-ID')})`).join('<br>');
-                let buyerInfo = o.buyer ? `<b>${o.buyer.name}</b> (${o.buyer.phone})<br><small>${o.buyer.address}</small><br><span style="color:#0284c7; font-size:10px;">Metode: ${o.buyer.payment}</span>` : 'Data pembeli manual';
-                
                 let currentStatus = o.status || 'Pending';
                 let statusClass = 'status-pending';
                 if(currentStatus === 'Sedang Diproses') statusClass = 'status-proses';
@@ -380,19 +341,19 @@
 
                 tbody.innerHTML += `
                     <tr>
-                        <td><b>${o.orderId}</b><br><small>${o.date}</small></td>
-                        <td>${buyerInfo}</td>
+                        <td><b>${o.orderId}</b></td>
+                        <td><small>${o.date}</small></td>
                         <td>${itemsList}</td>
                         <td><b style="color:#ea580c;">Rp ${o.total.toLocaleString('id-ID')}</b></td>
                         <td>
-                            <select class="status-select ${statusClass}" onchange="changeOrderStatus(${realIndex}, this.value)">
+                            <select class="status-select ${statusClass}" onchange="changeOrderStatus(${index}, this.value)">
                                 <option value="Pending" ${currentStatus==='Pending'?'selected':''}>⏳ Pending</option>
-                                <option value="Sedang Diproses" ${currentStatus==='Sedang Diproses'?'selected':''}>⚙️ Sedang Diproses</option>
-                                <option value="Sedang Dikirim" ${currentStatus==='Sedang Dikirim'?'selected':''}>🚚 Sedang Dikirim</option>
+                                <option value="Sedang Diproses" ${currentStatus==='Sedang Diproses'?'selected':''}>⚙️ Proses</option>
+                                <option value="Sedang Dikirim" ${currentStatus==='Sedang Dikirim'?'selected':''}>🚚 Kirim</option>
                                 <option value="Selesai" ${currentStatus==='Selesai'?'selected':''}>✅ Selesai</option>
                             </select>
                         </td>
-                        <td><button onclick="deleteOrder(${realIndex})" class="btn-del">Hapus</button></td>
+                        <td><button onclick="deleteOrder(${index})" class="btn-del">Hapus</button></td>
                     </tr>
                 `;
             });

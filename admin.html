@@ -7,70 +7,118 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f6f8; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 12px; }
+        
+        /* PERBAIKAN 1: Body dibuat Full Screen (100vh) */
+        body { 
+            background-color: #f4f6f8; 
+            color: #333; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-        /* Login Container */
+        /* Login Container Centered */
+        .login-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+            padding: 15px;
+        }
+
         #auth-card { 
-            max-width: 360px; width: 100%; background: #fff; padding: 28px 20px; border-radius: 8px; 
+            max-width: 380px; width: 100%; background: #fff; padding: 28px 20px; border-radius: 8px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; border-top: 4px solid #ee4d2d;
         }
         #auth-card h2 { color: #ee4d2d; margin-bottom: 6px; font-size: 20px; text-transform: uppercase; }
 
-        /* Main Dashboard Panel */
+        /* PERBAIKAN 2: Main Dashboard Mengisi Seluruh Layar Desktop */
         .admin-layout {
-            display: none; width: 100%; max-width: 1150px; background: #ffffff; 
-            border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); overflow: hidden;
-            flex-direction: column; min-height: 85vh;
+            display: none; 
+            width: 100%; 
+            min-height: 100vh; 
+            background: #ffffff; 
+            flex-direction: column;
         }
         @media (min-width: 768px) { 
-            .admin-layout { flex-direction: row; min-height: 650px; } 
+            .admin-layout { flex-direction: row; } 
         }
 
         /* Sidebar Navigation */
         .side-nav { width: 100%; background: #222; color: #fff; padding: 15px; display: flex; flex-direction: column; }
-        @media (min-width: 768px) { .side-nav { width: 230px; padding: 20px 12px; } }
+        @media (min-width: 768px) { 
+            .side-nav { width: 250px; padding: 25px 15px; flex-shrink: 0; } 
+        }
         
-        .user-badge { text-align: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
-        .user-badge .avatar { width: 42px; height: 42px; border-radius: 50%; background: #ee4d2d; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; margin: 0 auto 6px auto; }
-        .user-badge .username { font-size: 13px; font-weight: bold; }
+        .user-badge { text-align: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .user-badge .avatar { width: 48px; height: 48px; border-radius: 50%; background: #ee4d2d; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: bold; margin: 0 auto 8px auto; }
+        .user-badge .username { font-size: 14px; font-weight: bold; }
 
-        .menu-list { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
+        .menu-list { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
         @media (min-width: 768px) { .menu-list { flex-direction: column; } }
         
         .menu-item {
-            background: transparent; border: none; color: #aaa; padding: 10px 12px; text-align: left;
-            border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s;
-            flex: 1; min-width: 100px; display: flex; align-items: center; gap: 6px; text-transform: uppercase;
+            background: transparent; border: none; color: #aaa; padding: 12px 15px; text-align: left;
+            border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s;
+            flex: 1; min-width: 120px; display: flex; align-items: center; gap: 8px; text-transform: uppercase;
         }
         .menu-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
         .menu-item.active { background: #ee4d2d; color: #fff; }
 
-        /* Main Workspace */
-        .content-area { flex: 1; background: #f8f9fa; padding: 18px; overflow-y: auto; max-height: 85vh; }
-        @media (min-width: 768px) { .content-area { padding: 24px; } }
+        /* PERBAIKAN 3: Area Konten Mengisi Layar Sesuai Resolusi Monitor */
+        .content-area { 
+            flex: 1; 
+            background: #f8f9fa; 
+            padding: 20px; 
+            overflow-y: auto; 
+        }
+        @media (min-width: 768px) { .content-area { padding: 30px; } }
 
-        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .header-bar h2 { font-size: 16px; font-weight: bold; color: #222; text-transform: uppercase; }
+        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 12px; }
+        .header-bar h2 { font-size: 18px; font-weight: bold; color: #222; text-transform: uppercase; }
 
-        /* Form Inputs */
-        .form-row { margin-bottom: 12px; text-align: left; }
-        .form-row label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #555; text-transform: uppercase; }
-        .form-row input, .form-row select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 11px; outline: none; }
+        /* PERBAIKAN 4: Grid Form Tambah Barang menjadi 2 Kolom di Desktop */
+        .form-card {
+            background: #fff; 
+            padding: 24px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            max-width: 900px; /* Melebar secara proporsional */
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        @media (min-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr; /* Split 2 Kolom di Desktop */
+            }
+            .form-grid .full-width {
+                grid-column: span 2;
+            }
+        }
+
+        .form-row { text-align: left; }
+        .form-row label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 6px; color: #555; text-transform: uppercase; }
+        .form-row input, .form-row select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; outline: none; }
 
         .btn-action { 
-            background: #ee4d2d; color: #fff; border: none; padding: 10px 16px; 
-            border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; text-transform: uppercase;
-            transition: 0.2s; width: 100%;
+            background: #ee4d2d; color: #fff; border: none; padding: 12px 20px; 
+            border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; text-transform: uppercase;
+            transition: 0.2s; width: 100%; margin-top: 10px;
         }
         .btn-action:hover { background: #d73211; }
 
         .img-preview-container { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-        .img-preview-container img { width: 55px; height: 55px; object-fit: cover; border-radius: 4px; border: 2px solid #ee4d2d; }
+        .img-preview-container img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; border: 2px solid #ee4d2d; }
 
         /* Tables */
-        .data-table-container { width: 100%; overflow-x: auto; background: #fff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; color: #333; min-width: 520px; }
-        table th, table td { border-bottom: 1px solid #eee; padding: 10px; text-align: left; }
+        .data-table-container { width: 100%; overflow-x: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; color: #333; min-width: 600px; }
+        table th, table td { border-bottom: 1px solid #eee; padding: 12px 15px; text-align: left; }
         table th { background: #f4f6f8; color: #555; font-weight: bold; text-transform: uppercase; }
 
         /* Modal Detail */
@@ -96,15 +144,17 @@
 </head>
 <body>
 
-    <div id="auth-card">
-        <h2>🔒 Panel Admin</h2>
-        <p style="font-size: 11px; color: #777; margin-bottom: 14px;">Masukkan password untuk masuk.</p>
-        <form onsubmit="handleAdminLogin(event)">
-            <div class="form-row">
-                <input type="password" id="admin-password" required placeholder="Password (admin123)...">
-            </div>
-            <button type="submit" class="btn-action">Masuk Sekarang</button>
-        </form>
+    <div class="login-wrapper" id="login-wrapper">
+        <div id="auth-card">
+            <h2>🔒 Panel Admin</h2>
+            <p style="font-size: 11px; color: #777; margin-bottom: 14px;">Masukkan password untuk masuk.</p>
+            <form onsubmit="handleAdminLogin(event)">
+                <div class="form-row">
+                    <input type="password" id="admin-password" required placeholder="Password (admin123)...">
+                </div>
+                <button type="submit" class="btn-action">Masuk Sekarang</button>
+            </form>
+        </div>
     </div>
 
     <div class="admin-layout" id="admin-main-panel">
@@ -112,7 +162,7 @@
             <div class="user-badge">
                 <div class="avatar">A</div>
                 <div class="username">Admin TokoKu</div>
-                <div style="font-size: 10px; color: #888;">Manager Utama</div>
+                <div style="font-size: 11px; color: #aaa;">Manager Utama</div>
             </div>
 
             <div class="menu-list">
@@ -128,41 +178,45 @@
         <div class="content-area">
             <div class="header-bar">
                 <h2 id="current-section-title">Tambah Barang Baru</h2>
-                <button onclick="adminLogout()" style="background:#ee4d2d; color:#fff; border:none; padding: 6px 12px; border-radius:4px; font-size:10px; font-weight:bold; cursor:pointer;">Keluar</button>
+                <button onclick="adminLogout()" style="background:#ee4d2d; color:#fff; border:none; padding: 8px 14px; border-radius:4px; font-size:11px; font-weight:bold; cursor:pointer;">Keluar</button>
             </div>
 
             <div id="tab-input" class="tab-content">
-                <form id="add-product-form" onsubmit="handleAddNewProduct(event)" style="max-width: 500px; background: #fff; padding: 18px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                    <div class="form-row">
-                        <label>Nama Produk</label>
-                        <input type="text" id="new-name" required placeholder="Contoh: Headphones Wireless">
-                    </div>
-                    <div class="form-row">
-                        <label>Kategori</label>
-                        <select id="new-category" required>
-                            <option value="Gaming">Gaming</option>
-                            <option value="Elektronik">Elektronik</option>
-                            <option value="Sepatu">Sepatu</option>
-                            <option value="Aksesoris">Aksesoris</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
-                        <label>Harga (Rp)</label>
-                        <input type="number" id="new-price" required placeholder="Contoh: 250000">
-                    </div>
-                    
-                    <div class="form-row">
-                        <label>Upload Foto Produk (Pilih >1 Foto Sekaligus)</label>
-                        <input type="file" id="new-img-file" accept="image/*" multiple required onchange="previewImages(event)">
-                        <div id="image-previews" class="img-preview-container"></div>
-                    </div>
-
-                    <div class="form-row">
-                        <label>Jumlah Stok Awal</label>
-                        <input type="number" id="new-stock" value="10" required>
-                    </div>
-                    <button type="submit" class="btn-action">Simpan Produk</button>
-                </form>
+                <div class="form-card">
+                    <form id="add-product-form" onsubmit="handleAddNewProduct(event)">
+                        <div class="form-grid">
+                            <div class="form-row">
+                                <label>Nama Produk</label>
+                                <input type="text" id="new-name" required placeholder="Contoh: Headphones Wireless">
+                            </div>
+                            <div class="form-row">
+                                <label>Kategori</label>
+                                <select id="new-category" required>
+                                    <option value="Gaming">Gaming</option>
+                                    <option value="Elektronik">Elektronik</option>
+                                    <option value="Sepatu">Sepatu</option>
+                                    <option value="Aksesoris">Aksesoris</option>
+                                </select>
+                            </div>
+                            <div class="form-row">
+                                <label>Harga (Rp)</label>
+                                <input type="number" id="new-price" required placeholder="Contoh: 250000">
+                            </div>
+                            <div class="form-row">
+                                <label>Jumlah Stok Awal</label>
+                                <input type="number" id="new-stock" value="10" required>
+                            </div>
+                            <div class="form-row full-width">
+                                <label>Upload Foto Produk (Pilih >1 Foto Sekaligus)</label>
+                                <input type="file" id="new-img-file" accept="image/*" multiple required onchange="previewImages(event)">
+                                <div id="image-previews" class="img-preview-container"></div>
+                            </div>
+                            <div class="full-width">
+                                <button type="submit" class="btn-action">Simpan Produk</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <div id="tab-view" class="tab-content" style="display: none;">
@@ -224,7 +278,7 @@
         }
 
         function showAdminPanelDirect() {
-            document.getElementById("auth-card").style.display = "none";
+            document.getElementById("login-wrapper").style.display = "none";
             document.getElementById("admin-main-panel").style.display = "flex";
             renderAdminProductTable();
         }
@@ -244,10 +298,15 @@
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
             document.getElementById('tab-' + tabName).style.display = 'block';
 
-            if(tabName === 'view') renderAdminProductTable();
+            const sectionTitle = document.getElementById('current-section-title');
+            if(tabName === 'input') {
+                sectionTitle.innerText = "Tambah Barang Baru";
+            } else {
+                sectionTitle.innerText = "Daftar Stok Produk";
+                renderAdminProductTable();
+            }
         }
 
-        // Preview saat pilih file foto
         function previewImages(event) {
             const container = document.getElementById("image-previews");
             container.innerHTML = "";
@@ -266,7 +325,6 @@
             });
         }
 
-        // Simpan Produk Baru dengan Array Foto
         function handleAddNewProduct(e) {
             e.preventDefault();
             if (tempImagesBase64.length === 0) {
@@ -281,7 +339,7 @@
                 category: document.getElementById("new-category").value,
                 price: parseInt(document.getElementById("new-price").value),
                 img: tempImagesBase64[0],
-                images: tempImagesBase64, // SIMPAN SEMUA FOTO DALAM ARRAY
+                images: tempImagesBase64,
                 stock: parseInt(document.getElementById("new-stock").value)
             });
 
@@ -299,7 +357,7 @@
             let prods = getProducts();
 
             if(prods.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#888; padding: 15px;'>Belum ada produk.</td></tr>";
+                tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color:#888; padding: 20px;'>Belum ada produk tersimpan.</td></tr>";
                 return;
             }
 
@@ -309,7 +367,7 @@
                     <tr>
                         <td>
                             <div style="position:relative; display:inline-block;">
-                                <img src="${p.img}" style="width:36px; height:36px; object-fit:cover; border-radius:4px;">
+                                <img src="${p.img}" style="width:40px; height:40px; object-fit:cover; border-radius:4px;">
                                 ${totalPhotos > 1 ? `<span style="position:absolute; bottom:-4px; right:-4px; background:#ee4d2d; color:#fff; font-size:9px; padding:1px 4px; border-radius:8px; font-weight:bold;">+${totalPhotos - 1}</span>` : ''}
                             </div>
                         </td>
@@ -317,8 +375,8 @@
                         <td>Rp ${p.price.toLocaleString('id-ID')}</td>
                         <td>${p.stock} pcs</td>
                         <td>
-                            <button onclick="openProductDetailModal(${p.id})" style="background:#2196f3; color:white; border:none; padding:4px 8px; border-radius:3px; cursor:pointer; font-weight:bold;">Pratinjau</button>
-                            <button onclick="deleteProduct(${p.id})" style="background:#ee4d2d; color:white; border:none; padding:4px 8px; border-radius:3px; cursor:pointer; font-weight:bold;">Hapus</button>
+                            <button onclick="openProductDetailModal(${p.id})" style="background:#2196f3; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer; font-weight:bold; font-size:11px;">Pratinjau</button>
+                            <button onclick="deleteProduct(${p.id})" style="background:#ee4d2d; color:white; border:none; padding:5px 10px; border-radius:3px; cursor:pointer; font-weight:bold; font-size:11px;">Hapus</button>
                         </td>
                     </tr>
                 `;

@@ -25,12 +25,13 @@
         .search-btn { background: #f97316; color: #fff; border: none; padding: 8px 16px; cursor: pointer; font-weight: bold; font-size: 11px; }
         .search-btn:hover { background: #ea580c; }
         
-        .cart-btn, .admin-profile-btn { 
+        .cart-btn, .admin-profile-btn, .reset-btn { 
             background: #fff; color: #ea580c; border: 1px solid #d1d5db; padding: 8px 14px; 
             border-radius: 30px; font-size: 12px; text-decoration: none; cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: 600; white-space: nowrap;
         }
         .admin-profile-btn { background: #f97316; color: #fff; border-color: #f97316; }
         .admin-profile-btn:hover { background: #ea580c; }
+        .reset-btn { background: #f3f4f6; color: #4b5563; }
 
         .hero { background: #fff7ed; text-align: center; padding: 30px 20px; border-bottom: 1px solid #ffedd5; }
         .hero h1 { font-size: 22px; font-weight: bold; letter-spacing: 2px; margin-bottom: 6px; color: #ea580c; text-transform: uppercase; }
@@ -110,6 +111,7 @@
             <button class="search-btn" onclick="searchProducts()">Cari</button>
         </div>
         <div class="header-right">
+            <button class="reset-btn" onclick="resetDataProduk()" title="Klik jika gambar Power Bank tidak muncul">🔄 Refresh Data</button>
             <button class="cart-btn" onclick="openCartModal()">🛒 Bag (<span id="cart-count">0</span>)</button>
             <a href="admin.html" class="admin-profile-btn">👤 Admin</a>
         </div>
@@ -158,6 +160,8 @@
     <footer>&copy; 2026 TOKO UCEN JAYA. All Rights Reserved.</footer>
 
     <script>
+        const FALLBACK_PB_IMG = "https://images.unsplash.com/photo-1609592424109-dd9892f1b177?w=500&q=80";
+
         const DEFAULT_PRODUCTS = [
             { id: 1, name: "Mouse Gaming RGB", price: 150000, stock: 15, images: ["https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500&q=80"] },
             { id: 2, name: "Keyboard Mechanical RGB", price: 289000, stock: 10, images: ["https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80"] },
@@ -166,12 +170,12 @@
             { id: 5, name: "Smartwatch", price: 899000, stock: 12, images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80"] },
             { id: 6, name: "Sepatu Sneakers", price: 459000, stock: 20, images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80"] },
             { id: 7, name: "Laptop Gaming", price: 12999000, stock: 3, images: ["https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500&q=80"] },
-            { id: 8, name: "Power Bank 20.000mAh", price: 199000, stock: 25, images: ["https://images.unsplash.com/photo-1609592424109-dd9892f1b177?w=500&q=80"] }
+            { id: 8, name: "Power Bank 20.000mAh", price: 199000, stock: 25, images: [FALLBACK_PB_IMG] }
         ];
 
         function getProducts() { 
             let stored = localStorage.getItem('toko_products');
-            if(!stored || JSON.parse(stored).length === 0) {
+            if(!stored) {
                 localStorage.setItem('toko_products', JSON.stringify(DEFAULT_PRODUCTS));
                 return DEFAULT_PRODUCTS;
             }
@@ -181,6 +185,12 @@
         function saveProducts(p) { localStorage.setItem('toko_products', JSON.stringify(p)); }
         function getCart() { return JSON.parse(localStorage.getItem('toko_cart')) || []; }
         function saveCart(c) { localStorage.setItem('toko_cart', JSON.stringify(c)); }
+
+        function resetDataProduk() {
+            localStorage.setItem('toko_products', JSON.stringify(DEFAULT_PRODUCTS));
+            renderProducts();
+            alert("Data produk berhasil diperbarui!");
+        }
 
         let currentActiveProduct = null;
 
@@ -195,11 +205,13 @@
                 return;
             }
             products.forEach(p => {
-                const displayImg = (p.images && p.images[0]) || p.img || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80';
+                let displayImg = (p.images && p.images[0]) || p.img || FALLBACK_PB_IMG;
                 grid.innerHTML += `
                     <div class="product-card" onclick="openProductDetail(${p.id})">
                         <div>
-                            <div class="product-img-wrap"><img src="${displayImg}" class="product-img"></div>
+                            <div class="product-img-wrap">
+                                <img src="${displayImg}" class="product-img" onerror="this.src='${FALLBACK_PB_IMG}'">
+                            </div>
                             <div class="product-name">${p.name}</div>
                             <div class="product-price">Rp ${p.price.toLocaleString('id-ID')}</div>
                             <div class="product-stock">Stok: ${p.stock} pcs</div>
@@ -222,9 +234,12 @@
             
             const allImgs = (currentActiveProduct.images && currentActiveProduct.images.length > 0) 
                 ? currentActiveProduct.images 
-                : [currentActiveProduct.img || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80'];
+                : [FALLBACK_PB_IMG];
 
-            document.getElementById("detail-img").src = allImgs[0];
+            const detailImg = document.getElementById("detail-img");
+            detailImg.src = allImgs[0];
+            detailImg.onerror = function() { this.src = FALLBACK_PB_IMG; };
+
             document.getElementById("detail-name").innerText = currentActiveProduct.name;
             document.getElementById("detail-price").innerText = "Rp " + currentActiveProduct.price.toLocaleString('id-ID');
             document.getElementById("detail-stock").innerText = "Stok Tersedia: " + currentActiveProduct.stock + " pcs";
@@ -233,7 +248,7 @@
             thumbContainer.innerHTML = "";
             if(allImgs.length > 1) {
                 allImgs.forEach((imgSrc, idx) => {
-                    thumbContainer.innerHTML += `<img src="${imgSrc}" class="${idx===0?'active':''}" onclick="changeMainImg(this, '${imgSrc}')">`;
+                    thumbContainer.innerHTML += `<img src="${imgSrc}" class="${idx===0?'active':''}" onclick="changeMainImg(this, '${imgSrc}')" onerror="this.src='${FALLBACK_PB_IMG}'">`;
                 });
             }
             openModal('product-detail-modal');
@@ -253,7 +268,7 @@
                     return;
                 }
                 let cart = getCart();
-                cart.push({ id: p.id, name: p.name, price: p.price, img: (p.images && p.images[0]) || p.img });
+                cart.push({ id: p.id, name: p.name, price: p.price, img: (p.images && p.images[0]) || FALLBACK_PB_IMG });
                 saveCart(cart);
                 updateCartBadge();
                 alert(`✨ ${p.name} ditambahkan ke tas!`);

@@ -56,9 +56,38 @@
         .btn-primary:hover { background: #b8972e; }
 
         .table-wrap { width: 100%; overflow-x: auto; background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 500px; }
-        table th, table td { border-bottom: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 600px; }
+        table th, table td { border-bottom: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; vertical-align: middle; }
         table th { background: #f1f5f9; font-weight: bold; color: #475569; }
+
+        /* Dropdown status */
+        .status-select {
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            border: 1px solid #cbd5e1;
+            cursor: pointer;
+            outline: none;
+        }
+        .status-pending { background-color: #fef3c7; color: #d97706; border-color: #fcd34d; }
+        .status-proses { background-color: #e0f2fe; color: #0369a1; border-color: #7dd3fc; }
+        .status-kirim { background-color: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
+        .status-selesai { background-color: #dcfce7; color: #15803d; border-color: #86efac; }
+
+        /* Tombol Tambah Stok */
+        .btn-add-stock {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 6px;
+        }
+        .btn-add-stock:hover { background-color: #059669; }
 
         @media (max-width: 768px) {
             .admin-dashboard-wrapper { flex-direction: column; }
@@ -141,7 +170,7 @@
                                 <th>Waktu</th>
                                 <th>Barang Dibeli</th>
                                 <th>Total Bayar</th>
-                                <th>Status</th>
+                                <th>Status Pesanan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -154,14 +183,14 @@
                 <form id="add-product-form" onsubmit="handleAddNewProduct(event)" style="max-width: 600px; background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
                     <div class="form-group">
                         <label>Nama Barang</label>
-                        <input type="text" id="new-name" required placeholder="Contoh: Sepatu Sneaker Eksklusif">
+                        <input type="text" id="new-name" required placeholder="Contoh: Power Bank 20.000mAh">
                     </div>
                     <div class="form-group">
                         <label>Harga (Rp)</label>
-                        <input type="number" id="new-price" required placeholder="Contoh: 250000">
+                        <input type="number" id="new-price" required placeholder="Contoh: 199000">
                     </div>
                     <div class="form-group">
-                        <label>Upload Foto Produk (Gunakan Shift/Ctrl untuk Pilih >1 Foto)</label>
+                        <label>Upload Foto Produk</label>
                         <input type="file" id="new-img-file" accept="image/*" multiple required>
                     </div>
                     <div class="form-group">
@@ -180,7 +209,7 @@
                                 <th>Foto</th>
                                 <th>Nama Barang</th>
                                 <th>Harga</th>
-                                <th>Sisa Stok</th>
+                                <th>Sisa Stok & Tambah</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -195,7 +224,22 @@
         const ADMIN_PASSWORD = "admin123";
         let salesChartInstance = null;
 
+        // Default Produk jika localStorage kosong (Lengkap dengan Gambar Power Bank yang Aktif)
+        const DEFAULT_PRODUCTS = [
+            { id: 1, name: "Mouse Gaming RGB", price: 150000, stock: 6, images: ["https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=300"] },
+            { id: 2, name: "Keyboard Mechanical RGB", price: 289000, stock: 10, images: ["https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=300"] },
+            { id: 3, name: "Headset Gaming", price: 399000, stock: 8, images: ["https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=300"] },
+            { id: 4, name: "Smartphone Android", price: 3499000, stock: 4, images: ["https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=300"] },
+            { id: 5, name: "Smartwatch", price: 899000, stock: 12, images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300"] },
+            { id: 6, name: "Sepatu Sneakers", price: 459000, stock: 20, images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300"] },
+            { id: 7, name: "Laptop Gaming", price: 12999000, stock: 2, images: ["https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=300"] },
+            { id: 8, name: "Power Bank 20.000mAh", price: 199000, stock: 25, images: ["https://images.unsplash.com/photo-1609592424109-dd9892f1b177?w=300"] }
+        ];
+
         window.onload = function() {
+            if(!localStorage.getItem('toko_products')) {
+                localStorage.setItem('toko_products', JSON.stringify(DEFAULT_PRODUCTS));
+            }
             if(localStorage.getItem('toko_admin_logged') === 'true') showAdminPanelDirect();
         };
 
@@ -262,17 +306,37 @@
 
             orders.forEach((o, index) => {
                 let itemsList = o.items.map(i => `• ${i.name} (Rp ${i.price.toLocaleString('id-ID')})`).join('<br>');
+                let currentStatus = o.status || 'Pending';
+                let statusClass = 'status-pending';
+                if(currentStatus === 'Sedang Diproses') statusClass = 'status-proses';
+                if(currentStatus === 'Sedang Dikirim') statusClass = 'status-kirim';
+                if(currentStatus === 'Selesai') statusClass = 'status-selesai';
+
                 tbody.innerHTML += `
                     <tr>
                         <td><b>${o.orderId}</b></td>
                         <td><small>${o.date}</small></td>
                         <td>${itemsList}</td>
                         <td><b style="color:#b8972e;">Rp ${o.total.toLocaleString('id-ID')}</b></td>
-                        <td><span style="background:#fef3c7; color:#d97706; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold;">${o.status}</span></td>
-                        <td><button onclick="deleteOrder(${index})" style="background:#ef4444; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Hapus</button></td>
+                        <td>
+                            <select class="status-select ${statusClass}" onchange="changeOrderStatus(${index}, this.value)">
+                                <option value="Pending" ${currentStatus==='Pending'?'selected':''}>⏳ Pending</option>
+                                <option value="Sedang Diproses" ${currentStatus==='Sedang Diproses'?'selected':''}>⚙️ Sedang Diproses</option>
+                                <option value="Sedang Dikirim" ${currentStatus==='Sedang Dikirim'?'selected':''}>🚚 Sedang Dikirim</option>
+                                <option value="Selesai" ${currentStatus==='Selesai'?'selected':''}>✅ Selesai</option>
+                            </select>
+                        </td>
+                        <td><button onclick="deleteOrder(${index})" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Hapus</button></td>
                     </tr>
                 `;
             });
+        }
+
+        function changeOrderStatus(index, newStatus) {
+            let orders = getOrders();
+            orders[index].status = newStatus;
+            localStorage.setItem('toko_orders', JSON.stringify(orders));
+            renderOrdersTable();
         }
 
         function deleteOrder(index) {
@@ -281,6 +345,94 @@
                 orders.splice(index, 1);
                 localStorage.setItem('toko_orders', JSON.stringify(orders));
                 renderOrdersTable();
+                updateDashboardStats();
+            }
+        }
+
+        // TAMPILKAN TABEL STOK DAN FITUR TAMBAH STOK
+        function renderAdminProductTable() {
+            const tbody = document.getElementById("admin-product-table-body");
+            tbody.innerHTML = "";
+            let prods = getProducts();
+            if(prods.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; padding: 20px;'>Belum ada produk.</td></tr>";
+                return;
+            }
+            prods.forEach(p => {
+                const mainImg = (p.images && p.images[0]) || p.img || 'https://via.placeholder.com/150';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><img src="${mainImg}" style="width:40px; height:40px; object-fit:cover; border-radius:6px;" onerror="this.src='https://via.placeholder.com/150'"></td>
+                        <td><b>${p.name}</b></td>
+                        <td>Rp ${p.price.toLocaleString('id-ID')}</td>
+                        <td>
+                            <b>${p.stock} pcs</b> 
+                            <button class="btn-add-stock" onclick="addStockPrompt(${p.id})">(+ Tambah)</button>
+                        </td>
+                        <td><button onclick="deleteProduct(${p.id})" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Hapus</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // FUNGSI PROMPT UNTUK MANAMBAH STOK BARANG
+        function addStockPrompt(id) {
+            let prods = getProducts();
+            let prod = prods.find(p => p.id === id);
+            if(prod) {
+                let addQty = prompt(`Tambah stok untuk "${prod.name}":\n(Masukkan jumlah unit yang ingin ditambahkan)`, "5");
+                if(addQty !== null && !isNaN(addQty) && parseInt(addQty) > 0) {
+                    prod.stock += parseInt(addQty);
+                    saveProducts(prods);
+                    renderAdminProductTable();
+                    alert(`✅ Stok ${prod.name} berhasil ditambahkan! Stok saat ini: ${prod.stock} pcs`);
+                }
+            }
+        }
+
+        function handleAddNewProduct(e) {
+            e.preventDefault();
+            const name = document.getElementById("new-name").value;
+            const price = parseInt(document.getElementById("new-price").value);
+            const fileInput = document.getElementById("new-img-file");
+            const stock = parseInt(document.getElementById("new-stock").value);
+
+            const files = Array.from(fileInput.files);
+            if (files.length === 0) return;
+
+            let imagesArray = [];
+            let loadedCount = 0;
+
+            files.forEach((file) => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imagesArray.push(event.result);
+                    loadedCount++;
+
+                    if (loadedCount === files.length) {
+                        let prods = getProducts();
+                        prods.unshift({
+                            id: Date.now(),
+                            name: name, 
+                            price: price, 
+                            images: imagesArray,
+                            stock: stock
+                        });
+
+                        saveProducts(prods);
+                        alert(`✨ Berhasil! Produk "${name}" tersimpan.`);
+                        document.getElementById("add-product-form").reset();
+                        switchTab('view', document.querySelectorAll('.sidebar-btn')[3]);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function deleteProduct(id) {
+            if(confirm("Yakin ingin menghapus produk ini?")) {
+                saveProducts(getProducts().filter(p => p.id !== id));
+                renderAdminProductTable();
                 updateDashboardStats();
             }
         }
@@ -311,75 +463,6 @@
                     }
                 }
             });
-        }
-
-        function handleAddNewProduct(e) {
-            e.preventDefault();
-            const name = document.getElementById("new-name").value;
-            const price = parseInt(document.getElementById("new-price").value);
-            const fileInput = document.getElementById("new-img-file");
-            const stock = parseInt(document.getElementById("new-stock").value);
-
-            const files = Array.from(fileInput.files);
-            if (files.length === 0) return;
-
-            let imagesArray = [];
-            let loadedCount = 0;
-
-            files.forEach((file) => {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    imagesArray.push(event.target.result);
-                    loadedCount++;
-
-                    if (loadedCount === files.length) {
-                        let prods = getProducts();
-                        prods.unshift({
-                            id: Date.now(),
-                            name: name, 
-                            price: price, 
-                            images: imagesArray,
-                            stock: stock
-                        });
-
-                        saveProducts(prods);
-                        alert(`✨ Berhasil! Produk "${name}" tersimpan.`);
-                        document.getElementById("add-product-form").reset();
-                        switchTab('view', document.querySelectorAll('.sidebar-btn')[3]);
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function renderAdminProductTable() {
-            const tbody = document.getElementById("admin-product-table-body");
-            tbody.innerHTML = "";
-            let prods = getProducts();
-            if(prods.length === 0) {
-                tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; padding: 20px;'>Belum ada produk.</td></tr>";
-                return;
-            }
-            prods.forEach(p => {
-                const mainImg = (p.images && p.images[0]) || p.img || '';
-                tbody.innerHTML += `
-                    <tr>
-                        <td><img src="${mainImg}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;"></td>
-                        <td><b>${p.name}</b></td>
-                        <td>Rp ${p.price.toLocaleString('id-ID')}</td>
-                        <td><b>${p.stock}</b> pcs</td>
-                        <td><button onclick="deleteProduct(${p.id})" style="background:#ef4444; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Hapus</button></td>
-                    </tr>
-                `;
-            });
-        }
-
-        function deleteProduct(id) {
-            if(confirm("Yakin ingin menghapus produk ini?")) {
-                saveProducts(getProducts().filter(p => p.id !== id));
-                renderAdminProductTable();
-                updateDashboardStats();
-            }
         }
     </script>
 </body>

@@ -1,53 +1,190 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - TOKO UCEN JAYA</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    html, body { width: 100vw; height: 100vh; overflow: hidden; background: #1a2332; display: flex; justify-content: center; align-items: center; }
-    
-    .login-card {
-      background: #ffffff; padding: 35px 25px; border-radius: 12px; width: 90%; max-width: 400px;
-      text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    .login-card h2 { color: #b8972e; margin-bottom: 8px; font-size: 22px; text-transform: uppercase; letter-spacing: 1px; }
-    .login-card p { font-size: 12px; color: #64748b; margin-bottom: 20px; }
-    
-    .form-group { margin-bottom: 15px; text-align: left; }
-    .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 5px; color: #475569; text-transform: uppercase; }
-    select, button { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 13px; outline: none; }
-    button { background: #b8972e; color: #fff; font-weight: bold; border: none; cursor: pointer; text-transform: uppercase; margin-top: 10px; transition: 0.2s; }
-    button:hover { background: #9c7d23; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Jenis Login - TOKO UCEN JAYA</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        
+        body { 
+            width: 100vw; 
+            min-height: 100vh; 
+            background: linear-gradient(135deg, #78350f, #9a3412); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px; 
+        }
+
+        .login-card-container { 
+            background: #fff; 
+            width: 100%; 
+            max-width: 750px; 
+            border-radius: 16px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25); 
+            display: flex; 
+            overflow: hidden; 
+            flex-direction: row; 
+        }
+
+        /* Sisi Kiri (Brand / Info) */
+        .brand-side { 
+            background: #78350f; 
+            color: #fff; 
+            flex: 1; 
+            padding: 40px 30px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+        }
+
+        .brand-icon { 
+            font-size: 40px; 
+            margin-bottom: 15px; 
+            background: rgba(255,255,255,0.1); 
+            width: 70px; 
+            height: 70px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 50%; 
+        }
+
+        .brand-side h1 { 
+            font-size: 22px; 
+            letter-spacing: 2px; 
+            margin-bottom: 10px; 
+            text-transform: uppercase; 
+            font-weight: 800;
+        }
+
+        .brand-side p { 
+            font-size: 12px; 
+            color: #fed7aa; 
+            line-height: 1.5; 
+        }
+
+        /* Sisi Kanan (Pilihan Login) */
+        .options-side { 
+            flex: 1.2; 
+            padding: 40px 30px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+        }
+
+        .options-title { 
+            font-size: 15px; 
+            font-weight: bold; 
+            color: #1f2937; 
+            margin-bottom: 20px; 
+            text-align: center; 
+            letter-spacing: 0.5px; 
+        }
+
+        .role-card { 
+            border: 1px solid #e5e7eb; 
+            border-radius: 10px; 
+            padding: 15px; 
+            margin-bottom: 12px; 
+            cursor: pointer; 
+            transition: all 0.2s ease; 
+            display: flex; 
+            align-items: flex-start; 
+            gap: 12px; 
+            text-decoration: none; 
+            background: #fafaf9;
+        }
+
+        .role-card:hover { 
+            border-color: #ea580c; 
+            background: #fff7ed; 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(234,88,12,0.1); 
+        }
+
+        .role-icon { 
+            font-size: 22px; 
+            background: #ffedd5; 
+            color: #ea580c; 
+            width: 40px; 
+            height: 40px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 8px; 
+            flex-shrink: 0; 
+        }
+
+        .role-info h3 { 
+            font-size: 13px; 
+            font-weight: bold; 
+            color: #1f2937; 
+            margin-bottom: 3px; 
+        }
+
+        .role-info p { 
+            font-size: 11px; 
+            color: #6b7280; 
+            line-height: 1.4; 
+        }
+
+        .footer-note { 
+            text-align: center; 
+            font-size: 10px; 
+            color: #9ca3af; 
+            margin-top: 20px; 
+        }
+
+        /* Responsif untuk HP / Layar Kecil */
+        @media (max-width: 650px) { 
+            .login-card-container { 
+                flex-direction: column; 
+                max-width: 400px; 
+            } 
+            .brand-side { 
+                padding: 30px 20px; 
+            } 
+            .options-side { 
+                padding: 30px 20px; 
+            } 
+        }
+    </style>
 </head>
 <body>
 
-  <div class="login-card">
-    <h2>TOKO UCEN JAYA</h2>
-    <p>Pilih Mode Akses Sistem Toko</p>
-    
-    <div class="form-group">
-      <label>Mode Masuk</label>
-      <select id="roleSelect">
-        <option value="customer">Customer / Pembeli</option>
-        <option value="admin">Admin Toko</option>
-      </select>
+    <div class="login-card-container">
+        <div class="brand-side">
+            <div class="brand-icon">🛍️</div>
+            <h1>TOKO UCEN JAYA</h1>
+            <p>Belanja lebih mudah, cepat, dan aman.<br>Silakan masuk sebagai Customer atau Admin.</p>
+        </div>
+
+        <div class="options-side">
+            <div class="options-title">Pilih Jenis Login</div>
+
+            <a href="customer.html" class="role-card">
+                <div class="role-icon">👤</div>
+                <div class="role-info">
+                    <h3>Login Customer</h3>
+                    <p>Masuk untuk mulai berbelanja, melihat produk, mengelola keranjang dan checkout.</p>
+                </div>
+            </a>
+
+            <a href="admin.html" class="role-card">
+                <div class="role-icon">🛡️</div>
+                <div class="role-info">
+                    <h3>Login Admin</h3>
+                    <p>Masuk ke Dashboard Admin untuk mengelola produk, kategori, customer dan pesanan.</p>
+                </div>
+            </a>
+
+            <div class="footer-note">&copy; 2026 TOKO UCEN JAYA</div>
+        </div>
     </div>
 
-    <button onclick="masukToko()">MASUK KE TOKO</button>
-  </div>
-
-  <script>
-    function masukToko() {
-      const role = document.getElementById('roleSelect').value;
-      if (role === 'admin') {
-        window.location.href = 'admin.html';
-      } else {
-        window.location.href = 'customer.html';
-      }
-    }
-  </script>
 </body>
 </html>

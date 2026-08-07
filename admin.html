@@ -60,7 +60,6 @@
         table th, table td { border-bottom: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; vertical-align: middle; }
         table th { background: #f1f5f9; font-weight: bold; color: #475569; }
 
-        /* Style khusus dropdown status pesanan */
         .status-select {
             padding: 6px 10px;
             border-radius: 6px;
@@ -75,7 +74,6 @@
         .status-kirim { background-color: #f3e8ff; color: #6b21a8; border-color: #d8b4fe; }
         .status-selesai { background-color: #dcfce7; color: #15803d; border-color: #86efac; }
 
-        /* Tombol Tambah Stok */
         .btn-add-stock {
             background-color: #10b981;
             color: white;
@@ -132,6 +130,7 @@
                 <button class="sidebar-btn" onclick="switchTab('orders', this)">🛍️ Pesanan Masuk (<span id="order-count">0</span>)</button>
                 <button class="sidebar-btn" onclick="switchTab('input', this)">➕ Input Barang</button>
                 <button class="sidebar-btn" onclick="switchTab('view', this)">📦 Kelola Stok</button>
+                <button onclick="resetDataProdukAdmin()" class="sidebar-btn" style="color: #f97316;">🔄 Refresh Produk</button>
                 <button onclick="adminLogout()" class="sidebar-btn" style="color: #ef4444;">🚪 Logout</button>
             </div>
         </div>
@@ -223,6 +222,7 @@
     <script>
         const ADMIN_PASSWORD = "admin123";
         let salesChartInstance = null;
+        const FALLBACK_PB_IMG = "https://images.unsplash.com/photo-1609592424109-dd9892f1b177?w=300";
 
         const DEFAULT_PRODUCTS = [
             { id: 1, name: "Mouse Gaming RGB", price: 150000, stock: 6, images: ["https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=300"] },
@@ -232,7 +232,7 @@
             { id: 5, name: "Smartwatch", price: 899000, stock: 12, images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300"] },
             { id: 6, name: "Sepatu Sneakers", price: 459000, stock: 20, images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300"] },
             { id: 7, name: "Laptop Gaming", price: 12999000, stock: 2, images: ["https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=300"] },
-            { id: 8, name: "Power Bank 20.000mAh", price: 199000, stock: 25, images: ["https://images.unsplash.com/photo-1609592424109-dd9892f1b177?w=300"] }
+            { id: 8, name: "Power Bank 20.000mAh", price: 199000, stock: 25, images: [FALLBACK_PB_IMG] }
         ];
 
         window.onload = function() {
@@ -241,6 +241,13 @@
             }
             if(localStorage.getItem('toko_admin_logged') === 'true') showAdminPanelDirect();
         };
+
+        function resetDataProdukAdmin() {
+            localStorage.setItem('toko_products', JSON.stringify(DEFAULT_PRODUCTS));
+            renderAdminProductTable();
+            updateDashboardStats();
+            alert("Data produk berhasil di-refresh ke katalog default!");
+        }
 
         function handleAdminLogin(e) {
             e.preventDefault();
@@ -357,10 +364,10 @@
                 return;
             }
             prods.forEach(p => {
-                const mainImg = (p.images && p.images[0]) || p.img || 'https://via.placeholder.com/150';
+                const mainImg = (p.images && p.images[0]) || p.img || FALLBACK_PB_IMG;
                 tbody.innerHTML += `
                     <tr>
-                        <td><img src="${mainImg}" style="width:40px; height:40px; object-fit:cover; border-radius:6px;" onerror="this.src='https://via.placeholder.com/150'"></td>
+                        <td><img src="${mainImg}" style="width:40px; height:40px; object-fit:cover; border-radius:6px;" onerror="this.src='${FALLBACK_PB_IMG}'"></td>
                         <td><b>${p.name}</b></td>
                         <td>Rp ${p.price.toLocaleString('id-ID')}</td>
                         <td>

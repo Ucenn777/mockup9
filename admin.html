@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toko Fadli Jaya - Admin Dashboard</title>
+    <title>Toko Ucen - Admin Dashboard</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #eef2f7; color: #333; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; animation: fadeInBody 0.5s ease; }
+        
+        /* FULL SCREEN FULL VIEWPORT SETTING */
+        html, body { width: 100vw; min-height: 100vh; overflow-x: hidden; background-color: #eef2f7; color: #333; }
+        body { display: flex; justify-content: center; align-items: center; padding: 0; margin: 0; animation: fadeInBody 0.5s ease; }
         @keyframes fadeInBody { from { opacity: 0; } to { opacity: 1; } }
 
         #login-wrapper { 
-            max-width: 380px; width: 100%; background: #fff; padding: 25px 20px; border-radius: 12px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;
+            max-width: 380px; width: 90%; background: #fff; padding: 25px 20px; border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; margin: auto;
         }
         @media(min-width: 768px) { #login-wrapper { padding: 35px; } }
         #login-wrapper h2 { color: #2c3e50; margin-bottom: 8px; font-size: 18px; text-transform: uppercase; }
 
         #loading-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(4px);
             z-index: 9999; justify-content: center; align-items: center; flex-direction: column;
         }
@@ -27,28 +30,29 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* KONTEN ADMIN FULL SCREEN AT DESKTOP */
         .admin-dashboard-wrapper {
-            display: none; width: 100%; max-width: 1200px; background: #ffffff; 
-            border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); overflow: hidden;
-            flex-direction: column; min-height: 85vh; animation: zoomIn 0.4s ease;
+            display: none; width: 100vw; min-height: 100vh; background: #ffffff; 
+            box-shadow: none; overflow: hidden;
+            flex-direction: column; animation: zoomIn 0.4s ease;
         }
         @media (min-width: 768px) { 
-            .admin-dashboard-wrapper { flex-direction: row; border-radius: 12px; min-height: 700px; } 
+            .admin-dashboard-wrapper { flex-direction: row; min-height: 100vh; } 
         }
         @keyframes zoomIn { from { transform: scale(0.98); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         .admin-sidebar { width: 100%; background: #26334f; color: #fff; padding: 15px; display: flex; flex-direction: column; }
-        @media (min-width: 768px) { .admin-sidebar { width: 250px; padding: 25px 15px; } }
+        @media (min-width: 768px) { .admin-sidebar { width: 260px; min-height: 100vh; padding: 25px 15px; } }
         
         .admin-profile-area { text-align: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
         .admin-avatar { width: 45px; height: 45px; border-radius: 50%; background: #b8972e; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; margin: 0 auto 6px auto; }
-        .admin-name { font-size: 12px; font-weight: 600; }
+        .admin-name { font-size: 13px; font-weight: 600; }
 
         .sidebar-menu { display: flex; flex-wrap: wrap; gap: 5px; flex: 1; }
         @media (min-width: 768px) { .sidebar-menu { flex-direction: column; } }
         
         .sidebar-btn {
-            background: transparent; border: none; color: #a0aec0; padding: 8px 10px; text-align: left;
+            background: transparent; border: none; color: #a0aec0; padding: 10px 12px; text-align: left;
             border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer; transition: all 0.2s;
             flex: 1; min-width: 105px; display: flex; align-items: center; gap: 6px;
         }
@@ -58,13 +62,13 @@
         .sidebar-footer { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; margin-top: auto; display: none; }
         @media (min-width: 768px) { .sidebar-footer { display: block; } }
 
-        .admin-main-content { flex: 1; background: #f8fafc; padding: 15px; overflow-y: auto; max-height: 85vh; }
+        .admin-main-content { flex: 1; background: #f8fafc; padding: 15px; overflow-y: auto; height: 100vh; }
         @media (min-width: 768px) { .admin-main-content { padding: 25px; } }
 
         .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; flex-wrap: wrap; gap: 8px; }
         .top-header h2 { font-size: 14px; font-weight: 600; color: #1e293b; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .back-link { display: inline-flex; align-items: center; gap: 5px; margin-bottom: 12px; color: #26334f; text-decoration: none; font-size: 11px; font-weight: 600; }
+        .back-link { display: inline-flex; align-items: center; gap: 5px; margin-bottom: 12px; color: #cbd5e1; text-decoration: none; font-size: 11px; font-weight: 600; }
         .back-link:hover { text-decoration: underline; }
 
         .dashboard-split-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
@@ -105,6 +109,9 @@
         table th, table td { border-bottom: 1px solid #e2e8f0; padding: 8px 10px; text-align: left; }
         table th { background: #f1f5f9; color: #475569; font-weight: 600; text-transform: uppercase; }
         table tr:hover { background: #f8fafc; }
+        
+        .img-preview-group { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+        .img-preview-group img { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; }
     </style>
 </head>
 <body>
@@ -115,7 +122,7 @@
     </div>
 
     <div id="login-wrapper">
-        <h2 style="color: #26334f;">🔒 Area Admin</h2>
+        <h2 style="color: #26334f;">🔒 Admin Toko Ucen</h2>
         <p style="font-size: 11px; color: #64748b; margin-bottom: 12px;">Masukkan password untuk mengakses dasbor.</p>
         <form onsubmit="handleAdminLogin(event)">
             <div class="form-group">
@@ -127,11 +134,11 @@
 
     <div class="admin-dashboard-wrapper" id="admin-main-panel">
         <div class="admin-sidebar">
-            <a href="customer.html" class="back-link" style="color: #cbd5e1; margin-bottom: 10px;">&larr; Ke Halaman Toko</a>
+            <a href="customer.html" class="back-link">&larr; Ke Toko Ucen</a>
             
             <div class="admin-profile-area">
-                <div class="admin-avatar">A</div>
-                <div class="admin-name">Andrew Bennet</div>
+                <div class="admin-avatar">U</div>
+                <div class="admin-name">Admin Toko Ucen</div>
                 <div style="font-size: 9px; color: #94a3b8;">Administrator</div>
             </div>
 
@@ -153,7 +160,6 @@
                 <button onclick="adminLogout()" class="sidebar-btn" style="background:#ef4444; color:#fff; padding: 5px 8px; display:inline-block; border-radius:4px; font-size:10px;">Logout</button>
             </div>
 
-            <!-- Tab Dashboard -->
             <div id="tab-dashboard" class="tab-content">
                 <div class="dashboard-split-grid">
                     <div class="split-col">
@@ -169,7 +175,7 @@
                         </div>
 
                         <div class="dash-card gold">
-                            <div class="dash-card-title">Total Pendapatan Toko</div>
+                            <div class="dash-card-title">Total Pendapatan Toko Ucen</div>
                             <div class="dash-card-value" id="stat-total-revenue">Rp 0</div>
                         </div>
 
@@ -193,17 +199,10 @@
                                 ✨ Suara notifikasi pesanan masuk aktif. Penyimpanan lokal (localStorage) terhubung sepenuhnya.
                             </p>
                         </div>
-                        <div class="widget-box">
-                            <div class="widget-title">Ulasan Pelanggan Terbaru</div>
-                            <div style="font-size: 10px; color: #64748b; background: #f8fafc; padding: 8px; border-left: 3px solid #b8972e; border-radius: 4px;">
-                                "Suara lonceng pesanan masuk saat belanja sangat seru!"
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab Input Barang -->
             <div id="tab-input" class="tab-content" style="display: none;">
                 <form id="add-product-form" onsubmit="handleAddNewProduct(event)" style="max-width: 550px; background: #fff; padding: 18px; border-radius: 8px; border: 1px solid #e2e8f0;">
                     <div class="form-group">
@@ -215,8 +214,9 @@
                         <input type="number" id="new-price" required placeholder="Contoh: 350000">
                     </div>
                     <div class="form-group">
-                        <label>Upload Foto Produk</label>
-                        <input type="file" id="new-img-file" accept="image/*" required>
+                        <label>Upload Foto Produk (Bisa Pilih Lebih Dari 1 Foto)</label>
+                        <input type="file" id="new-img-file" accept="image/*" multiple required>
+                        <small style="font-size: 9px; color: #64748b;">Gunakan tombol Ctrl / Shift untuk memilih beberapa foto sekaligus.</small>
                     </div>
                     <div class="form-group">
                         <label>Varian Warna (pisahkan koma)</label>
@@ -230,7 +230,6 @@
                 </form>
             </div>
 
-            <!-- Tab Kelola Stok -->
             <div id="tab-view" class="tab-content" style="display: none;">
                 <div class="table-wrap">
                     <table>
@@ -248,7 +247,6 @@
                 </div>
             </div>
 
-            <!-- Tab Laporan Penjualan -->
             <div id="tab-reports" class="tab-content" style="display: none;">
                 <div class="table-wrap">
                     <table>
@@ -338,6 +336,7 @@
             document.getElementById("stat-total-revenue").innerText = "Rp " + totalRev.toLocaleString('id-ID');
         }
 
+        // HAKIKAT DARI MULTI IMAGE UPLOAD
         function handleAddNewProduct(e) {
             e.preventDefault();
             const name = document.getElementById("new-name").value;
@@ -346,26 +345,41 @@
             const colorsStr = document.getElementById("new-colors").value;
             const stock = parseInt(document.getElementById("new-stock").value);
 
-            if (fileInput.files && fileInput.files[0]) {
+            const files = Array.from(fileInput.files);
+            if (files.length === 0) return;
+
+            let imagesArray = [];
+            let loadedCount = 0;
+
+            files.forEach((file) => {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    const base64Image = event.target.result;
-                    const colors = colorsStr.split(',').map(c => c.trim());
-                    let prods = getProducts();
+                    imagesArray.push(event.target.result);
+                    loadedCount++;
 
-                    prods.push({
-                        id: prods.length > 0 ? Math.max(...prods.map(p => p.id)) + 1 : 1,
-                        name: name, price: price, img: base64Image, colors: colors, stock: stock,
-                        comments: ["Produk original berkualitas tinggi!"]
-                    });
+                    if (loadedCount === files.length) {
+                        const colors = colorsStr.split(',').map(c => c.trim());
+                        let prods = getProducts();
 
-                    saveProducts(prods);
-                    alert("Produk berhasil ditambahkan!");
-                    document.getElementById("add-product-form").reset();
-                    switchTab('view', document.querySelectorAll('.sidebar-btn')[2]);
+                        prods.push({
+                            id: prods.length > 0 ? Math.max(...prods.map(p => p.id)) + 1 : 1,
+                            name: name, 
+                            price: price, 
+                            img: imagesArray[0], // Foto Utama
+                            images: imagesArray,  // Array seluruh foto
+                            colors: colors, 
+                            stock: stock,
+                            comments: ["Produk original berkualitas tinggi dari Toko Ucen!"]
+                        });
+
+                        saveProducts(prods);
+                        alert("Produk dengan " + files.length + " foto berhasil ditambahkan!");
+                        document.getElementById("add-product-form").reset();
+                        switchTab('view', document.querySelectorAll('.sidebar-btn')[2]);
+                    }
                 };
-                reader.readAsDataURL(fileInput.files[0]);
-            }
+                reader.readAsDataURL(file);
+            });
         }
 
         function renderAdminProductTable() {
@@ -377,10 +391,11 @@
                 return;
             }
             prods.forEach(p => {
+                const mainImg = p.img || (p.images && p.images[0]) || '';
                 tbody.innerHTML += `
                     <tr>
-                        <td><img src="${p.img}" style="width:28px; height:28px; object-fit:cover; border-radius:4px;" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80'"></td>
-                        <td><b>${p.name}</b></td>
+                        <td><img src="${mainImg}" style="width:28px; height:28px; object-fit:cover; border-radius:4px;" onerror="this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80'"></td>
+                        <td><b>${p.name}</b> <span style="font-size:9px; color:#64748b;">(${p.images ? p.images.length : 1} foto)</span></td>
                         <td>Rp ${p.price.toLocaleString('id-ID')}</td>
                         <td><input type="number" value="${p.stock}" style="width: 55px; padding: 3px;" onchange="updateStock(${p.id}, this.value)"> pcs</td>
                         <td><button onclick="deleteProduct(${p.id})" style="background:#ef4444; color:white; border:none; padding:3px 8px; border-radius:4px; cursor:pointer;">Hapus</button></td>

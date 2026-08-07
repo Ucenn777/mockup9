@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TOKO UCEN JAYA - Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { width: 100%; min-height: 100vh; background-color: #f8fafc; color: #333; }
@@ -12,16 +13,10 @@
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1a2332; 
             display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px;
         }
-        .login-box {
-            background: #fff; padding: 30px; border-radius: 12px; width: 100%; max-width: 380px; text-align: center;
-        }
+        .login-box { background: #fff; padding: 30px; border-radius: 12px; width: 100%; max-width: 380px; text-align: center; }
 
-        /* FLEXBOX RESPONSIVE DASHBOARD */
-        .admin-dashboard-wrapper {
-            display: flex; width: 100%; min-height: 100vh;
-        }
+        .admin-dashboard-wrapper { display: flex; width: 100%; min-height: 100vh; }
 
-        /* SIDEBAR DEFAULT DESKTOP */
         .admin-sidebar { 
             width: 250px; background: #1a2332; color: #fff; padding: 20px 15px; 
             display: flex; flex-direction: column; flex-shrink: 0; 
@@ -39,7 +34,6 @@
         }
         .sidebar-btn:hover, .sidebar-btn.active { background: #b8972e; color: #fff; }
 
-        /* CONTENT AREA */
         .admin-main-content { flex: 1; padding: 25px; background: #f8fafc; overflow-y: auto; }
 
         .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; }
@@ -51,7 +45,7 @@
         .dash-card-title { font-size: 11px; font-weight: bold; color: #64748b; text-transform: uppercase; margin-bottom: 6px; }
         .dash-card-value { font-size: 20px; font-weight: bold; color: #1e293b; }
 
-        .widget-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
+        .widget-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
         .widget-title { font-size: 12px; font-weight: bold; color: #1e293b; text-transform: uppercase; margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
 
         .form-group { margin-bottom: 15px; text-align: left; }
@@ -66,7 +60,6 @@
         table th, table td { border-bottom: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; }
         table th { background: #f1f5f9; font-weight: bold; color: #475569; }
 
-        /* MEDIA QUERY KHUSUS TAMPILAN HP */
         @media (max-width: 768px) {
             .admin-dashboard-wrapper { flex-direction: column; }
             .admin-sidebar { width: 100%; height: auto; padding: 15px; }
@@ -107,6 +100,7 @@
 
             <div class="sidebar-menu">
                 <button class="sidebar-btn active" onclick="switchTab('dashboard', this)">📊 Dashboard</button>
+                <button class="sidebar-btn" onclick="switchTab('orders', this)">🛍️ Pesanan Masuk (<span id="order-count">0</span>)</button>
                 <button class="sidebar-btn" onclick="switchTab('input', this)">➕ Input Barang</button>
                 <button class="sidebar-btn" onclick="switchTab('view', this)">📦 Kelola Stok</button>
                 <button onclick="adminLogout()" class="sidebar-btn" style="color: #ef4444;">🚪 Logout</button>
@@ -121,20 +115,38 @@
             <div id="tab-dashboard" class="tab-content">
                 <div class="dashboard-split-grid">
                     <div class="dash-card">
-                        <div class="dash-card-title">Total Produk</div>
+                        <div class="dash-card-title">Total Jenis Produk</div>
                         <div class="dash-card-value" id="stat-total-prod">0</div>
                     </div>
                     <div class="dash-card" style="border-left-color: #10b981;">
-                        <div class="dash-card-title">Total Pendapatan</div>
-                        <div class="dash-card-value">Rp 0</div>
+                        <div class="dash-card-title">Total Pendapatan Masuk</div>
+                        <div class="dash-card-value" id="stat-total-revenue">Rp 0</div>
                     </div>
                 </div>
 
                 <div class="widget-box">
-                    <div class="widget-title">Status Sistem Toko Ucen Jaya</div>
-                    <p style="font-size: 12px; color: #475569;">
-                        ✨ Sistem sudah responsif untuk layar HP dan Desktop. Data produk tersimpan di LocalStorage browser.
-                    </p>
+                    <div class="widget-title">📈 Grafik Performa Penjualan Mingguan</div>
+                    <div style="position: relative; height: 220px; width: 100%;">
+                        <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-orders" class="tab-content" style="display: none;">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID Pesanan</th>
+                                <th>Waktu</th>
+                                <th>Barang Dibeli</th>
+                                <th>Total Bayar</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-orders-table-body"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -149,7 +161,7 @@
                         <input type="number" id="new-price" required placeholder="Contoh: 250000">
                     </div>
                     <div class="form-group">
-                        <label>Upload Foto Produk (Pilih > 1 Foto)</label>
+                        <label>Upload Foto Produk (Gunakan Shift/Ctrl untuk Pilih >1 Foto)</label>
                         <input type="file" id="new-img-file" accept="image/*" multiple required>
                     </div>
                     <div class="form-group">
@@ -168,7 +180,7 @@
                                 <th>Foto</th>
                                 <th>Nama Barang</th>
                                 <th>Harga</th>
-                                <th>Stok</th>
+                                <th>Sisa Stok</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -181,9 +193,9 @@
 
     <script>
         const ADMIN_PASSWORD = "admin123";
+        let salesChartInstance = null;
 
         window.onload = function() {
-            if (!localStorage.getItem('toko_products')) localStorage.setItem('toko_products', JSON.stringify([]));
             if(localStorage.getItem('toko_admin_logged') === 'true') showAdminPanelDirect();
         };
 
@@ -201,7 +213,9 @@
             document.getElementById("login-wrapper").style.display = "none";
             document.getElementById("admin-main-panel").style.display = "flex";
             updateDashboardStats();
+            renderOrdersTable();
             renderAdminProductTable();
+            initChart();
         }
 
         function adminLogout() {
@@ -211,6 +225,7 @@
 
         function getProducts() { return JSON.parse(localStorage.getItem('toko_products')) || []; }
         function saveProducts(prods) { localStorage.setItem('toko_products', JSON.stringify(prods)); }
+        function getOrders() { return JSON.parse(localStorage.getItem('toko_orders')) || []; }
 
         function switchTab(tabName, btnElement) {
             document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
@@ -219,12 +234,83 @@
             document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
             document.getElementById('tab-' + tabName).style.display = 'block';
 
-            if(tabName === 'dashboard') updateDashboardStats();
+            if(tabName === 'dashboard') {
+                updateDashboardStats();
+                setTimeout(initChart, 100);
+            }
+            if(tabName === 'orders') renderOrdersTable();
             if(tabName === 'view') renderAdminProductTable();
         }
 
         function updateDashboardStats() {
             document.getElementById("stat-total-prod").innerText = getProducts().length;
+            let orders = getOrders();
+            let totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
+            document.getElementById("stat-total-revenue").innerText = "Rp " + totalRevenue.toLocaleString('id-ID');
+            document.getElementById("order-count").innerText = orders.length;
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById("admin-orders-table-body");
+            tbody.innerHTML = "";
+            let orders = getOrders();
+
+            if (orders.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; padding: 20px;'>Belum ada pesanan masuk dari customer.</td></tr>";
+                return;
+            }
+
+            orders.forEach((o, index) => {
+                let itemsList = o.items.map(i => `• ${i.name} (Rp ${i.price.toLocaleString('id-ID')})`).join('<br>');
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${o.orderId}</b></td>
+                        <td><small>${o.date}</small></td>
+                        <td>${itemsList}</td>
+                        <td><b style="color:#b8972e;">Rp ${o.total.toLocaleString('id-ID')}</b></td>
+                        <td><span style="background:#fef3c7; color:#d97706; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:bold;">${o.status}</span></td>
+                        <td><button onclick="deleteOrder(${index})" style="background:#ef4444; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Hapus</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function deleteOrder(index) {
+            if(confirm("Hapus pesanan ini?")) {
+                let orders = getOrders();
+                orders.splice(index, 1);
+                localStorage.setItem('toko_orders', JSON.stringify(orders));
+                renderOrdersTable();
+                updateDashboardStats();
+            }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('salesChart');
+            if(!ctx) return;
+            if(salesChartInstance) salesChartInstance.destroy();
+
+            salesChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
+                    datasets: [{
+                        label: 'Penjualan (Rp)',
+                        data: [1500000, 2200000, 1800000, 3800000, 2900000, 4500000, 5100000],
+                        backgroundColor: '#b8972e',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
         }
 
         function handleAddNewProduct(e) {
@@ -248,19 +334,18 @@
 
                     if (loadedCount === files.length) {
                         let prods = getProducts();
-                        prods.push({
+                        prods.unshift({
                             id: Date.now(),
                             name: name, 
                             price: price, 
-                            img: imagesArray[0], 
                             images: imagesArray,
                             stock: stock
                         });
 
                         saveProducts(prods);
-                        alert("Berhasil! Produk tersimpan.");
+                        alert(`✨ Berhasil! Produk "${name}" tersimpan.`);
                         document.getElementById("add-product-form").reset();
-                        switchTab('view', document.querySelectorAll('.sidebar-btn')[2]);
+                        switchTab('view', document.querySelectorAll('.sidebar-btn')[3]);
                     }
                 };
                 reader.readAsDataURL(file);
@@ -276,13 +361,13 @@
                 return;
             }
             prods.forEach(p => {
-                const mainImg = p.img || (p.images && p.images[0]) || '';
+                const mainImg = (p.images && p.images[0]) || p.img || '';
                 tbody.innerHTML += `
                     <tr>
                         <td><img src="${mainImg}" style="width:35px; height:35px; object-fit:cover; border-radius:4px;"></td>
                         <td><b>${p.name}</b></td>
                         <td>Rp ${p.price.toLocaleString('id-ID')}</td>
-                        <td>${p.stock} pcs</td>
+                        <td><b>${p.stock}</b> pcs</td>
                         <td><button onclick="deleteProduct(${p.id})" style="background:#ef4444; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Hapus</button></td>
                     </tr>
                 `;

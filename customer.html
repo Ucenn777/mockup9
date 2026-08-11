@@ -48,7 +48,7 @@
         }
         .product-card:hover { transform: translateY(-3px); border-color: #f97316; box-shadow: 0 6px 15px rgba(249,115,22,0.12); }
 
-        .product-img-wrap { width: 100%; height: 180px; overflow: hidden; border-radius: 6px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; }
+        .product-img-wrap { width: 100%; height: 180px; overflow: hidden; border-radius: 6px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; position: relative; }
         .product-img, .product-video { width: 100%; height: 100%; object-fit: cover; }
 
         .product-name { font-size: 13px; font-weight: bold; margin: 10px 0 4px 0; color: #1f2937; }
@@ -73,11 +73,8 @@
         .close-modal { position: absolute; top: 12px; right: 12px; background: #f3f4f6; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; }
 
         .detail-flex { display: flex; gap: 15px; flex-direction: row; }
-        .detail-img-area { width: 180px; flex-shrink: 0; }
-        .detail-img, .detail-video { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb; }
-        .thumb-gallery { display: flex; gap: 6px; margin-top: 8px; overflow-x: auto; padding-bottom: 4px; }
-        .thumb-gallery img { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; cursor: pointer; flex-shrink: 0; }
-        .thumb-gallery img.active { border-color: #f97316; border-width: 2px; }
+        .detail-img-area { width: 220px; flex-shrink: 0; }
+        .detail-img, .detail-video { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb; background: #000; }
 
         .form-group { margin-bottom: 12px; text-align: left; }
         .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #4b5563; text-transform: uppercase; }
@@ -116,7 +113,7 @@
             <button class="search-btn" onclick="searchProducts()">Cari</button>
         </div>
         <div class="header-right">
-            <button class="reset-btn" onclick="resetDataProduk()" title="Klik untuk memuat ulang data">🔄 Refresh Data</button>
+            <button class="reset-btn" onclick="resetDataProduk()" title="Klik untuk memuat ulang data">🔄 Refresh</button>
             <button class="cart-btn" onclick="openCartModal()">🛒 Bag (<span id="cart-count">0</span>)</button>
             <a href="index.html" class="admin-profile-btn" style="background:#ef4444; border-color:#ef4444;">🚪 Keluar</a>
         </div>
@@ -224,7 +221,7 @@
             const grid = document.getElementById("product-grid");
             grid.innerHTML = "";
             if (products.length === 0) {
-                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #6b7280; padding: 40px;'>Belum ada produk di Toko Ucen Jaya.</p>";
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #6b7280; padding: 40px;'>Produk tidak ditemukan.</p>";
                 return;
             }
             products.forEach(p => {
@@ -385,8 +382,9 @@
         }
 
         function searchProducts() {
-            const kw = document.getElementById("search-input").value.toLowerCase();
-            const filtered = getProducts().filter(p => p.name.toLowerCase().includes(kw));
+            const kw = document.getElementById("search-input").value.toLowerCase().trim();
+            const allProducts = getProducts();
+            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(kw));
             renderProducts(filtered);
         }
     </script>

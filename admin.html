@@ -158,7 +158,18 @@
 
         /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
-        .modal-box { background: #fff; padding: 20px; border-radius: 8px; width: 100%; max-width: 400px; }
+        .modal-box { background: #fff; padding: 20px; border-radius: 8px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; }
+
+        /* Modal Preview Media Slider */
+        .preview-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        .preview-content { position: relative; max-width: 600px; width: 100%; text-align: center; color: #fff; }
+        .preview-display { width: 100%; max-height: 70vh; object-fit: contain; border-radius: 6px; background: #000; }
+        .preview-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+        .nav-btn { background: #f97316; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; }
+        .nav-btn:hover { background: #ea580c; }
+        .close-preview { position: absolute; top: -40px; right: 0; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+        .clickable-thumb { cursor: pointer; transition: 0.2s; }
+        .clickable-thumb:hover { opacity: 0.8; transform: scale(1.05); }
 
         /* MEDIA QUERIES UNTUK TAMPILAN HP (MOBILE) */
         @media (max-width: 768px) {
@@ -225,12 +236,12 @@
         </div>
 
         <div id="tab-products" class="card" style="display: none;">
-            <div class="card-title">Daftar Stok & Edit Barang Toko (Foto / Video)</div>
+            <div class="card-title">Daftar Stok & Edit Barang Toko (Multi Media)</div>
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>Media</th>
+                            <th>Media (Klik untuk Geser)</th>
                             <th>Nama Barang</th>
                             <th>Harga</th>
                             <th>Stok</th>
@@ -268,7 +279,7 @@
         </div>
 
         <div id="tab-add" class="card" style="display: none; max-width: 500px;">
-            <div class="card-title">Tambah Produk Baru (Upload Foto / Video)</div>
+            <div class="card-title">Tambah Produk Baru (Bisa Banyak Foto / Video Sekaligus)</div>
             <form onsubmit="addNewProduct(event)">
                 <div class="form-group">
                     <label>Nama Produk</label>
@@ -283,8 +294,9 @@
                     <input type="number" id="new-stock" required placeholder="Contoh: 10">
                 </div>
                 <div class="form-group">
-                    <label>Pilih File Media (Foto atau Video)</label>
-                    <input type="file" id="new-file" accept="image/*,video/*" required style="padding: 6px; cursor: pointer;">
+                    <label>Pilih Banyak File (Foto / Video)</label>
+                    <input type="file" id="new-files" accept="image/*,video/*" multiple required style="padding: 6px; cursor: pointer;">
+                    <small style="color: #6b7280; font-size: 10px; display: block; margin-top: 3px;">Tahan tombol Ctrl/Shift untuk memilih banyak file sekaligus.</small>
                 </div>
                 <button type="submit" class="btn-primary">Simpan Produk Baru</button>
             </form>
@@ -309,8 +321,8 @@
                     <input type="number" id="edit-stock" required>
                 </div>
                 <div class="form-group">
-                    <label>Ganti File Media Baru (Opsional)</label>
-                    <input type="file" id="edit-file" accept="image/*,video/*" style="padding: 6px; cursor: pointer;">
+                    <label>Tambah/Ganti File Media Baru (Opsional)</label>
+                    <input type="file" id="edit-files" accept="image/*,video/*" multiple style="padding: 6px; cursor: pointer;">
                 </div>
                 <div style="display: flex; gap: 8px; margin-top: 15px;">
                     <button type="submit" class="btn-primary" style="flex:1;">Simpan</button>
@@ -320,9 +332,24 @@
         </div>
     </div>
 
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-content">
+            <button class="close-preview" onclick="closePreviewModal()">&times;</button>
+            <div id="preview-container">
+                </div>
+            <div class="preview-nav">
+                <button class="nav-btn" onclick="prevMedia()">◀ Sebelumnya</button>
+                <span id="preview-indicator" style="font-size: 12px; font-weight: bold;">1 / 1</span>
+                <button class="nav-btn" onclick="nextMedia()">Selanjutnya ▶</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const FALLBACK_IMG = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80";
         let salesChart = null;
+        let currentMediaList = [];
+        let currentMediaIndex = 0;
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('mobile-show');
@@ -408,18 +435,27 @@
                 return;
             }
             products.forEach((p, idx) => {
+                let mediaList = p.mediaList && p.mediaList.length > 0 ? p.mediaList : [{ type: 'image', url: p.media || p.img || FALLBACK_IMG }];
+                let firstMedia = mediaList[0];
                 let mediaElement = "";
-                let mediaSrc = p.media || (p.images && p.images[0]) || p.img || FALLBACK_IMG;
-                
-                if(p.mediaType === 'video') {
-                    mediaElement = `<video src="${mediaSrc}" width="50" height="50" style="object-fit:cover; border-radius:4px;" controls muted></video>`;
+
+                if(firstMedia.type === 'video') {
+                    mediaElement = `<video src="${firstMedia.url}" width="50" height="50" style="object-fit:cover; border-radius:4px;"></video>`;
                 } else {
-                    mediaElement = `<img src="${mediaSrc}" width="50" height="50" style="object-fit:cover; border-radius:4px;" onerror="this.src='${FALLBACK_IMG}'">`;
+                    mediaElement = `<img src="${firstMedia.url}" width="50" height="50" style="object-fit:cover; border-radius:4px;" onerror="this.src='${FALLBACK_IMG}'">`;
                 }
+
+                // Simpan data JSON ke atribut string untuk dipicu saat gambar diklik
+                let encodedMedia = encodeURIComponent(JSON.stringify(mediaList));
 
                 tbody.innerHTML += `
                     <tr>
-                        <td>${mediaElement}</td>
+                        <td>
+                            <div class="clickable-thumb" onclick="openPreviewModal('${encodedMedia}')" title="Klik untuk lihat foto/video">
+                                ${mediaElement}
+                                <br><span style="font-size:9px; color:#f97316; font-weight:bold;">🔍 ${mediaList.length} File (Klik)</span>
+                            </div>
+                        </td>
                         <td><b>${p.name}</b></td>
                         <td>Rp ${p.price.toLocaleString('id-ID')}</td>
                         <td><b>${p.stock} pcs</b></td>
@@ -432,6 +468,45 @@
             });
         }
 
+        // Fungsi Modal Preview Slider
+        function openPreviewModal(encodedMedia) {
+            currentMediaList = JSON.parse(decodeURIComponent(encodedMedia));
+            currentMediaIndex = 0;
+            document.getElementById('previewModal').style.display = 'flex';
+            displayCurrentMedia();
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        function displayCurrentMedia() {
+            let container = document.getElementById('preview-container');
+            let indicator = document.getElementById('preview-indicator');
+            let item = currentMediaList[currentMediaIndex];
+
+            if(item.type === 'video') {
+                container.innerHTML = `<video src="${item.url}" class="preview-display" controls autoplay></video>`;
+            } else {
+                container.innerHTML = `<img src="${item.url}" class="preview-display">`;
+            }
+            indicator.innerText = `${currentMediaIndex + 1} / ${currentMediaList.length}`;
+        }
+
+        function nextMedia() {
+            if(currentMediaList.length > 1) {
+                currentMediaIndex = (currentMediaIndex + 1) % currentMediaList.length;
+                displayCurrentMedia();
+            }
+        }
+
+        function prevMedia() {
+            if(currentMediaList.length > 1) {
+                currentMediaIndex = (currentMediaIndex - 1 + currentMediaList.length) % currentMediaList.length;
+                displayCurrentMedia();
+            }
+        }
+
         function openEditModal(idx) {
             let products = getProducts();
             let p = products[idx];
@@ -439,7 +514,7 @@
             document.getElementById("edit-name").value = p.name;
             document.getElementById("edit-price").value = p.price;
             document.getElementById("edit-stock").value = p.stock;
-            document.getElementById("edit-file").value = "";
+            document.getElementById("edit-files").value = "";
             document.getElementById("editModal").style.display = "flex";
         }
 
@@ -451,26 +526,37 @@
             event.preventDefault();
             let idx = document.getElementById("edit-idx").value;
             let products = getProducts();
-            let fileInput = document.getElementById("edit-file");
+            let filesInput = document.getElementById("edit-files");
 
             products[idx].name = document.getElementById("edit-name").value;
             products[idx].price = parseInt(document.getElementById("edit-price").value);
             products[idx].stock = parseInt(document.getElementById("edit-stock").value);
 
-            if(fileInput.files && fileInput.files[0]) {
-                let file = fileInput.files[0];
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    products[idx].media = e.target.result;
-                    products[idx].mediaType = file.type.startsWith('video') ? 'video' : 'image';
-                    products[idx].images = [e.target.result];
-                    products[idx].img = e.target.result;
-                    saveProducts(products);
-                    closeModal();
-                    renderAdminProducts();
-                    alert("Produk dan media berhasil diperbarui!");
-                };
-                reader.readAsDataURL(file);
+            if(filesInput.files && filesInput.files.length > 0) {
+                let files = Array.from(filesInput.files);
+                let processedFiles = 0;
+                let newMediaList = [];
+
+                files.forEach((file) => {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        newMediaList.push({
+                            type: file.type.startsWith('video') ? 'video' : 'image',
+                            url: e.target.result
+                        });
+                        processedFiles++;
+                        if(processedFiles === files.length) {
+                            products[idx].mediaList = newMediaList;
+                            products[idx].media = newMediaList[0].url;
+                            
+                            saveProducts(products);
+                            closeModal();
+                            renderAdminProducts();
+                            alert("Produk dan media berhasil diperbarui!");
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
             } else {
                 saveProducts(products);
                 closeModal();
@@ -494,37 +580,45 @@
             let name = document.getElementById("new-name").value;
             let price = parseInt(document.getElementById("new-price").value);
             let stock = parseInt(document.getElementById("new-stock").value);
-            let fileInput = document.getElementById("new-file");
+            let filesInput = document.getElementById("new-files");
 
-            let file = fileInput.files[0];
-            if(!file) {
-                alert("Silakan pilih file foto atau video terlebih dahulu!");
+            let files = Array.from(filesInput.files);
+            if(files.length === 0) {
+                alert("Silakan pilih minimal 1 file foto atau video!");
                 return;
             }
 
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                let mediaBase64 = e.target.result;
-                let mediaType = file.type.startsWith('video') ? 'video' : 'image';
+            let mediaList = [];
+            let processedCount = 0;
 
-                let products = getProducts();
-                products.push({ 
-                    id: Date.now(), 
-                    name, 
-                    price, 
-                    stock, 
-                    media: mediaBase64,
-                    mediaType: mediaType,
-                    images: [mediaBase64], 
-                    img: mediaBase64 
-                });
-                
-                saveProducts(products);
-                alert("Produk baru beserta media berhasil ditambahkan!");
-                event.target.reset();
-                switchTab('products');
-            };
-            reader.readAsDataURL(file);
+            files.forEach((file) => {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    mediaList.push({
+                        type: file.type.startsWith('video') ? 'video' : 'image',
+                        url: e.target.result
+                    });
+                    processedCount++;
+
+                    if(processedCount === files.length) {
+                        let products = getProducts();
+                        products.push({ 
+                            id: Date.now(), 
+                            name, 
+                            price, 
+                            stock, 
+                            mediaList: mediaList,
+                            media: mediaList[0].url
+                        });
+                        
+                        saveProducts(products);
+                        alert(`Produk baru beserta ${mediaList.length} file media berhasil ditambahkan!`);
+                        event.target.reset();
+                        switchTab('products');
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
         }
 
         let currentFilterStatus = 'All';

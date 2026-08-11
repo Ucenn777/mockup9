@@ -335,8 +335,7 @@
     <div class="preview-modal" id="previewModal">
         <div class="preview-content">
             <button class="close-preview" onclick="closePreviewModal()">&times;</button>
-            <div id="preview-container">
-                </div>
+            <div id="preview-container"></div>
             <div class="preview-nav">
                 <button class="nav-btn" onclick="prevMedia()">◀ Sebelumnya</button>
                 <span id="preview-indicator" style="font-size: 12px; font-weight: bold;">1 / 1</span>
@@ -445,7 +444,6 @@
                     mediaElement = `<img src="${firstMedia.url}" width="50" height="50" style="object-fit:cover; border-radius:4px;" onerror="this.src='${FALLBACK_IMG}'">`;
                 }
 
-                // Simpan data JSON ke atribut string untuk dipicu saat gambar diklik
                 let encodedMedia = encodeURIComponent(JSON.stringify(mediaList));
 
                 tbody.innerHTML += `
@@ -468,7 +466,6 @@
             });
         }
 
-        // Fungsi Modal Preview Slider
         function openPreviewModal(encodedMedia) {
             currentMediaList = JSON.parse(decodeURIComponent(encodedMedia));
             currentMediaIndex = 0;
@@ -546,22 +543,29 @@
                         });
                         processedFiles++;
                         if(processedFiles === files.length) {
-                            products[idx].mediaList = newMediaList;
-                            products[idx].media = newMediaList[0].url;
-                            
-                            saveProducts(products);
-                            closeModal();
-                            renderAdminProducts();
-                            alert("Produk dan media berhasil diperbarui!");
+                            try {
+                                products[idx].mediaList = newMediaList;
+                                products[idx].media = newMediaList[0].url;
+                                saveProducts(products);
+                                closeModal();
+                                renderAdminProducts();
+                                alert("Produk dan media berhasil diperbarui!");
+                            } catch (err) {
+                                alert("Gagal menyimpan! Ukuran file terlalu besar untuk memori browser.");
+                            }
                         }
                     };
                     reader.readAsDataURL(file);
                 });
             } else {
-                saveProducts(products);
-                closeModal();
-                renderAdminProducts();
-                alert("Produk berhasil diperbarui!");
+                try {
+                    saveProducts(products);
+                    closeModal();
+                    renderAdminProducts();
+                    alert("Produk berhasil diperbarui!");
+                } catch (err) {
+                    alert("Gagal menyimpan perubahan.");
+                }
             }
         }
 
@@ -601,20 +605,24 @@
                     processedCount++;
 
                     if(processedCount === files.length) {
-                        let products = getProducts();
-                        products.push({ 
-                            id: Date.now(), 
-                            name, 
-                            price, 
-                            stock, 
-                            mediaList: mediaList,
-                            media: mediaList[0].url
-                        });
-                        
-                        saveProducts(products);
-                        alert(`Produk baru beserta ${mediaList.length} file media berhasil ditambahkan!`);
-                        event.target.reset();
-                        switchTab('products');
+                        try {
+                            let products = getProducts();
+                            products.push({ 
+                                id: Date.now(), 
+                                name, 
+                                price, 
+                                stock, 
+                                mediaList: mediaList,
+                                media: mediaList[0].url
+                            });
+                            
+                            saveProducts(products);
+                            alert(`Produk baru beserta ${mediaList.length} file media berhasil ditambahkan!`);
+                            event.target.reset();
+                            switchTab('products');
+                        } catch (error) {
+                            alert("Gagal menyimpan! Ukuran file terlalu besar untuk memori browser. Coba gunakan foto/video yang ukurannya lebih kecil.");
+                        }
                     }
                 };
                 reader.readAsDataURL(file);

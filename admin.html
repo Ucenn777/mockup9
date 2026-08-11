@@ -225,12 +225,12 @@
         </div>
 
         <div id="tab-products" class="card" style="display: none;">
-            <div class="card-title">Daftar Stok & Edit Barang Toko</div>
+            <div class="card-title">Daftar Stok & Edit Barang Toko (Foto / Video)</div>
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>Foto</th>
+                            <th>Media</th>
                             <th>Nama Barang</th>
                             <th>Harga</th>
                             <th>Stok</th>
@@ -268,7 +268,7 @@
         </div>
 
         <div id="tab-add" class="card" style="display: none; max-width: 500px;">
-            <div class="card-title">Tambah Produk Baru</div>
+            <div class="card-title">Tambah Produk Baru (Upload Foto / Video)</div>
             <form onsubmit="addNewProduct(event)">
                 <div class="form-group">
                     <label>Nama Produk</label>
@@ -283,8 +283,8 @@
                     <input type="number" id="new-stock" required placeholder="Contoh: 10">
                 </div>
                 <div class="form-group">
-                    <label>Link Foto Produk (URL)</label>
-                    <input type="url" id="new-img" required placeholder="https://images.unsplash.com/...">
+                    <label>Pilih File Media (Foto atau Video)</label>
+                    <input type="file" id="new-file" accept="image/*,video/*" required style="padding: 6px; cursor: pointer;">
                 </div>
                 <button type="submit" class="btn-primary">Simpan Produk Baru</button>
             </form>
@@ -309,8 +309,8 @@
                     <input type="number" id="edit-stock" required>
                 </div>
                 <div class="form-group">
-                    <label>Link Foto (URL)</label>
-                    <input type="url" id="edit-img" required>
+                    <label>Ganti File Media Baru (Opsional)</label>
+                    <input type="file" id="edit-file" accept="image/*,video/*" style="padding: 6px; cursor: pointer;">
                 </div>
                 <div style="display: flex; gap: 8px; margin-top: 15px;">
                     <button type="submit" class="btn-primary" style="flex:1;">Simpan</button>
@@ -364,7 +364,6 @@
             }
             if(event) event.target.classList.add('active');
 
-            // Tutup sidebar otomatis di HP setelah menu diklik
             if(window.innerWidth <= 768) {
                 document.getElementById('sidebar').classList.remove('mobile-show');
             }
@@ -409,10 +408,18 @@
                 return;
             }
             products.forEach((p, idx) => {
-                let img = (p.images && p.images[0]) || p.img || FALLBACK_IMG;
+                let mediaElement = "";
+                let mediaSrc = p.media || (p.images && p.images[0]) || p.img || FALLBACK_IMG;
+                
+                if(p.mediaType === 'video') {
+                    mediaElement = `<video src="${mediaSrc}" width="50" height="50" style="object-fit:cover; border-radius:4px;" controls muted></video>`;
+                } else {
+                    mediaElement = `<img src="${mediaSrc}" width="50" height="50" style="object-fit:cover; border-radius:4px;" onerror="this.src='${FALLBACK_IMG}'">`;
+                }
+
                 tbody.innerHTML += `
                     <tr>
-                        <td><img src="${img}" width="35" height="35" style="object-fit:cover; border-radius:4px;" onerror="this.src='${FALLBACK_IMG}'"></td>
+                        <td>${mediaElement}</td>
                         <td><b>${p.name}</b></td>
                         <td>Rp ${p.price.toLocaleString('id-ID')}</td>
                         <td><b>${p.stock} pcs</b></td>
@@ -432,7 +439,7 @@
             document.getElementById("edit-name").value = p.name;
             document.getElementById("edit-price").value = p.price;
             document.getElementById("edit-stock").value = p.stock;
-            document.getElementById("edit-img").value = (p.images && p.images[0]) || p.img || '';
+            document.getElementById("edit-file").value = "";
             document.getElementById("editModal").style.display = "flex";
         }
 
@@ -444,17 +451,32 @@
             event.preventDefault();
             let idx = document.getElementById("edit-idx").value;
             let products = getProducts();
+            let fileInput = document.getElementById("edit-file");
+
             products[idx].name = document.getElementById("edit-name").value;
             products[idx].price = parseInt(document.getElementById("edit-price").value);
             products[idx].stock = parseInt(document.getElementById("edit-stock").value);
-            let imgVal = document.getElementById("edit-img").value;
-            products[idx].images = [imgVal];
-            products[idx].img = imgVal;
 
-            saveProducts(products);
-            closeModal();
-            renderAdminProducts();
-            alert("Produk berhasil diperbarui!");
+            if(fileInput.files && fileInput.files[0]) {
+                let file = fileInput.files[0];
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    products[idx].media = e.target.result;
+                    products[idx].mediaType = file.type.startsWith('video') ? 'video' : 'image';
+                    products[idx].images = [e.target.result];
+                    products[idx].img = e.target.result;
+                    saveProducts(products);
+                    closeModal();
+                    renderAdminProducts();
+                    alert("Produk dan media berhasil diperbarui!");
+                };
+                reader.readAsDataURL(file);
+            } else {
+                saveProducts(products);
+                closeModal();
+                renderAdminProducts();
+                alert("Produk berhasil diperbarui!");
+            }
         }
 
         function deleteProduct(idx) {
@@ -472,14 +494,37 @@
             let name = document.getElementById("new-name").value;
             let price = parseInt(document.getElementById("new-price").value);
             let stock = parseInt(document.getElementById("new-stock").value);
-            let img = document.getElementById("new-img").value;
+            let fileInput = document.getElementById("new-file");
 
-            let products = getProducts();
-            products.push({ id: Date.now(), name, price, stock, images: [img], img });
-            saveProducts(products);
-            alert("Produk baru berhasil ditambahkan!");
-            event.target.reset();
-            switchTab('products');
+            let file = fileInput.files[0];
+            if(!file) {
+                alert("Silakan pilih file foto atau video terlebih dahulu!");
+                return;
+            }
+
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let mediaBase64 = e.target.result;
+                let mediaType = file.type.startsWith('video') ? 'video' : 'image';
+
+                let products = getProducts();
+                products.push({ 
+                    id: Date.now(), 
+                    name, 
+                    price, 
+                    stock, 
+                    media: mediaBase64,
+                    mediaType: mediaType,
+                    images: [mediaBase64], 
+                    img: mediaBase64 
+                });
+                
+                saveProducts(products);
+                alert("Produk baru beserta media berhasil ditambahkan!");
+                event.target.reset();
+                switchTab('products');
+            };
+            reader.readAsDataURL(file);
         }
 
         let currentFilterStatus = 'All';

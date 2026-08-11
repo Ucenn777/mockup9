@@ -153,7 +153,7 @@
         .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #4b5563; text-transform: uppercase; }
         .form-group input { width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 12px; outline: none; }
         
-        .btn-primary { background: #f97316; color: #fff; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 11px; text-transform: uppercase; }
+        .btn-primary { background: #f97316; color: #fff; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 11px; text-transform: uppercase; width: 100%; }
         .btn-primary:hover { background: #ea580c; }
 
         /* Modal */
@@ -236,7 +236,7 @@
         </div>
 
         <div id="tab-products" class="card" style="display: none;">
-            <div class="card-title">Daftar Stok & Edit Barang Toko (Multi Media)</div>
+            <div class="card-title">Daftar Stok & Edit Barang Toko</div>
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -279,7 +279,7 @@
         </div>
 
         <div id="tab-add" class="card" style="display: none; max-width: 500px;">
-            <div class="card-title">Tambah Produk Baru (Bisa Banyak Foto / Video Sekaligus)</div>
+            <div class="card-title">Tambah Produk Baru</div>
             <form onsubmit="addNewProduct(event)">
                 <div class="form-group">
                     <label>Nama Produk</label>
@@ -294,9 +294,14 @@
                     <input type="number" id="new-stock" required placeholder="Contoh: 10">
                 </div>
                 <div class="form-group">
-                    <label>Pilih Banyak File (Foto / Video)</label>
-                    <input type="file" id="new-files" accept="image/*,video/*" multiple required style="padding: 6px; cursor: pointer;">
-                    <small style="color: #6b7280; font-size: 10px; display: block; margin-top: 3px;">Tahan tombol Ctrl/Shift untuk memilih banyak file sekaligus.</small>
+                    <label>Pilih File Foto dari Galeri (Opsional)</label>
+                    <input type="file" id="new-files" accept="image/*" multiple style="padding: 6px; cursor: pointer;">
+                    <small style="color: #6b7280; font-size: 10px; display: block;">Foto akan otomatis dikompres agar memori browser aman.</small>
+                </div>
+                <div class="form-group">
+                    <label>Atau Masukkan Link URL Foto / Video (Opsional)</label>
+                    <input type="text" id="new-url" placeholder="https://contoh.com/gambar.jpg atau .mp4">
+                    <small style="color: #6b7280; font-size: 10px; display: block;">Bisa masukkan link gambar atau link video online (misal MP4).</small>
                 </div>
                 <button type="submit" class="btn-primary" id="btn-submit-prod">Simpan Produk Baru</button>
             </form>
@@ -321,8 +326,12 @@
                     <input type="number" id="edit-stock" required>
                 </div>
                 <div class="form-group">
-                    <label>Tambah/Ganti File Media Baru (Opsional)</label>
-                    <input type="file" id="edit-files" accept="image/*,video/*" multiple style="padding: 6px; cursor: pointer;">
+                    <label>Ganti File Foto Baru (Opsional)</label>
+                    <input type="file" id="edit-files" accept="image/*" multiple style="padding: 6px; cursor: pointer;">
+                </div>
+                <div class="form-group">
+                    <label>Atau Ganti Link URL Baru (Opsional)</label>
+                    <input type="text" id="edit-url" placeholder="https://...">
                 </div>
                 <div style="display: flex; gap: 8px; margin-top: 15px;">
                     <button type="submit" class="btn-primary" style="flex:1;">Simpan</button>
@@ -355,8 +364,7 @@
         }
 
         const DEFAULT_PRODUCTS = [
-            { id: 1, name: "Mouse Gaming RGB", price: 150000, stock: 15, mediaList: [{ type: "image", url: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500&q=80" }], media: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500&q=80" },
-            { id: 2, name: "Keyboard Mechanical RGB", price: 289000, stock: 10, mediaList: [{ type: "image", url: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80" }], media: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80" }
+            { id: 1, name: "Mouse Gaming RGB", price: 150000, stock: 15, mediaList: [{ type: "image", url: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500&q=80" }], media: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500&q=80" }
         ];
 
         function getProducts() { 
@@ -373,7 +381,7 @@
                 localStorage.setItem('toko_products', JSON.stringify(p));
                 return true;
             } catch (e) {
-                alert("Gagal menyimpan! Ukuran file atau data produk terlalu besar untuk memori browser. Coba gunakan foto dengan ukuran lebih kecil.");
+                alert("Gagal menyimpan! Kapasitas penyimpanan memori browser penuh. Hapus produk lama terlebih dahulu atau gunakan link URL.");
                 return false;
             }
         }
@@ -455,11 +463,11 @@
                 return;
             }
             products.forEach((p, idx) => {
-                let mediaList = p.mediaList && p.mediaList.length > 0 ? p.mediaList : [{ type: 'image', url: p.media || p.img || FALLBACK_IMG }];
+                let mediaList = p.mediaList && p.mediaList.length > 0 ? p.mediaList : [{ type: 'image', url: p.media || FALLBACK_IMG }];
                 let firstMedia = mediaList[0];
                 let mediaElement = "";
 
-                if(firstMedia.type === 'video') {
+                if(firstMedia.type === 'video' || (firstMedia.url && firstMedia.url.includes('.mp4'))) {
                     mediaElement = `<video src="${firstMedia.url}" width="50" height="50" style="object-fit:cover; border-radius:4px;"></video>`;
                 } else {
                     mediaElement = `<img src="${firstMedia.url}" width="50" height="50" style="object-fit:cover; border-radius:4px;" onerror="this.src='${FALLBACK_IMG}'">`;
@@ -470,7 +478,7 @@
                 tbody.innerHTML += `
                     <tr>
                         <td>
-                            <div class="clickable-thumb" onclick="openPreviewModal('${encodedMedia}')" title="Klik untuk lihat foto/video">
+                            <div class="clickable-thumb" onclick="openPreviewModal('${encodedMedia}')" title="Klik untuk lihat media">
                                 ${mediaElement}
                                 <br><span style="font-size:9px; color:#f97316; font-weight:bold;">🔍 ${mediaList.length} File (Klik)</span>
                             </div>
@@ -503,10 +511,11 @@
             let indicator = document.getElementById('preview-indicator');
             let item = currentMediaList[currentMediaIndex];
 
-            if(item.type === 'video') {
+            let isVideo = item.type === 'video' || (item.url && (item.url.includes('.mp4') || item.url.includes('video')));
+            if(isVideo) {
                 container.innerHTML = `<video src="${item.url}" class="preview-display" controls autoplay></video>`;
             } else {
-                container.innerHTML = `<img src="${item.url}" class="preview-display">`;
+                container.innerHTML = `<img src="${item.url}" class="preview-display" onerror="this.src='${FALLBACK_IMG}'">`;
             }
             indicator.innerText = `${currentMediaIndex + 1} / ${currentMediaList.length}`;
         }
@@ -533,6 +542,7 @@
             document.getElementById("edit-price").value = p.price;
             document.getElementById("edit-stock").value = p.stock;
             document.getElementById("edit-files").value = "";
+            document.getElementById("edit-url").value = "";
             document.getElementById("editModal").style.display = "flex";
         }
 
@@ -540,13 +550,8 @@
             document.getElementById("editModal").style.display = "none";
         }
 
-        // Fungsi bantu untuk kompresi gambar otomatis agar muat di localStorage HP
-        function compressImage(file, maxWidth = 600, quality = 0.6) {
+        function compressImage(file, maxWidth = 500, quality = 0.5) {
             return new Promise((resolve) => {
-                if (file.type.startsWith('video')) {
-                    resolve(URL.createObjectURL(file)); // Video dilewati kompresinya atau gunakan link eksternal jika kepenuhan
-                    return;
-                }
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = function (event) {
@@ -575,21 +580,28 @@
             let idx = document.getElementById("edit-idx").value;
             let products = getProducts();
             let filesInput = document.getElementById("edit-files");
+            let urlInput = document.getElementById("edit-url").value.trim();
 
             products[idx].name = document.getElementById("edit-name").value;
             products[idx].price = parseInt(document.getElementById("edit-price").value);
             products[idx].stock = parseInt(document.getElementById("edit-stock").value);
 
+            let newMediaList = products[idx].mediaList || [];
+
             if(filesInput.files && filesInput.files.length > 0) {
                 let files = Array.from(filesInput.files);
-                let newMediaList = [];
                 for(let file of files) {
                     let compressedUrl = await compressImage(file);
-                    newMediaList.push({
-                        type: file.type.startsWith('video') ? 'video' : 'image',
-                        url: compressedUrl
-                    });
+                    newMediaList.push({ type: 'image', url: compressedUrl });
                 }
+            }
+
+            if(urlInput) {
+                let type = (urlInput.includes('.mp4') || urlInput.includes('video')) ? 'video' : 'image';
+                newMediaList.push({ type: type, url: urlInput });
+            }
+
+            if(newMediaList.length > 0) {
                 products[idx].mediaList = newMediaList;
                 products[idx].media = newMediaList[0].url;
             }
@@ -617,25 +629,31 @@
             let price = parseInt(document.getElementById("new-price").value);
             let stock = parseInt(document.getElementById("new-stock").value);
             let filesInput = document.getElementById("new-files");
+            let urlInput = document.getElementById("new-url").value.trim();
 
             let files = Array.from(filesInput.files);
-            if(files.length === 0) {
-                alert("Silakan pilih minimal 1 file foto atau video!");
+            if(files.length === 0 && !urlInput) {
+                alert("Silakan pilih minimal foto dari galeri atau masukkan link URL!");
                 return;
             }
 
             let submitBtn = document.getElementById("btn-submit-prod");
-            submitBtn.innerText = "Memproses & Mengompres File...";
+            submitBtn.innerText = "Memproses & Menyimpan...";
             submitBtn.disabled = true;
 
             try {
                 let mediaList = [];
+                
+                // Proses file dari galeri (jika ada)
                 for(let file of files) {
                     let compressedUrl = await compressImage(file);
-                    mediaList.push({
-                        type: file.type.startsWith('video') ? 'video' : 'image',
-                        url: compressedUrl
-                    });
+                    mediaList.push({ type: 'image', url: compressedUrl });
+                }
+
+                // Proses link URL (jika diisi)
+                if(urlInput) {
+                    let type = (urlInput.includes('.mp4') || urlInput.includes('video')) ? 'video' : 'image';
+                    mediaList.push({ type: type, url: urlInput });
                 }
 
                 let products = getProducts();
@@ -649,12 +667,12 @@
                 });
                 
                 if(saveProducts(products)) {
-                    alert(`Produk baru beserta ${mediaList.length} file media berhasil ditambahkan!`);
+                    alert(`Produk baru berhasil ditambahkan!`);
                     event.target.reset();
                     switchTab('products');
                 }
             } catch (error) {
-                alert("Terjadi kesalahan saat menyimpan produk.");
+                alert("Terjadi kesalahan saat menyimpan.");
                 console.error(error);
             } finally {
                 submitBtn.innerText = "Simpan Produk Baru";

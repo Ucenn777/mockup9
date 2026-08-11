@@ -48,8 +48,8 @@
         }
         .product-card:hover { transform: translateY(-3px); border-color: #f97316; box-shadow: 0 6px 15px rgba(249,115,22,0.12); }
 
-        .product-img-wrap { width: 100%; height: 180px; overflow: hidden; border-radius: 6px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; position: relative; }
-        .product-img, .product-video { width: 100%; height: 100%; object-fit: cover; }
+        .product-img-wrap { width: 100%; height: 180px; overflow: hidden; border-radius: 6px; background: #f3f4f6; }
+        .product-img { width: 100%; height: 100%; object-fit: cover; }
 
         .product-name { font-size: 13px; font-weight: bold; margin: 10px 0 4px 0; color: #1f2937; }
         .product-price { font-size: 14px; font-weight: bold; color: #ea580c; margin-bottom: 4px; }
@@ -70,15 +70,14 @@
         .modal-content { 
             background: #fff; border-radius: 10px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 20px; position: relative; 
         }
-        .close-modal { position: absolute; top: 12px; right: 12px; background: #f3f4f6; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; z-index: 10; }
+        .close-modal { position: absolute; top: 12px; right: 12px; background: #f3f4f6; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; }
 
         .detail-flex { display: flex; gap: 15px; flex-direction: row; }
-        .detail-img-area { width: 220px; flex-shrink: 0; text-align: center; }
-        .detail-img, .detail-video { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb; background: #000; }
-        
-        .detail-nav-btn-container { display: flex; justify-content: space-between; margin-top: 6px; gap: 5px; }
-        .mini-nav-btn { background: #f97316; color: #fff; border: none; padding: 4px 8px; font-size: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .mini-nav-btn:hover { background: #ea580c; }
+        .detail-img-area { width: 180px; flex-shrink: 0; }
+        .detail-img { width: 100%; height: 180px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb; }
+        .thumb-gallery { display: flex; gap: 6px; margin-top: 8px; overflow-x: auto; padding-bottom: 4px; }
+        .thumb-gallery img { width: 40px; height: 40px; object-fit: cover; border-radius: 4px; border: 1px solid #cbd5e1; cursor: pointer; flex-shrink: 0; }
+        .thumb-gallery img.active { border-color: #f97316; border-width: 2px; }
 
         .form-group { margin-bottom: 12px; text-align: left; }
         .form-group label { display: block; font-size: 11px; font-weight: bold; margin-bottom: 4px; color: #4b5563; text-transform: uppercase; }
@@ -88,15 +87,6 @@
         .btn-primary { background: #f97316; color: #fff; border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 11px; width: 100%; }
         .btn-primary:hover { background: #ea580c; }
 
-        /* Modal Preview Layar Penuh */
-        .preview-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
-        .preview-content { position: relative; max-width: 600px; width: 100%; text-align: center; color: #fff; }
-        .preview-display { width: 100%; max-height: 70vh; object-fit: contain; border-radius: 6px; background: #000; }
-        .preview-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
-        .nav-btn { background: #f97316; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px; }
-        .nav-btn:hover { background: #ea580c; }
-        .close-preview { position: absolute; top: -40px; right: 0; background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
-
         @media (max-width: 600px) {
             header { padding: 10px 15px; }
             .logo { font-size: 16px; }
@@ -105,7 +95,7 @@
             .product-img-wrap { height: 130px; }
             .detail-flex { flex-direction: column; }
             .detail-img-area { width: 100%; }
-            .detail-img, .detail-video { height: 220px; }
+            .detail-img { height: 220px; }
         }
 
         footer { background: #fff; color: #6b7280; text-align: center; padding: 20px; font-size: 11px; border-top: 1px solid #e5e7eb; margin-top: 30px; }
@@ -126,9 +116,9 @@
             <button class="search-btn" onclick="searchProducts()">Cari</button>
         </div>
         <div class="header-right">
-            <button class="reset-btn" onclick="resetDataProduk()" title="Klik untuk memuat ulang data">🔄 Refresh</button>
+            <button class="reset-btn" onclick="resetDataProduk()" title="Klik untuk memuat ulang data">🔄 Refresh Data</button>
             <button class="cart-btn" onclick="openCartModal()">🛒 Bag (<span id="cart-count">0</span>)</button>
-            <a href="index.html" class="admin-profile-btn" style="background:#ef4444; border-color:#ef4444;">🚪 Keluar</a>
+            <a href="admin.html" class="admin-profile-btn">👤 Admin</a>
         </div>
     </header>
 
@@ -147,12 +137,8 @@
             <button class="close-modal" onclick="closeModal('product-detail-modal')">&times;</button>
             <div class="detail-flex">
                 <div class="detail-img-area">
-                    <div id="detail-media-container"></div>
-                    <div class="detail-nav-btn-container" id="detail-nav-buttons" style="display:none;">
-                        <button class="mini-nav-btn" onclick="prevDetailMedia()">◀ Prev</button>
-                        <span id="detail-media-indicator" style="font-size:11px; font-weight:bold; align-self:center;">1/1</span>
-                        <button class="mini-nav-btn" onclick="nextDetailMedia()">Next ▶</button>
-                    </div>
+                    <img id="detail-img" src="" alt="Produk" class="detail-img">
+                    <div id="thumb-gallery-container" class="thumb-gallery"></div>
                 </div>
                 <div style="flex: 1; display:flex; flex-direction:column; justify-content:center;">
                     <h3 id="detail-name" style="font-size: 16px; margin-bottom: 6px;"></h3>
@@ -160,18 +146,6 @@
                     <div id="detail-stock" style="font-size: 11px; color: #6b7280; margin-bottom: 15px;"></div>
                     <button class="btn-primary" onclick="addCurrentProductToCart()">+ Tambahkan ke Tas</button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="preview-modal" id="previewModal">
-        <div class="preview-content">
-            <button class="close-preview" onclick="closePreviewModal()">&times;</button>
-            <div id="preview-container"></div>
-            <div class="preview-nav">
-                <button class="nav-btn" onclick="prevPreviewMedia()">◀ Sebelumnya</button>
-                <span id="preview-indicator" style="font-size: 12px; font-weight: bold;">1 / 1</span>
-                <button class="nav-btn" onclick="nextPreviewMedia()">Selanjutnya ▶</button>
             </div>
         </div>
     </div>
@@ -221,8 +195,14 @@
         const FALLBACK_IMG = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80";
 
         const DEFAULT_PRODUCTS = [
-            { id: 1, name: "Mouse Gaming RGB", price: 150000, stock: 15, mediaList: [{ type: "image", url: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500&q=80" }], media: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500&q=80" },
-            { id: 2, name: "Keyboard Mechanical RGB", price: 289000, stock: 10, mediaList: [{ type: "image", url: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80" }], media: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80" }
+            { id: 1, name: "Mouse Gaming RGB", price: 150000, stock: 15, images: ["https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500&q=80"] },
+            { id: 2, name: "Keyboard Mechanical RGB", price: 289000, stock: 10, images: ["https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&q=80"] },
+            { id: 3, name: "Headset Gaming", price: 399000, stock: 8, images: ["https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=500&q=80"] },
+            { id: 4, name: "Smartphone Android", price: 3499000, stock: 5, images: ["https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80"] },
+            { id: 5, name: "Smartwatch", price: 899000, stock: 12, images: ["https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80"] },
+            { id: 6, name: "Sepatu Sneakers", price: 459000, stock: 20, images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80"] },
+            { id: 7, name: "Laptop Gaming", price: 12999000, stock: 3, images: ["https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500&q=80"] },
+            { id: 8, name: "Power Bank 20.000mAh", price: 199000, stock: 25, images: ["https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Power_bank_20000mAh.jpg/500px-Power_bank_20000mAh.jpg"] }
         ];
 
         function getProducts() { 
@@ -245,12 +225,6 @@
         }
 
         let currentActiveProduct = null;
-        let detailMediaList = [];
-        let detailMediaIdx = 0;
-
-        let previewMediaList = [];
-        let previewMediaIdx = 0;
-
         window.onload = function() { renderProducts(); updateCartBadge(); };
 
         function renderProducts(list = null) {
@@ -258,28 +232,16 @@
             const grid = document.getElementById("product-grid");
             grid.innerHTML = "";
             if (products.length === 0) {
-                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #6b7280; padding: 40px;'>Produk tidak ditemukan.</p>";
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #6b7280; padding: 40px;'>Belum ada produk di Toko Ucen Jaya.</p>";
                 return;
             }
             products.forEach(p => {
-                let mediaList = p.mediaList && p.mediaList.length > 0 ? p.mediaList : [{ type: 'image', url: p.media || p.img || FALLBACK_IMG }];
-                let firstMedia = mediaList[0];
-                let mediaHtml = "";
-                
-                if (firstMedia.type === 'video') {
-                    mediaHtml = `<video src="${firstMedia.url}" class="product-video" muted></video>`;
-                } else {
-                    mediaHtml = `<img src="${firstMedia.url}" class="product-img" onerror="this.src='${FALLBACK_IMG}'">`;
-                }
-
-                let encodedMedia = encodeURIComponent(JSON.stringify(mediaList));
-
+                let displayImg = (p.images && p.images[0]) || p.img || FALLBACK_IMG;
                 grid.innerHTML += `
                     <div class="product-card" onclick="openProductDetail(${p.id})">
                         <div>
-                            <div class="product-img-wrap" onclick="event.stopPropagation(); openPreviewModal('${encodedMedia}')" title="Klik untuk perbesar/geser media">
-                                ${mediaHtml}
-                                ${mediaList.length > 1 ? `<span style="position:absolute; bottom:4px; right:4px; background:rgba(0,0,0,0.6); color:#fff; font-size:9px; padding:2px 5px; border-radius:4px;">🔍 ${mediaList.length} File</span>` : ''}
+                            <div class="product-img-wrap">
+                                <img src="${displayImg}" class="product-img" onerror="this.src='${FALLBACK_IMG}'">
                             </div>
                             <div class="product-name">${p.name}</div>
                             <div class="product-price">Rp ${p.price.toLocaleString('id-ID')}</div>
@@ -297,96 +259,35 @@
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // Fungsi Detail Produk & Slider di dalam Modal Detail
         function openProductDetail(id) {
             currentActiveProduct = getProducts().find(p => p.id === id);
             if (!currentActiveProduct) return;
             
-            detailMediaList = currentActiveProduct.mediaList && currentActiveProduct.mediaList.length > 0 
-                ? currentActiveProduct.mediaList 
-                : [{ type: 'image', url: currentActiveProduct.media || FALLBACK_IMG }];
-            
-            detailMediaIdx = 0;
-            renderDetailMedia();
+            const allImgs = (currentActiveProduct.images && currentActiveProduct.images.length > 0) 
+                ? currentActiveProduct.images 
+                : [FALLBACK_IMG];
+
+            const detailImg = document.getElementById("detail-img");
+            detailImg.src = allImgs[0];
 
             document.getElementById("detail-name").innerText = currentActiveProduct.name;
             document.getElementById("detail-price").innerText = "Rp " + currentActiveProduct.price.toLocaleString('id-ID');
             document.getElementById("detail-stock").innerText = "Stok Tersedia: " + currentActiveProduct.stock + " pcs";
             
+            const thumbContainer = document.getElementById("thumb-gallery-container");
+            thumbContainer.innerHTML = "";
+            if(allImgs.length > 1) {
+                allImgs.forEach((imgSrc, idx) => {
+                    thumbContainer.innerHTML += `<img src="${imgSrc}" class="${idx===0?'active':''}" onclick="changeMainImg(this, '${imgSrc}')">`;
+                });
+            }
             openModal('product-detail-modal');
         }
 
-        function renderDetailMedia() {
-            const container = document.getElementById("detail-media-container");
-            const navContainer = document.getElementById("detail-nav-buttons");
-            const indicator = document.getElementById("detail-media-indicator");
-            let item = detailMediaList[detailMediaIdx];
-
-            if (item.type === 'video') {
-                container.innerHTML = `<video src="${item.url}" class="detail-video" controls autoplay></video>`;
-            } else {
-                container.innerHTML = `<img src="${item.url}" class="detail-img" onerror="this.src='${FALLBACK_IMG}'">`;
-            }
-
-            if (detailMediaList.length > 1) {
-                navContainer.style.display = "flex";
-                indicator.innerText = `${detailMediaIdx + 1} / ${detailMediaList.length}`;
-            } else {
-                navContainer.style.display = "none";
-            }
-        }
-
-        function nextDetailMedia() {
-            if (detailMediaList.length > 1) {
-                detailMediaIdx = (detailMediaIdx + 1) % detailMediaList.length;
-                renderDetailMedia();
-            }
-        }
-
-        function prevDetailMedia() {
-            if (detailMediaList.length > 1) {
-                detailMediaIdx = (detailMediaIdx - 1 + detailMediaList.length) % detailMediaList.length;
-                renderDetailMedia();
-            }
-        }
-
-        // Fungsi Modal Preview Layar Penuh (Fullscreen Zoom & Slider)
-        function openPreviewModal(encodedMedia) {
-            previewMediaList = JSON.parse(decodeURIComponent(encodedMedia));
-            previewMediaIdx = 0;
-            document.getElementById('previewModal').style.display = 'flex';
-            renderPreviewMedia();
-        }
-
-        function closePreviewModal() {
-            document.getElementById('previewModal').style.display = 'none';
-        }
-
-        function renderPreviewMedia() {
-            let container = document.getElementById('preview-container');
-            let indicator = document.getElementById('preview-indicator');
-            let item = previewMediaList[previewMediaIdx];
-
-            if (item.type === 'video') {
-                container.innerHTML = `<video src="${item.url}" class="preview-display" controls autoplay></video>`;
-            } else {
-                container.innerHTML = `<img src="${item.url}" class="preview-display">`;
-            }
-            indicator.innerText = `${previewMediaIdx + 1} / ${previewMediaList.length}`;
-        }
-
-        function nextPreviewMedia() {
-            if (previewMediaList.length > 1) {
-                previewMediaIdx = (previewMediaIdx + 1) % previewMediaList.length;
-                renderPreviewMedia();
-            }
-        }
-
-        function prevPreviewMedia() {
-            if (previewMediaList.length > 1) {
-                previewMediaIdx = (previewMediaIdx - 1 + previewMediaList.length) % previewMediaList.length;
-                renderPreviewMedia();
-            }
+        function changeMainImg(el, src) {
+            document.querySelectorAll('.thumb-gallery img').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById("detail-img").src = src;
         }
 
         function quickAdd(id) {
@@ -397,10 +298,7 @@
                     return;
                 }
                 let cart = getCart();
-                let mediaList = p.mediaList && p.mediaList.length > 0 ? p.mediaList : [{ type: 'image', url: p.media || FALLBACK_IMG }];
-                let mediaSrc = mediaList[0].url;
-                
-                cart.push({ id: p.id, name: p.name, price: p.price, img: mediaSrc });
+                cart.push({ id: p.id, name: p.name, price: p.price, img: (p.images && p.images[0]) || FALLBACK_IMG });
                 saveCart(cart);
                 updateCartBadge();
                 alert(`✨ ${p.name} ditambahkan ke tas!`);
@@ -497,9 +395,8 @@
         }
 
         function searchProducts() {
-            const kw = document.getElementById("search-input").value.toLowerCase().trim();
-            const allProducts = getProducts();
-            const filtered = allProducts.filter(p => p.name.toLowerCase().includes(kw));
+            const kw = document.getElementById("search-input").value.toLowerCase();
+            const filtered = getProducts().filter(p => p.name.toLowerCase().includes(kw));
             renderProducts(filtered);
         }
     </script>

@@ -531,41 +531,22 @@
 
             if(filesInput.files && filesInput.files.length > 0) {
                 let files = Array.from(filesInput.files);
-                let processedFiles = 0;
-                let newMediaList = [];
+                let newMediaList = files.map(file => ({
+                    type: file.type.startsWith('video') ? 'video' : 'image',
+                    url: URL.createObjectURL(file)
+                }));
 
-                files.forEach((file) => {
-                    let reader = new FileReader();
-                    reader.onload = function(e) {
-                        newMediaList.push({
-                            type: file.type.startsWith('video') ? 'video' : 'image',
-                            url: e.target.result
-                        });
-                        processedFiles++;
-                        if(processedFiles === files.length) {
-                            try {
-                                products[idx].mediaList = newMediaList;
-                                products[idx].media = newMediaList[0].url;
-                                saveProducts(products);
-                                closeModal();
-                                renderAdminProducts();
-                                alert("Produk dan media berhasil diperbarui!");
-                            } catch (err) {
-                                alert("Gagal menyimpan! Ukuran file terlalu besar untuk memori browser.");
-                            }
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                });
-            } else {
-                try {
-                    saveProducts(products);
-                    closeModal();
-                    renderAdminProducts();
-                    alert("Produk berhasil diperbarui!");
-                } catch (err) {
-                    alert("Gagal menyimpan perubahan.");
-                }
+                products[idx].mediaList = newMediaList;
+                products[idx].media = newMediaList[0].url;
+            }
+
+            try {
+                saveProducts(products);
+                closeModal();
+                renderAdminProducts();
+                alert("Produk berhasil diperbarui!");
+            } catch (err) {
+                alert("Gagal menyimpan perubahan.");
             }
         }
 
@@ -592,41 +573,30 @@
                 return;
             }
 
-            let mediaList = [];
-            let processedCount = 0;
+            try {
+                let mediaList = files.map(file => ({
+                    type: file.type.startsWith('video') ? 'video' : 'image',
+                    url: URL.createObjectURL(file)
+                }));
 
-            files.forEach((file) => {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    mediaList.push({
-                        type: file.type.startsWith('video') ? 'video' : 'image',
-                        url: e.target.result
-                    });
-                    processedCount++;
-
-                    if(processedCount === files.length) {
-                        try {
-                            let products = getProducts();
-                            products.push({ 
-                                id: Date.now(), 
-                                name, 
-                                price, 
-                                stock, 
-                                mediaList: mediaList,
-                                media: mediaList[0].url
-                            });
-                            
-                            saveProducts(products);
-                            alert(`Produk baru beserta ${mediaList.length} file media berhasil ditambahkan!`);
-                            event.target.reset();
-                            switchTab('products');
-                        } catch (error) {
-                            alert("Gagal menyimpan! Ukuran file terlalu besar untuk memori browser. Coba gunakan foto/video yang ukurannya lebih kecil.");
-                        }
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
+                let products = getProducts();
+                products.push({ 
+                    id: Date.now(), 
+                    name, 
+                    price, 
+                    stock, 
+                    mediaList: mediaList,
+                    media: mediaList[0].url
+                });
+                
+                saveProducts(products);
+                alert(`Produk baru beserta ${mediaList.length} file media berhasil ditambahkan!`);
+                event.target.reset();
+                switchTab('products');
+            } catch (error) {
+                alert("Terjadi kesalahan saat menyimpan produk.");
+                console.error(error);
+            }
         }
 
         let currentFilterStatus = 'All';
